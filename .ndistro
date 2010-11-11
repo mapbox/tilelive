@@ -1,0 +1,6 @@
+node 0.3.0
+
+module senchalabs connect 0.2.6
+module visionmedia express 1.0.0rc4
+module documentcloud underscore 1.1.1
+module polotek libxmljs 0.4.1

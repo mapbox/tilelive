@@ -7,8 +7,7 @@ var toHost = '127.0.0.1';
 var cache = {};
 
 http.createServer(function(req, res) {
-    var parsedUrl = url.parse(req.url),
-        response = '';
+    var parsedUrl = url.parse(req.url);
 
     var fragment = parsedUrl.pathname + (parsedUrl.search || '');
 
