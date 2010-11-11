@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 // A proxy for tilejive
 
 var sys = require('sys'), http = require('http'), url = require('url');
@@ -8,7 +10,6 @@ var cache = {};
 
 http.createServer(function(req, res) {
     var parsedUrl = url.parse(req.url);
-
     var fragment = parsedUrl.pathname + (parsedUrl.search || '');
 
     if (cache[fragment]) {
@@ -18,7 +19,6 @@ http.createServer(function(req, res) {
     }
 
     var client = http.createClient(toPort, toHost);
-
     var request = client.request('GET', fragment, {
         Host: toHost,
         Accept: '*/*',
@@ -29,13 +29,9 @@ http.createServer(function(req, res) {
 
     request.addListener('response', function(response) {
         var body = '';
-        var start = true;
+        res.writeHead(200, response.headers);
         response.setEncoding('utf8');
         response.addListener('data', function(chunk) {
-            if (start) {
-                res.writeHead(200, response.headers);
-                start = false;
-            }
             res.write(chunk);
             body += chunk;
         });
@@ -47,7 +43,6 @@ http.createServer(function(req, res) {
             return res.end();
         });
     });
-
     request.end();
 }).listen(apiPort);
 
