@@ -9,24 +9,20 @@ var http = require('http'),
  * @param Boolean base64 whether the mapfile is base64 encoded.
  */
 var Map = function(mapfile, base64) {
-    if (base64) {
-        var b = new Buffer(mapfile, 'base64');
-        this.mapfile = b.toString('utf-8');
-        this.mapfile_64 = b.toString('base64');
-    } else {
-        var b = new Buffer(mapfile, 'utf-8');
-        this.mapfile = b.toString('utf-8');
-        this.mapfile_64 = b.toString('base64');
-    }
+    this.mapfile = (new Buffer(mapfile, (base64) ? 'base64' : 'utf-8'))
+        .toString('utf-8');
 };
+
+Map.__defineGetter__('mapfile_64', function() {
+    return this.mapfile.toString('base64');
+});
 
 /**
  * Localize a mapfile - download core and related files
  */
 Map.prototype.localize = function(callback) {
-    console.log('localizing');
     this.localizeSelf(this.mapfile, function(err, data) {
-        this.localizeExternals(data, callback);
+        // Map.localizeExternals(data, callback);
     });
 };
 
@@ -37,7 +33,7 @@ Map.prototype.localize = function(callback) {
  * @param Function callback function to run once downloaded.
  */
 Map.prototype.localizeSelf = function(mapfile, callback) {
-    netlib.downloadAndGet(mapfile, mapfile, callback);
+    netlib.downloadAndGet(mapfile, netlib.safe64(mapfile), callback);
 };
 
 /**
@@ -47,7 +43,7 @@ Map.prototype.localizeSelf = function(mapfile, callback) {
  * @param Function callback function to run once completed.
  */
 Map.prototype.localizeExternals = function(data, callback) {
-    var doc = libxml.parseXmlString(data);
+    // var doc = libxml.parseXmlString(data);
 };
 
 /**

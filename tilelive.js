@@ -11,9 +11,8 @@ var settings = require('./settings');
 /**
  * Wireframe of TileLive.js
  */
-
 require('tilehandler.js');
 
 var app = require('server');
-app.listen(8889);
+app.listen(app.set('settings')('port'));
 console.log('TileLive server started on port %s', app.address().port);

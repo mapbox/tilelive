@@ -19,11 +19,10 @@ var Map = require('./map').Map,
  * - Data Tile: (geojson)
  * - Grid Tile: (*.grid.json).
  */
-var Tile = function(scheme, mapfile, z, x, y, format) {
+function Tile(scheme, mapfile, z, x, y, format) {
     if (typeof mapfile == Map) {
         this.mapnik_map = map;
-    }
-    else {
+    } else {
         this.mapnik_map = new Map(mapfile, true);
     }
     this.scheme = scheme;
@@ -49,9 +48,10 @@ var Tile = function(scheme, mapfile, z, x, y, format) {
  */
 Tile.prototype.render = function(callback) {
     try {
-        this.render[this.filetype](callback);
+        this[this.filetype](callback);
     } catch (err) {
         callback('Filetype unsupported', null);
+        console.log(err.message);
     }
 };
 
@@ -60,7 +60,7 @@ Tile.prototype.render = function(callback) {
  * @param Function callback the function to call when
  *  data is rendered.
  */
-Tile.prototype.render.png = function(callback) {
+Tile.prototype.png = function(callback) {
     this.mapnik_map.render(
         this.bbox,
         function(image) {
@@ -78,7 +78,7 @@ Tile.prototype.render.png = function(callback) {
  * @param Function callback the function to call when
  *  data is rendered.
  */
-Tile.prototype.render.jpg = function(callback) {
+Tile.prototype.jpg = function(callback) {
     callback(null, 'jpg file');
 };
 
@@ -87,7 +87,7 @@ Tile.prototype.render.jpg = function(callback) {
  * @param Function callback the function to call when
  *  data is rendered.
  */
-Tile.prototype.render.grid = function(callback) {
+Tile.prototype.grid = function(callback) {
     callback(null, 'grid file');
 };
 
@@ -96,7 +96,7 @@ Tile.prototype.render.grid = function(callback) {
  * @param Function callback the function to call when
  *  data is rendered.
  */
-Tile.prototype.render.geojson = function(callback) {
+Tile.prototype.geojson = function(callback) {
     callback(null, 'geojson file');
 };
 
