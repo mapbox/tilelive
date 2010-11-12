@@ -24,7 +24,6 @@ app.get('/:scheme/:mapfile_64/:z/:x/:y.:format', function(req, res) {
 
     tile.render(function(err, data) {
         if (!err) {
-            // TODO: allow settings-override of headers for cloudfront
             res.send.apply(data);
         } else {
             res.send('Tile rendering error: ' + err);

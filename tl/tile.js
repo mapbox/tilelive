@@ -1,5 +1,6 @@
 // TODO: eliminate these includes, blegh
 var Map = require('./map').Map,
+    Format = require('./format').Format,
     SphericalMercator = require('./sphericalmercator').SphericalMercator;
 
 /**
@@ -20,11 +21,7 @@ var Map = require('./map').Map,
  * - Grid Tile: (*.grid.json).
  */
 function Tile(scheme, mapfile, z, x, y, format) {
-    if (typeof mapfile == Map) {
-        this.mapnik_map = map;
-    } else {
-        this.mapnik_map = new Map(mapfile, true);
-    }
+    this.map = new Map(mapfile, true);
     this.scheme = scheme;
     this.z = z;
     this.x = x;
@@ -32,12 +29,7 @@ function Tile(scheme, mapfile, z, x, y, format) {
     // TODO: make class fns
     this.sm = new SphericalMercator();
     this.bbox = this.sm.xyz_to_envelope(x, y, z);
-    if (format.match(/grid.json/g)) {
-        this.filetype = 'grid';
-        this.format = format;
-    } else {
-        this.format = this.filetype = format;
-    }
+    this.format = Format.select(format);
 };
 
 /**
@@ -48,56 +40,11 @@ function Tile(scheme, mapfile, z, x, y, format) {
  */
 Tile.prototype.render = function(callback) {
     try {
-        this[this.filetype](callback);
+        this.format(this, callback);
     } catch (err) {
         callback('Filetype unsupported', null);
         console.log(err.message);
     }
-};
-
-/**
- * Generate a PNG file and call callback
- * @param Function callback the function to call when
- *  data is rendered.
- */
-Tile.prototype.png = function(callback) {
-    this.mapnik_map.render(
-        this.bbox,
-        function(image) {
-            callback(null, [
-            image, {
-                'Content-Type': 'image/png'
-            },
-            204]);
-        }
-    );
-};
-
-/**
- * Generate a JPG file and call callback
- * @param Function callback the function to call when
- *  data is rendered.
- */
-Tile.prototype.jpg = function(callback) {
-    callback(null, 'jpg file');
-};
-
-/**
- * Generate a Grid file and call callback
- * @param Function callback the function to call when
- *  data is rendered.
- */
-Tile.prototype.grid = function(callback) {
-    callback(null, 'grid file');
-};
-
-/**
- * Generate a GeoJSON file and call callback
- * @param Function callback the function to call when
- *  data is rendered.
- */
-Tile.prototype.geojson = function(callback) {
-    callback(null, 'geojson file');
 };
 
 module.exports = { Tile: Tile };

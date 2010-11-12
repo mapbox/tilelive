@@ -4,7 +4,7 @@ var fs = require('fs'),
 
 var downloadAndGet = function(file_url, filename, callback) {
     var file_url = url.parse(file_url);
-    var c = http.createClient(file_url.port, file_url.hostname);
+    var c = http.createClient(file_url.port || 80, file_url.hostname);
     var request = c.request('GET', file_url.pathname, {
         host: file_url.hostname
     });

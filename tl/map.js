@@ -1,5 +1,6 @@
 var http = require('http'),
     url = require('url'),
+    fs = require('fs'),
     netlib = require('./netlib');
 
 /**
@@ -19,12 +20,38 @@ Map.__defineGetter__('mapfile_64', function() {
 
 /**
  * Localize a mapfile - download core and related files
+ *
+ * @param Function callback to call once completed.
  */
 Map.prototype.localize = function(callback) {
-    this.localizeSelf(this.mapfile, function(err, data) {
-        // Map.localizeExternals(data, callback);
-    });
+    if (!this.localized()) {
+        var that = this; // TODO avoid
+        this.localizeSelf(this.mapfile, function(err, data) {
+            that.localizeExternals(data, callback);
+        });
+    } else {
+        callback();
+    }
 };
+
+// TODO: move to other library
+Map.prototype.mapfilePos = function(mapfile) {
+    // TODO: make mapfiles a setting
+    return 'mapfiles/' + netlib.safe64(mapfile);
+}
+
+/**
+ * Return whether the current mapfile is downloaded and completed
+ * TODO: make multi-process safe
+ */
+Map.prototype.localized = function() {
+    try {
+        fs.statSync(this.mapfilePos(this.mapfile));
+        return true;
+    } catch(err) {
+        return false;
+    }
+}
 
 /**
  * Download just a mapfile to the local host
@@ -33,7 +60,7 @@ Map.prototype.localize = function(callback) {
  * @param Function callback function to run once downloaded.
  */
 Map.prototype.localizeSelf = function(mapfile, callback) {
-    netlib.downloadAndGet(mapfile, netlib.safe64(mapfile), callback);
+    netlib.downloadAndGet(mapfile, this.mapfilePos(mapfile), callback);
 };
 
 /**
@@ -44,6 +71,7 @@ Map.prototype.localizeSelf = function(mapfile, callback) {
  */
 Map.prototype.localizeExternals = function(data, callback) {
     // var doc = libxml.parseXmlString(data);
+    callback();
 };
 
 /**
@@ -58,6 +86,5 @@ Map.prototype.render = function(bbox, callback) {
         this.map.render(bbox, callback);
     });
 };
-
 
 module.exports = { Map: Map };
