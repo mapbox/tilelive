@@ -39,12 +39,14 @@ function Tile(scheme, mapfile, z, x, y, format) {
  *  data is rendered.
  */
 Tile.prototype.render = function(callback) {
-    try {
-        this.format(this, callback);
-    } catch (err) {
-        callback('Filetype unsupported', null);
-        console.log(err.message);
-    }
+    var that = this;
+    this.map.localize(function() {
+        try {
+            that.format(that, callback);
+        } catch (err) {
+            console.log(err.message);
+        }
+    });
 };
 
 module.exports = { Tile: Tile };

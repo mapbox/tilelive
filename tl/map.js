@@ -1,6 +1,7 @@
 var http = require('http'),
     url = require('url'),
     fs = require('fs'),
+    MapPool = require('./mappool').MapPool,
     netlib = require('./netlib');
 
 /**
@@ -86,5 +87,12 @@ Map.prototype.render = function(bbox, callback) {
         this.map.render(bbox, callback);
     });
 };
+
+/**
+ * Get a mapnik map from the pool
+ */
+Map.prototype.mapnik_map = function() {
+    return MapPool.get(this.mapfilePos(this.mapfile));
+}
 
 module.exports = { Map: Map };
