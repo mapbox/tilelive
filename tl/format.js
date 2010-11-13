@@ -4,9 +4,10 @@ var Format = {
      */
     select: function(format) {
         for (i in Format) {
+            // don't consider this function
             if (Format[i].hasOwnProperty('find')) {
                 if (Format[i].find) {
-                    return module.exports.Format[i].render;
+                    return Format[i].render;
                 }
             }
         }
@@ -40,4 +41,4 @@ var Format = {
     geojson: function(callback) { }
 }
 
-module.exports.Format = Format;
+module.exports = Format;

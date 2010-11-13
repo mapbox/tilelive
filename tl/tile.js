@@ -1,6 +1,6 @@
 // TODO: eliminate these includes, blegh
-var Map = require('./map').Map,
-    Format = require('./format').Format,
+var Map = require('./map'),
+    Format = require('./format'),
     SphericalMercator = require('./sphericalmercator').SphericalMercator;
 
 /**

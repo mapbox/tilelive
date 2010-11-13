@@ -1,5 +1,4 @@
 var app = require('server'),
-    cli = require('./modules/Node-CLI/node-cli.js'),
     tl = require('tl');
 
 app.get('/:scheme/:mapfile_64/:z/:x/:y.:format', function(req, res) {
@@ -25,6 +24,9 @@ app.get('/:scheme/:mapfile_64/:z/:x/:y.:format', function(req, res) {
 
     tile.render(function(err, data) {
         if (!err) {
+            // Using apply here allows the tile rendering
+            // function to send custom heades without access
+            // to the request object.
             res.send.apply(data);
         } else {
             res.send('Tile rendering error: ' + err);
