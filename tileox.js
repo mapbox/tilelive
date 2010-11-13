@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// A proxy for tilejive
+// A proxy for tilelive
 
 var sys = require('sys'), http = require('http'), url = require('url');
 var apiPort = process.ARGV[2] || 8000;

@@ -19,7 +19,32 @@ var downloadAndGet = function(file_url, filename, callback) {
         });
         response.on('end', function() {
             f.destroy();
-            callback(null, data);
+            callback(null, filename, data);
+        });
+        response.on('error', function(err) {
+            callback(err, null);
+        });
+    });
+};
+
+var download = function(file_url, filename, callback) {
+    var file_url = url.parse(file_url);
+    var c = http.createClient(file_url.port || 80, file_url.hostname);
+    var request = c.request('GET', file_url.pathname, {
+        host: file_url.hostname
+    });
+    request.end();
+
+    console.log('downloading: %s', file_url.hostname);
+    var f = fs.WriteStream(filename);
+    request.on('response', function(response) {
+        response.on('data', function(chunk) {
+            f.write(chunk);
+        });
+        response.on('end', function() {
+            f.destroy();
+            console.log('download finished');
+            callback(null);
         });
         response.on('error', function(err) {
             callback(err, null);
@@ -34,5 +59,6 @@ var safe64 = function(s) {
 
 module.exports = {
     downloadAndGet: downloadAndGet,
+    download: download,
     safe64: safe64
 };

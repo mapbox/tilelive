@@ -11,6 +11,7 @@ var settings = require('./settings');
 /**
  * Wireframe of TileLive.js
  */
+require('bootstrap.js')();
 require('tilehandler.js');
 
 var app = require('server');

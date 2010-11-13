@@ -1,4 +1,5 @@
 var app = require('server'),
+    cli = require('./modules/Node-CLI/node-cli.js'),
     tl = require('tl');
 
 app.get('/:scheme/:mapfile_64/:z/:x/:y.:format', function(req, res) {
