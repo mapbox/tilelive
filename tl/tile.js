@@ -1,7 +1,7 @@
 // TODO: eliminate these includes, blegh
 var Map = require('./map'),
     Format = require('./format'),
-    SphericalMercator = require('./sphericalmercator').SphericalMercator;
+    SphericalMercator = require('./sphericalmercator');
 
 /**
  * TileLive Tile object definition
@@ -30,7 +30,7 @@ function Tile(scheme, mapfile, z, x, y, format) {
     this.sm = new SphericalMercator();
     this.bbox = this.sm.xyz_to_envelope(x, y, z);
     this.format = Format.select(format);
-};
+}
 
 /**
  * Generate output and invoke callback function. Defers to

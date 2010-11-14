@@ -7,7 +7,7 @@ var fs = require('fs'),
     _ = require('underscore')._,
     spawn = require('child_process').spawn,
     app = require('server');
-    
+
 var External = {
     /**
      * Download and process a file, returning a filesystem path
@@ -15,9 +15,9 @@ var External = {
      */
     processors: function(key) {
         return {
-            '.zip':     External.unzip,
+            '.zip': External.unzip,
             '.geojson': External.plainfile,
-            '.kml':     External.plainfile
+            '.kml': External.plainfile
         }[key];
     },
 
@@ -48,25 +48,46 @@ var External = {
     unzip: function(filename, resource_url, callback) {
         // regrettably complex because zip library isn't written for
         // node yet.
-        console.log([filename, '-d', External.pos(resource_url)]);
-        var unzip_op = spawn('unzip', [filename, '-d', External.pos(resource_url)]);
+        var locateShp = function(dir) {
+            var unzipped = fs.readdirSync(dir);
+            var shp = _.detect(unzipped,
+                function(f) {
+                    return path.extname(f) == '.shp';
+                }
+            );
+            if (!shp) {
+                var dirs = _.select(unzipped,
+                    function(f) {
+                        return fs.statSync(dir + '/' + f).isDirectory();
+                    }
+                );
+                if (dirs) {
+                    console.log('recursing into %d dirs', dirs.length);
+                    for (var i = 0, l = dirs.length; i < l; i++) {
+                        var located = locateShp(dir + '/' + dirs[i]);
+                        if (located) {
+                            return located;
+                        }
+                    }
+                }
+            }
+            else {
+                console.log('returning %s', shp);
+                return dir + '/' + shp;
+            }
+        };
 
-        unzip_op.on('exit', function(code) {
+        spawn('unzip', [filename, '-d', External.pos(resource_url)])
+            .on('exit', function(code) {
             if (code > 0) {
                 console.log('Unzip returned a code of %d', code);
             } else {
-                fs.readdir(External.pos(resource_url), function(err, unzipped_files) {
-                    console.log(unzipped_files);
-                    var shpfile = External.pos(resource_url) + _.detect(unzipped_files,
-                        function(f) {
-                            return path.extname(f) == '.shp';
-                        }
-                    );
-                    callback(resource_url, shpfile);
-                });
+                // TODO; eliminate locality of reference
+                var shpfile = '../' + locateShp(External.pos(resource_url));
+                callback(null, [resource_url, shpfile]);
             }
         });
     }
-}
+};
 
 module.exports = External;

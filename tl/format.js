@@ -27,7 +27,7 @@ var Format = {
                     callback(null, [
                         image, {
                             'Content-Type': 'image/png'
-                        }, 204]);
+                        }]);
                 }
             );
         },
@@ -39,6 +39,6 @@ var Format = {
     grid: function(callback) { },
 
     geojson: function(callback) { }
-}
+};
 
 module.exports = Format;

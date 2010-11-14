@@ -28,7 +28,7 @@ Map.__defineGetter__('mapfile_64', function() {
 Map.prototype.mapfilePos = function(mapfile) {
     // TODO: make mapfiles a setting
     return 'mapfiles/' + netlib.safe64(mapfile);
-}
+};
 
 /**
  * Return whether the current mapfile is downloaded and completed
@@ -38,10 +38,10 @@ Map.prototype.localized = function() {
     try {
         fs.statSync(this.mapfilePos(this.mapfile));
         return true;
-    } catch(err) {
+    } catch (err) {
         return false;
     }
-}
+};
 
 /**
  * Localize a mapfile - download core and related files
@@ -67,7 +67,7 @@ Map.prototype.localize = function(callback) {
  */
 Map.prototype.localizeSelf = function(mapfile, callback) {
     // this downloads the mapfile into a buffer, but doesn't save it until
-    // externals are fixed up - unclear of whether this will scale for 
+    // externals are fixed up - unclear of whether this will scale for
     // very large mapfiles
     netlib.get(mapfile, this.mapfilePos(mapfile), callback);
 };
@@ -83,17 +83,21 @@ Map.prototype.localizeExternals = function(data, mapfile, callback) {
     var doc = libxmljs.parseXmlString(data);
     var files = doc.find("//Parameter[@name='file']");
     var external_urls = [];
+    var file_index = {};
     var that = this;
     if (files) {
         Step(
             function() {
+                var group = this.group();
                 for (var i = 0, l = files.length; i < l; i++) {
-                    External.process(files[i].text(), this.parallel());
+                    External.process(files[i].text(), group());
+                    file_index[files[i].text()] = files[i];
                 }
             },
             function(err, results) {
-                console.log(results);
-                // files[i].text(this.externalPos(files[i].text(), true));
+                for (var i = 0, l = results.length; i < l; i++) {
+                    file_index[results[i][0]].text(results[i][1]);
+                }
                 fs.writeFile(mapfile, doc.toString(), function() {
                     console.log('file written');
                     console.log(doc.toString());
@@ -122,6 +126,6 @@ Map.prototype.render = function(bbox, callback) {
  */
 Map.prototype.mapnik_map = function() {
     return MapPool.get(this.mapfilePos(this.mapfile));
-}
+};
 
 module.exports = Map;

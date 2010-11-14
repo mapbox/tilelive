@@ -18,7 +18,7 @@ app.get('/:scheme/:mapfile_64/:z/:x/:y.:format', function(req, res) {
             req.params.x,
             req.params.y,
             req.params.format);
-    } catch(err) {
+    } catch (err) {
         res.send('Tile invalid: ' + err.message);
     }
 
@@ -27,7 +27,8 @@ app.get('/:scheme/:mapfile_64/:z/:x/:y.:format', function(req, res) {
             // Using apply here allows the tile rendering
             // function to send custom heades without access
             // to the request object.
-            res.send.apply(data);
+            res.send.apply(res, data);
+            // res.send.apply(res, ['hello', { 'Content-Type': 'image/png' }]);
         } else {
             res.send('Tile rendering error: ' + err);
         }

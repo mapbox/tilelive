@@ -9,7 +9,7 @@ var MapPool = new function mappool() {
     for (var i = 0; i < this.size; i++) {
         this.pool.push([]);
     }
-};
+}
 
 /**
  * get a map
@@ -30,6 +30,6 @@ MapPool.get = function(mapfile) {
     }
     console.log(this.pool[mapfile][0]);
     return this.pool[mapfile][0];
-}
+};
 
 module.exports.MapPool = MapPool;

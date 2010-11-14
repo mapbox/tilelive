@@ -47,7 +47,7 @@ SphericalMercator.prototype.ll_to_px = function(ll, zoom) {
     var d = this.zc[zoom];
     var f = this.minmax(Math.sin(this.DEG_TO_RAD * ll[1]), -0.9999, 0.9999);
     var x = Math.round(d + ll[0] * this.Bc[zoom]);
-    var y = Math.round(d + 0.5 * Math.log((1 + f) / (1 - f)) * -this.Cc[zoom]);
+    var y = Math.round(d + 0.5 * Math.log((1 + f) / (1 - f)) * (-this.Cc[zoom]));
     return [x, y];
 };
 
@@ -78,12 +78,13 @@ SphericalMercator.prototype.xyz_to_envelope = function(x, y, zoom, tms_style) {
     if (tms_style) {
         y = (Math.pow(2, zoom) - 1) - y;
     }
-    var ll = (x * this.size, (y + 1) * this.size);
-    var ur = ((x + 1) * this.size, y * this.size);
+    var ll = [x * this.size, (y + 1) * this.size];
+    var ur = [(x + 1) * this.size, y * this.size];
     var ys = this.px_to_ll(ll, zoom);
     var xs = this.px_to_ll(ur, zoom);
-    var env = mercator.forward(ys.concat(xs))
+    var env = mercator.forward(ys.concat(xs));
+    console.log(env);
     return env;
 };
 
-module.exports = { SphericalMercator: SphericalMercator };
+module.exports = SphericalMercator;
