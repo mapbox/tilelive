@@ -7,21 +7,21 @@ var mercator = new mapnik.Projection('+proj=merc +a=6378137 +b=6378137 +lat_ts=0
  * for fast tile lookups
  */
 function SphericalMercator() {
+    var size = 256;
     this.Bc = [];
     this.Cc = [];
     this.zc = [];
     this.Ac = [];
     this.DEG_TO_RAD = Math.PI / 180;
     this.RAD_TO_DEG = 180 / Math.PI;
-    this.cache = {};
     this.size = 256;
-    this.levels = 23;
+    this.levels = 18;
     for (var d = 0; d < this.levels; d++) {
-        this.Bc.push(this.size / 360.0);
-        this.Cc.push(this.size / (2 * Math.PI));
-        this.zc.push(this.size / 2);
-        this.Ac.push(this.size);
-        this.size *= 2.0;
+        this.Bc.push(size / 360);
+        this.Cc.push(size / (2 * Math.PI));
+        this.zc.push(size / 2);
+        this.Ac.push(size);
+        size *= 2;
     }
 }
 
@@ -59,7 +59,7 @@ SphericalMercator.prototype.ll_to_px = function(ll, zoom) {
  */
 SphericalMercator.prototype.px_to_ll = function(px, zoom) {
     var zoom_denom = this.zc[zoom];
-    var g = (px[1] - zoom_denom) / -this.Cc[zoom];
+    var g = (px[1] - zoom_denom) / (-this.Cc[zoom]);
     var lat = (px[0] - zoom_denom) / this.Bc[zoom];
     var lon = this.RAD_TO_DEG * (2 * Math.atan(Math.exp(g)) - 0.5 * Math.PI);
     return [lat, lon];
@@ -80,10 +80,8 @@ SphericalMercator.prototype.xyz_to_envelope = function(x, y, zoom, tms_style) {
     }
     var ll = [x * this.size, (y + 1) * this.size];
     var ur = [(x + 1) * this.size, y * this.size];
-    var ys = this.px_to_ll(ll, zoom);
-    var xs = this.px_to_ll(ur, zoom);
-    var env = mercator.forward(ys.concat(xs));
-    console.log(env);
+    var bbox = this.px_to_ll(ll, zoom).concat(this.px_to_ll(ur, zoom));
+    var env = mercator.forward(bbox);
     return env;
 };
 

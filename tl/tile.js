@@ -23,12 +23,12 @@ var Map = require('./map'),
 function Tile(scheme, mapfile, z, x, y, format) {
     this.map = new Map(mapfile, true);
     this.scheme = scheme;
-    this.z = z;
-    this.x = x;
-    this.y = y;
+    this.z = parseInt(z);
+    this.x = parseInt(x);
+    this.y = parseInt(y);
     // TODO: make class fns
     this.sm = new SphericalMercator();
-    this.bbox = this.sm.xyz_to_envelope(x, y, z);
+    this.bbox = this.sm.xyz_to_envelope(this.x, this.y, this.z, false);
     this.format = Format.select(format);
 }
 
