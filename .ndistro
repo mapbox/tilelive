@@ -5,5 +5,3 @@ module visionmedia express 1.0.0rc4
 module documentcloud underscore 1.1.1
 module polotek libxmljs
 module creationix step
-module egorich239 node-compress
-module SchizoDuckie Node-CLI
