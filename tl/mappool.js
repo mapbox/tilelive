@@ -13,6 +13,8 @@ var MapPool = new function mappool() {
 
 /**
  * get a map
+ *
+ * @return {Object} a mapnik mapfile
  */
 MapPool.get = function(mapfile) {
     if (this.pool[mapfile]) {

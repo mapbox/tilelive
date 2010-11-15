@@ -28,10 +28,10 @@ function SphericalMercator() {
 /**
  * Get the max of the first two numbers and the min of that and the third
  *
- * @param Number a.
- * @param Number b.
- * @param Number c.
- * @return Number.
+ * @param {Number} a the first number.
+ * @param {Number} b the second number.
+ * @param {Number} c the third number.
+ * @return {Number}
  */
 SphericalMercator.prototype.minmax = function(a, b, c) {
     return Math.min(Math.max(a, b), c);
@@ -40,8 +40,8 @@ SphericalMercator.prototype.minmax = function(a, b, c) {
 /**
  * Convert lat lon to screen pixel value
  *
- * @param Array px [lat lon] array of geographic coordinates.
- * @param Number zoom number of the zoom level.
+ * @param {Array} px [lat lon] array of geographic coordinates.
+ * @param {Number} zoom number of the zoom level.
  */
 SphericalMercator.prototype.ll_to_px = function(ll, zoom) {
     var d = this.zc[zoom];
@@ -54,8 +54,8 @@ SphericalMercator.prototype.ll_to_px = function(ll, zoom) {
 /**
  * Convert screen pixel value to lat lon
  *
- * @param Array px [x y] array of geographic coordinates.
- * @param Number zoom number of the zoom level.
+ * @param {Array} px [x y] array of geographic coordinates.
+ * @param {Number} zoom number of the zoom level.
  */
 SphericalMercator.prototype.px_to_ll = function(px, zoom) {
     var zoom_denom = this.zc[zoom];
@@ -68,10 +68,10 @@ SphericalMercator.prototype.px_to_ll = function(px, zoom) {
 /**
  * Convert tile xyz value to Mapnik envelope
  *
- * @param Number x latitude number.
- * @param Number y longitude number.
- * @param Number zoom zoom.
- * @param Boolean tms_style whether to compute a tms tile.
+ * @param {Number} x latitude number.
+ * @param {Number} y longitude number.
+ * @param {Number} zoom zoom.
+ * @param {Boolean} tms_style whether to compute a tms tile.
  * @return Object Mapnik envelope.
  */
 SphericalMercator.prototype.xyz_to_envelope = function(x, y, zoom, tms_style) {

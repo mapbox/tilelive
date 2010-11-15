@@ -11,9 +11,9 @@ module.exports = {
      * Download a file to the disk and return the downloaded
      * filename and its data
      *
-     * @param String file_url the URI of the file.
-     * @param String filename the filename on the system.
-     * @param Function callback to call after finishing the download and
+     * @param {String} file_url the URI of the file.
+     * @param {String} filename the filename on the system.
+     * @param {Function} callback to call after finishing the download and
      *   run with arguments [err, filename, data].
      */
     downloadAndGet: function(file_url, filename, callback) {
@@ -45,9 +45,9 @@ module.exports = {
     /**
      * Download a file and return data
      *
-     * @param String file_url the URI of the file.
-     * @param String filename the filename on the system.
-     * @param Function callback to call after finishing the download and
+     * @param {String} file_url the URI of the file.
+     * @param {String} filename the filename on the system.
+     * @param {Function} callback to call after finishing the download and
      *   run with arguments [err, filename, data].
      */
     get: function(file_url, filename, callback) {
@@ -76,9 +76,9 @@ module.exports = {
     /**
      * Download a file
      *
-     * @param String file_url the URI of the file.
-     * @param String filename the filename on the system.
-     * @param Function callback to call after finishing the download and
+     * @param {String} file_url the URI of the file.
+     * @param {String} filename the filename on the system.
+     * @param {Function} callback to call after finishing the download and
      *   run with arguments [err, filename, data].
      */
     download: function(file_url_raw, filename, callback) {
@@ -107,6 +107,14 @@ module.exports = {
         });
     },
 
+    /**
+     * Encode a string as base64
+     *
+     * TODO: actually make safe64 by chunking
+     *
+     * @param {String} s the string to be encoded.
+     * @return {String} base64 encoded string.
+     */
     safe64: function(s) {
         var b = new Buffer(s, 'utf-8');
         return b.toString('base64');

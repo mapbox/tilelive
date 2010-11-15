@@ -11,8 +11,8 @@ var http = require('http'),
 /**
  * Map constructor
  *
- * @param String mapfile the location of the mapfile.
- * @param Boolean base64 whether the mapfile is base64 encoded.
+ * @param {String} mapfile the location of the mapfile.
+ * @param {Boolean} base64 whether the mapfile is base64 encoded.
  */
 var Map = function(mapfile, base64) {
     this.mapfile = (new Buffer(mapfile, (base64) ? 'base64' : 'utf-8'))
@@ -33,6 +33,8 @@ Map.prototype.mapfilePos = function(mapfile) {
 /**
  * Return whether the current mapfile is downloaded and completed
  * TODO: make multi-process safe
+ *
+ * @return {Boolean} whether the mapfile is downloaded and ready.
  */
 Map.prototype.localized = function() {
     try {
@@ -46,7 +48,7 @@ Map.prototype.localized = function() {
 /**
  * Localize a mapfile - download core and related files
  *
- * @param Function callback to call once completed.
+ * @param {Function} callback to call once completed.
  */
 Map.prototype.localize = function(callback) {
     if (!this.localized()) {
@@ -62,8 +64,8 @@ Map.prototype.localize = function(callback) {
 /**
  * Download just a mapfile to the local host
  *
- * @param String mapfile the XML map file to download.
- * @param Function callback function to run once downloaded.
+ * @param {String} mapfile the XML map file to download.
+ * @param {Function} callback function to run once downloaded.
  */
 Map.prototype.localizeSelf = function(mapfile, callback) {
     // this downloads the mapfile into a buffer, but doesn't save it until
@@ -75,9 +77,9 @@ Map.prototype.localizeSelf = function(mapfile, callback) {
 /**
  * Download all files referenced by a mapfile
  *
- * @param String data string of XML data in a mapfile.
- * @param String mapfile name of mapfile this is modifying.
- * @param Function callback function to run once completed.
+ * @param {String} data string of XML data in a mapfile.
+ * @param {String} mapfile name of mapfile this is modifying.
+ * @param {Function} callback function to run once completed.
  */
 Map.prototype.localizeExternals = function(data, mapfile, callback) {
     var doc = libxmljs.parseXmlString(data);
@@ -111,8 +113,8 @@ Map.prototype.localizeExternals = function(data, mapfile, callback) {
 /**
  * Download all files referenced by a mapfile
  *
- * @param String data string of XML data in a mapfile.
- * @param Function callback function to run once completed.
+ * @param {String} data string of XML data in a mapfile.
+ * @param {Function} callback function to run once completed.
  */
 Map.prototype.render = function(bbox, callback) {
     // requires a localized, loaded map
@@ -123,6 +125,8 @@ Map.prototype.render = function(bbox, callback) {
 
 /**
  * Get a mapnik map from the pool
+ *
+ * @return {Object} mapnik map.
  */
 Map.prototype.mapnik_map = function() {
     return MapPool.get(this.mapfilePos(this.mapfile));

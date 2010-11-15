@@ -10,12 +10,12 @@ var Map = require('./map'),
 /**
  * Tile constructor
  *
- * @param String scheme: (xyz|tms|tile (tms)).
- * @param String mapfile base64-encoded mapfile.
- * @param Number z zoom level.
- * @param Number x latitude.
- * @param Number y longitude.
- * @param String format:
+ * @param {String} scheme (xyz|tms|tile (tms)).
+ * @param {String} mapfile base64-encoded mapfile.
+ * @param {Number} z zoom level.
+ * @param {Number} x latitude.
+ * @param {Number} y longitude.
+ * @param {String} format
  * - Tile: (png|jpg)
  * - Data Tile: (geojson)
  * - Grid Tile: (*.grid.json).
@@ -35,7 +35,7 @@ function Tile(scheme, mapfile, z, x, y, format) {
 /**
  * Generate output and invoke callback function. Defers to
  * a sub function of render
- * @param Function callback the function to call when
+ * @param {Function} callback the function to call when
  *  data is rendered.
  */
 Tile.prototype.render = function(callback) {
