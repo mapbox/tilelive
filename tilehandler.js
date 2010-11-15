@@ -27,6 +27,7 @@ app.get('/:scheme/:mapfile_64/:z/:x/:y.*', function(req, res) {
             // Using apply here allows the tile rendering
             // function to send custom heades without access
             // to the request object.
+            data[1] = _.extend(app.set('settings')('header_defaults'), data[1]);
             res.send.apply(res, data);
             // res.send.apply(res, ['hello', { 'Content-Type': 'image/png' }]);
         } else {
