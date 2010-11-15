@@ -11,10 +11,10 @@ module.exports = {
      * Download a file to the disk and return the downloaded
      * filename and its data
      *
-     * @param String file_url the URI of the file
+     * @param String file_url the URI of the file.
      * @param String filename the filename on the system.
-     * @param Function callback to call after finishing the download and 
-     *   run with arguments [err, filename, data]
+     * @param Function callback to call after finishing the download and
+     *   run with arguments [err, filename, data].
      */
     downloadAndGet: function(file_url, filename, callback) {
         var file_url = url.parse(file_url);
@@ -45,10 +45,10 @@ module.exports = {
     /**
      * Download a file and return data
      *
-     * @param String file_url the URI of the file
+     * @param String file_url the URI of the file.
      * @param String filename the filename on the system.
-     * @param Function callback to call after finishing the download and 
-     *   run with arguments [err, filename, data]
+     * @param Function callback to call after finishing the download and
+     *   run with arguments [err, filename, data].
      */
     get: function(file_url, filename, callback) {
         var file_url = url.parse(file_url);
@@ -76,10 +76,10 @@ module.exports = {
     /**
      * Download a file
      *
-     * @param String file_url the URI of the file
+     * @param String file_url the URI of the file.
      * @param String filename the filename on the system.
-     * @param Function callback to call after finishing the download and 
-     *   run with arguments [err, filename, data]
+     * @param Function callback to call after finishing the download and
+     *   run with arguments [err, filename, data].
      */
     download: function(file_url_raw, filename, callback) {
         var file_url = url.parse(file_url_raw);

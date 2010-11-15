@@ -49,4 +49,4 @@ Tile.prototype.render = function(callback) {
     });
 };
 
-module.exports = { Tile: Tile };
+module.exports = Tile;

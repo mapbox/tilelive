@@ -2,7 +2,7 @@ var app = require('server'),
     fs = require('fs');
 
 /**
- * Bootstrap the application - ensure that directories 
+ * Bootstrap the application - ensure that directories
  * exist, etc
  */
 function bootstrap() {

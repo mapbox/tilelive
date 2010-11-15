@@ -39,8 +39,15 @@ var External = {
             .createHash('md5').update(ext).digest('hex');
     },
 
+    plainname: function(resource_url) {
+        return require('crypto')
+            .createHash('md5').update(resource_url).digest('hex') +
+            path.extname(resource_url);
+
+    }
+
     /**
-     * Download an external, process it, and return the usable filepath for 
+     * Download an external, process it, and return the usable filepath for
      * Mapnik
      * @param String resource_url the URI of the datasource from a mapfile.
      * @param Function callback passed into processor function after localizing.
@@ -55,6 +62,31 @@ var External = {
             }
         });
 
+    },
+
+    /**
+     * Deal with a plain file, which is likely to be 
+     * GeoJSON, KML, or one of the other OGR-supported formats, 
+     * returning a Mapnik-usable filename
+     * 
+     * @param String filename the place of the file on your system
+     * @param String resource_url
+     * @param Function callback
+     */
+    plainfile: function(filename, resource_url, callback) {
+        // TODO: possibly decide upon default extension
+        var extension = path.extname(resource_url);
+        if (extension !== '') {
+            // TODO: make sure dir doesn't exist
+            var destination = External.pos(resource_url) + '/' + External.plainname(resource_url);
+            fs.mkdirSync(External.pos(resource_url));
+            fs.renameSync(
+                filename, 
+                destination);
+            return destination;
+        } else {
+            throw Exception('Non-extended files cannot be processed');
+        }
     },
 
     /**
