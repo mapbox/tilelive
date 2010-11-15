@@ -89,18 +89,18 @@ Map.prototype.localizeExternals = function(data, mapfile, callback) {
         Step(
             function() {
                 var group = this.group();
+                // download all files referred to by mapfile
                 for (var i = 0, l = files.length; i < l; i++) {
                     External.process(files[i].text(), group());
                     file_index[files[i].text()] = files[i];
                 }
             },
             function(err, results) {
+                // rewrite mapfile with local references
                 for (var i = 0, l = results.length; i < l; i++) {
                     file_index[results[i][0]].text(results[i][1]);
                 }
                 fs.writeFile(mapfile, doc.toString(), function() {
-                    console.log('file written');
-                    console.log(doc.toString());
                     callback();
                 });
             }

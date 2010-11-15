@@ -1,5 +1,3 @@
-// Lib for dealing with nasty externals
-
 var fs = require('fs'),
     netlib = require('./netlib'),
     url = require('url'),
@@ -10,32 +8,46 @@ var fs = require('fs'),
 
 var External = {
     /**
-     * Download and process a file, returning a filesystem path
-     * of the required resource for Mapnik
+     * Get a processor, given a file's extension
+     * @param String extension the file's extension.
+     * @return Function processor function.
      */
-    processors: function(key) {
+    processors: function(extension) {
         return {
             '.zip': External.unzip,
             '.geojson': External.plainfile,
             '.kml': External.plainfile
-        }[key];
+        }[extension];
     },
 
+    /**
+     * Get the final resting position of an external's directory
+     * @param ext name of the external.
+     * @return file path.
+     */
     pos: function(ext) {
         return app.set('settings')('data_dir') + '/' + netlib.safe64(ext);
     },
 
+    /**
+     * Get the temporary path of an external before processing
+     * @param ext filename of the external.
+     * @return file path.
+     */
     tmppos: function(ext) {
-        return app.set('settings')('data_dir') + '/' + require('crypto').createHash('md5').update(ext).digest('hex');
+        return app.set('settings')('data_dir') + '/' + require('crypto')
+            .createHash('md5').update(ext).digest('hex');
     },
 
+    /**
+     * Download an external, process it, and return the usable filepath for 
+     * Mapnik
+     * @param String resource_url the URI of the datasource from a mapfile.
+     * @param Function callback passed into processor function after localizing.
+     */
     process: function(resource_url, callback) {
-        console.log('process called');
-
-        // TODO: handle no-format urls, read mime, etc
         var file_format = path.extname(resource_url);
         netlib.download(resource_url, External.tmppos(resource_url), function(err, url, filename) {
-            console.log('downloaded resource');
             if (External.processors(file_format)) {
                 External.processors(file_format)(filename, resource_url, callback);
             } else {
@@ -45,6 +57,14 @@ var External = {
 
     },
 
+    /**
+     * Unzip a file and return a shapefile contained within it
+     *
+     * TODO: handle other files than shapefiles
+     * @param String filename the place of the shapefile on your system
+     * @param String resource_url
+     * @param Function callback
+     */
     unzip: function(filename, resource_url, callback) {
         // regrettably complex because zip library isn't written for
         // node yet.
@@ -62,7 +82,6 @@ var External = {
                     }
                 );
                 if (dirs) {
-                    console.log('recursing into %d dirs', dirs.length);
                     for (var i = 0, l = dirs.length; i < l; i++) {
                         var located = locateShp(dir + '/' + dirs[i]);
                         if (located) {
@@ -72,7 +91,6 @@ var External = {
                 }
             }
             else {
-                console.log('returning %s', shp);
                 return dir + '/' + shp;
             }
         };

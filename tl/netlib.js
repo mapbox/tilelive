@@ -2,7 +2,20 @@ var fs = require('fs'),
     http = require('http'),
     url = require('url');
 
+/**
+ * A library of net-interaction functions - this could be simplified
+ */
+
 module.exports = {
+    /**
+     * Download a file to the disk and return the downloaded
+     * filename and its data
+     *
+     * @param String file_url the URI of the file
+     * @param String filename the filename on the system.
+     * @param Function callback to call after finishing the download and 
+     *   run with arguments [err, filename, data]
+     */
     downloadAndGet: function(file_url, filename, callback) {
         var file_url = url.parse(file_url);
         var c = http.createClient(file_url.port || 80, file_url.hostname);
@@ -29,6 +42,14 @@ module.exports = {
         });
     },
 
+    /**
+     * Download a file and return data
+     *
+     * @param String file_url the URI of the file
+     * @param String filename the filename on the system.
+     * @param Function callback to call after finishing the download and 
+     *   run with arguments [err, filename, data]
+     */
     get: function(file_url, filename, callback) {
         var file_url = url.parse(file_url);
         var c = http.createClient(file_url.port || 80, file_url.hostname);
@@ -52,6 +73,14 @@ module.exports = {
         });
     },
 
+    /**
+     * Download a file
+     *
+     * @param String file_url the URI of the file
+     * @param String filename the filename on the system.
+     * @param Function callback to call after finishing the download and 
+     *   run with arguments [err, filename, data]
+     */
     download: function(file_url_raw, filename, callback) {
         var file_url = url.parse(file_url_raw);
         var c = http.createClient(file_url.port || 80, file_url.hostname);

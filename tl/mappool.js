@@ -28,7 +28,6 @@ MapPool.get = function(mapfile) {
             this.pool[mapfile].push(m);
         }
     }
-    console.log(this.pool[mapfile][0]);
     return this.pool[mapfile][0];
 };
 

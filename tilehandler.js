@@ -1,7 +1,7 @@
 var app = require('server'),
     tl = require('tl');
 
-app.get('/:scheme/:mapfile_64/:z/:x/:y.:format', function(req, res) {
+app.get('/:scheme/:mapfile_64/:z/:x/:y.*', function(req, res) {
     /*
      * scheme: (xyz|tms|tile (tms))
      *
@@ -17,7 +17,7 @@ app.get('/:scheme/:mapfile_64/:z/:x/:y.:format', function(req, res) {
             req.params.z,
             req.params.x,
             req.params.y,
-            req.params.format);
+            req.params[0]);
     } catch (err) {
         res.send('Tile invalid: ' + err.message);
     }

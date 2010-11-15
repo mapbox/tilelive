@@ -6,7 +6,7 @@ var Format = {
         for (i in Format) {
             // don't consider this function
             if (Format[i].hasOwnProperty('find')) {
-                if (Format[i].find) {
+                if (format.match(Format[i].find)) {
                     return Format[i].render;
                 }
             }
@@ -20,7 +20,6 @@ var Format = {
      */
     png: {
         'render': function(tile, callback) {
-            // TODO: make explicitly mapnik_map call
             tile.map.mapnik_map().render(
                 tile.bbox,
                 function(image) {
@@ -34,11 +33,39 @@ var Format = {
         'find': /png/
     },
 
-    jpg: function(callback) { },
+    jpg: {
+        'render': function(tile, callback) {
+            /*
+             * TODO: mapnik driver only supports png
+            tile.map.mapnik_map().render(
+                tile.bbox,
+                function(image) {
+                    callback(null, [
+                        image, {
+                            'Content-Type': 'image/jpeg'
+                        }]);
+                }
+            );
+            */
+        },
+        'find': /(jpg|jpeg)/
+    },
 
-    grid: function(callback) { },
+    grid: {
+        'render': function(tile, callback) {
+            tile.map.mapnik_map().zoom_to_box(tile.bbox);
+            callback(null, [
+                tile.map.mapnik_map().query_map_point(0, 4, 'COUNTRY_ID'), {
+                    'Content-Type': 'application/json'
+            }]);
+        },
+        'find': /json/
+    },
 
-    geojson: function(callback) { }
+    geojson: {
+        'render': function(callback) { },
+        'find': /geojson/
+    }
 };
 
 module.exports = Format;
