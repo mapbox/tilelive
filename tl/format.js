@@ -1,6 +1,9 @@
 var Format = {
     /**
      * Select a format
+     *
+     * @param {String} format the extension of the tile.
+     * @return {Function} renderer function.
      */
     select: function(format) {
         for (i in Format) {
@@ -13,12 +16,14 @@ var Format = {
         }
     },
 
-    /**
-     * Generate a PNG file and call callback
-     * @param Function callback the function to call when
-     *  data is rendered.
-     */
     png: {
+        /**
+         * Generate a PNG file and call callback
+         *
+         * @param {Object} tile tile object.
+         * @param {Function} callback the function to call when
+         *  data is rendered.
+         */
         'render': function(tile, callback) {
             tile.map.mapnik_map().render(
                 tile.bbox,
@@ -33,7 +38,15 @@ var Format = {
         'find': /png/
     },
 
+
     jpg: {
+        /**
+         * Generate a JPG file and call callback
+         *
+         * @param {Object} tile tile object.
+         * @param {Function} callback the function to call when
+         *  data is rendered.
+         */
         'render': function(tile, callback) {
             /*
              * TODO: mapnik driver only supports png
@@ -52,6 +65,13 @@ var Format = {
     },
 
     grid: {
+        /**
+         * Generate a grid file and call callback
+         *
+         * @param {Object} tile tile object.
+         * @param {Function} callback the function to call when
+         *  data is rendered.
+         */
         'render': function(tile, callback) {
             tile.map.mapnik_map().zoom_to_box(tile.bbox);
             callback(null, [
