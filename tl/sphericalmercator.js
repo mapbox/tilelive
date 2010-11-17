@@ -85,4 +85,4 @@ SphericalMercator.prototype.xyz_to_envelope = function(x, y, zoom, tms_style) {
     return env;
 };
 
-module.exports = SphericalMercator;
+module.exports = new SphericalMercator();
