@@ -13,6 +13,7 @@ var settings = require('./settings');
  */
 require('bootstrap.js')();
 require('tilehandler.js');
+require('inspect.js');
 
 var app = require('server');
 app.listen(app.set('settings')('port'));

@@ -1,0 +1,26 @@
+var app = require('server'),
+    tl = require('tl');
+
+/**
+ * Inspect fields
+ */
+app.get('/:mapfile_64/fields.json', function(req, res) {
+});
+
+/**
+ * Inspect data
+ */
+app.get('/:mapfile_64/data.json', function(req, res) {
+});
+
+/**
+ * Inspect layer
+ */
+app.get('/:mapfile_64/:layer_64/layer.json', function(req, res) {
+});
+
+/**
+ * Inspect field values
+ */
+app.get('/:mapfile_64/:layer_64/:feature_64/values.json', function(req, res) {
+});
