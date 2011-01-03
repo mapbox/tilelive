@@ -25,6 +25,16 @@ var Format = {
          *  data is rendered.
          */
         'render': function(tile, callback) {
+            // @TODO Synchronous tile render. Switch to version below once
+            // upstream bug in .render() method is fixed.
+            var map = tile.map.mapnik_map();
+            map.zoom_to_box(tile.bbox);
+            callback(null, [
+                map.render_to_string("png"),
+                {'Content-Type': 'image/png'}
+            ]);
+
+            /*
             tile.map.mapnik_map().render(
                 tile.bbox,
                 function(image) {
@@ -34,6 +44,7 @@ var Format = {
                         }]);
                 }
             );
+            */
         },
         'find': /png/
     },
