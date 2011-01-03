@@ -1,4 +1,5 @@
 var app = require('server'),
+    _ = require('underscore')._,
     tl = require('tl');
 
 app.get('/:scheme/:mapfile_64/:z/:x/:y.*', function(req, res) {
