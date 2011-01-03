@@ -1,6 +1,10 @@
 var app = require('server'),
     tl = require('tl');
 
+app.get('/status.json', function(req, res) {
+    res.send({ status: 'true' });
+});
+
 /**
  * Inspect fields
  */
