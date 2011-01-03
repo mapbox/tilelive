@@ -1,7 +1,7 @@
 require.paths.unshift(__dirname + '/modules',
         __dirname + '/lib/node', __dirname);
 
-var mapnik = require('./modules/mapnik.node');
+var mapnik = require('mapnik');
 
 mapnik.register_datasources('/usr/local/lib/mapnik2/input');
 mapnik.register_fonts('/usr/local/lib/mapnik2/fonts/');
