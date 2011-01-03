@@ -1,7 +1,6 @@
 var http = require('http'),
     url = require('url'),
     fs = require('fs'),
-    //libxmljs = require('libxmljs'),
     Step = require('step'),
     External = require('./external'),
     spawn = require('child_process').spawn,
