@@ -1,0 +1,14 @@
+{
+  "name"          : "tilelive",
+  "description"   : "TileLive",
+  "url"           : "http://github.com/developmentseed/tilelive.js",
+  "keywords"      : ["mapping"],
+  "contributors"  : [],
+  "dependencies"  : {
+      "underscore" : "1.1.1",
+      "libxmljs"   : ">=0.4.1",
+      "step"       : ">=v0.0.3"
+  },
+  "main"          : "tl.js",
+  "version"       : "1.0.0"
+}
