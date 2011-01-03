@@ -19,7 +19,7 @@ module.exports = {
     downloadAndGet: function(file_url, filename, callback) {
         var file_url = url.parse(file_url);
         var c = http.createClient(file_url.port || 80, file_url.hostname);
-        var request = c.request('GET', file_url.pathname, {
+        var request = c.request('GET', file_url.pathname + '?' + (file_url.query || ''), {
             host: file_url.hostname
         });
         request.end();
@@ -54,8 +54,9 @@ module.exports = {
         var file_url = url.parse(file_url);
         var c = http.createClient(file_url.port || 80, file_url.hostname);
         // TODO: more robust method for getting things with params?
+        console.log(file_url.pathname + '?' + file_url.query);
         var request = c.request('GET', file_url.pathname + '?' + file_url.query, {
-            host: file_url.hostname,
+            host: file_url.host,
             query: file_url.query
         });
         request.end();

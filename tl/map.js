@@ -1,9 +1,10 @@
 var http = require('http'),
     url = require('url'),
     fs = require('fs'),
-    libxmljs = require('libxmljs'),
+    //libxmljs = require('libxmljs'),
     Step = require('step'),
     External = require('./external'),
+    spawn = require('child_process').spawn,
     MapPool = require('./mappool').MapPool,
     netlib = require('./netlib');
 
@@ -22,11 +23,17 @@ Map.__defineGetter__('mapfile_64', function() {
     return this.mapfile.toString('base64');
 });
 
-
 // TODO: move to other library
 Map.prototype.mapfilePos = function(mapfile) {
     // TODO: make mapfiles a setting
-    return 'mapfiles/' + netlib.safe64(mapfile);
+    return 'mapfiles/' + netlib.safe64(mapfile) + '.xml';
+};
+
+// TODO: move to other library
+Map.prototype.tempMapfilePos = function(mapfile) {
+    // TODO: make mapfiles a setting
+    // TODO: handle mapfiles with mml already in them
+    return 'mapfiles/' + netlib.safe64(mapfile) + '.mml';
 };
 
 /**
@@ -52,8 +59,18 @@ Map.prototype.localized = function() {
 Map.prototype.localize = function(callback) {
     if (!this.localized()) {
         var that = this; // TODO avoid
+        console.log('downloading ' + this.mapfile);
         this.localizeSelf(this.mapfile, function(err, mapfile, data) {
-            that.localizeExternals(data, mapfile, callback);
+            spawn('python', [
+                '/usr/local/bin/cascadenik-compile.py',
+                mapfile,
+                that.mapfilePos(that.mapfile)
+              ]
+            )
+            .on('exit', function(code) {
+                code == 0 && callback();
+                console.log('compile ended with ', code);
+            });
         });
     } else {
         callback();
@@ -70,43 +87,7 @@ Map.prototype.localizeSelf = function(mapfile, callback) {
     // this downloads the mapfile into a buffer, but doesn't save it until
     // externals are fixed up - unclear of whether this will scale for
     // very large mapfiles
-    netlib.get(mapfile, this.mapfilePos(mapfile), callback);
-};
-
-/**
- * Download all files referenced by a mapfile
- *
- * @param {String} data string of XML data in a mapfile.
- * @param {String} mapfile name of mapfile this is modifying.
- * @param {Function} callback function to run once completed.
- */
-Map.prototype.localizeExternals = function(data, mapfile, callback) {
-    var doc = libxmljs.parseXmlString(data);
-    var files = doc.find("//Parameter[@name='file']");
-    var external_urls = [];
-    var file_index = {};
-    var that = this;
-    if (files) {
-        Step(
-            function() {
-                var group = this.group();
-                // download all files referred to by mapfile
-                for (var i = 0, l = files.length; i < l; i++) {
-                    External.process(files[i].text(), group());
-                    file_index[files[i].text()] = files[i];
-                }
-            },
-            function(err, results) {
-                // rewrite mapfile with local references
-                for (var i = 0, l = results.length; i < l; i++) {
-                    file_index[results[i][0]].text(results[i][1]);
-                }
-                fs.writeFile(mapfile, doc.toString(), function() {
-                    callback();
-                });
-            }
-        );
-    }
+    netlib.downloadAndGet(mapfile, this.tempMapfilePos(mapfile), callback);
 };
 
 /**
