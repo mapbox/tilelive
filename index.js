@@ -1,1 +1,4 @@
-module.exports = require('./lib/tilelive/tile');
+module.exports = {
+    Tile: require('./lib/tilelive/tile'),
+    Map: require('./lib/tilelive/map')
+};

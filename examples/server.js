@@ -2,7 +2,7 @@
  * Tile server using the node web framework Express (http://expressjs.com).
  */
 var express = require('express'),
-    Tile = require('tilelive.js'),
+    Tile = require('tilelive.js').Tile,
     app = express.createServer();
 
 app.get('/:scheme/:mapfile_64/:z/:x/:y.*', function(req, res) {
