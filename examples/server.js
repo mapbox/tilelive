@@ -2,7 +2,7 @@
  * Tile server using the node web framework Express (http://expressjs.com).
  */
 var express = require('express'),
-    Tile = require('tilelive.js').Tile,
+    Tile = require('tilelive').Tile,
     app = express.createServer();
 
 app.get('/:scheme/:mapfile_64/:z/:x/:y.*', function(req, res) {
@@ -36,5 +36,6 @@ app.get('/:scheme/:mapfile_64/:z/:x/:y.*', function(req, res) {
     });
 });
 
+console.log("Listening on port: " + 8888);
 app.listen(8888);
 

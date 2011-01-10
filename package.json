@@ -1,12 +1,14 @@
 {
   "name"          : "tilelive",
+  "main"          : "./index",
   "description"   : "TileLive",
   "url"           : "http://github.com/developmentseed/tilelive.js",
   "keywords"      : ["mapping"],
   "contributors"  : [],
   "dependencies"  : {
-      "node-mapnik": "",
-      "underscore": ">= 1.1.1"
+      "mapnik"     : ">= 0.1.2",
+      "mess"       : ">= 0.0.40",
+      "underscore" : ">= 1.1.1"
   },
   "version"       : "1.0.0"
 }
