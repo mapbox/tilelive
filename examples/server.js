@@ -15,14 +15,15 @@ app.get('/:scheme/:mapfile_64/:z/:x/:y.*', function(req, res) {
      * - Grid Tile: (*.grid.json)
      */
     try {
-        var tile = new Tile(
-            req.params.scheme,
-            req.params.mapfile_64,
-            req.params.z,
-            req.params.x,
-            req.params.y,
-            req.params[0],
-            '/tmp/mapfiles');
+        var tile = new Tile({
+            scheme: req.params.scheme,
+            mapfile: req.params.mapfile_64,
+            z: req.params.z,
+            x: req.params.x,
+            y: req.params.y,
+            format: req.params[0],
+            mapfile_dir: '/tmp/mapfiles'
+        });
     } catch (err) {
         res.send('Tile invalid: ' + err.message);
     }
