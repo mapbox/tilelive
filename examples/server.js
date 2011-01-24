@@ -18,9 +18,10 @@ app.get('/:scheme/:mapfile_64/:z/:x/:y.*', function(req, res) {
         var tile = new Tile({
             scheme: req.params.scheme,
             mapfile: req.params.mapfile_64,
-            z: req.params.z,
-            x: req.params.x,
-            y: req.params.y,
+            xyz: [
+                req.params.x,
+                req.params.z,
+                req.params.y],
             format: req.params[0],
             mapfile_dir: '/tmp/mapfiles'
         });
@@ -37,6 +38,6 @@ app.get('/:scheme/:mapfile_64/:z/:x/:y.*', function(req, res) {
     });
 });
 
-console.log("Listening on port: " + 8888);
+console.log('Listening on port: ' + 8888);
 app.listen(8888);
 
