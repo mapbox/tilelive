@@ -21,6 +21,7 @@ requirements
 - https://github.com/mapnik/node-mapnik
 - https://github.com/documentcloud/underscore
 - https://github.com/developmentseed/mess.js
+- https://github.com/coopernurse/node-pool
 
 usage
 
