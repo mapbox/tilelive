@@ -1,7 +1,7 @@
 # tilelive.js
 
-tilelive.js is a tile server for node.js[1] which supports on-the-fly
-configuration and advanced interaction output. It's based off of Mapnik [2] and
+tilelive.js is a tile server for [node.js](http://nodejs.org/) which supports on-the-fly
+configuration and advanced interaction output. It's powered by [Mapnik](http://mapnik.org/) and
 can be used to add a tile server to an existing web application or wrapped with
 a light standalone web tile server.
 
@@ -12,11 +12,11 @@ its web framework.
 
 ## Requirements
 
-- https://github.com/mapnik/node-mapnik
-- https://github.com/documentcloud/underscore
-- https://github.com/developmentseed/mess.js
-- https://github.com/coopernurse/node-pool
-- https://github.com/tmcw/node-get
+- [node-mapnik](https://github.com/mapnik/node-mapnik)
+- [underscore](https://github.com/documentcloud/underscore)
+- [mess.js](https://github.com/developmentseed/mess.js)
+- [node-pool](https://github.com/coopernurse/node-pool)
+- [node-get](https://github.com/tmcw/node-get)
 
 ## Usage
 
