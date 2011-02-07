@@ -7,7 +7,7 @@
   "contributors"  : [],
   "dependencies"  : {
       "mapnik"     : ">= 0.1.2",
-      "mess"       : ">= 0.0.40",
+      "carto"      : ">= 0.0.40",
       "node-get"   : ">= 0.0.0",
       "underscore" : ">= 1.1.1",
       "generic-pool": ">= 1.0.3"

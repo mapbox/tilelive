@@ -14,7 +14,7 @@ its web framework.
 
 - [node-mapnik](https://github.com/mapnik/node-mapnik)
 - [underscore](https://github.com/documentcloud/underscore)
-- [mess.js](https://github.com/developmentseed/mess.js)
+- [carto](https://github.com/mapbox/carto)
 - [node-pool](https://github.com/coopernurse/node-pool)
 - [node-get](https://github.com/tmcw/node-get)
 
