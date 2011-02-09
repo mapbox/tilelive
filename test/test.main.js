@@ -101,6 +101,7 @@ exports['Tile Batch'] = function(beforeExit) {
     batch.renderInteractionChunk(function(err, tiles) {
         assert.isNull(err, 'The batch was not rendered.');
     });
+    batch.finish();
 
     beforeExit(function() {
         fs.stat(__dirname + '/tmp/batch.mbtiles', function(err, stats) {
