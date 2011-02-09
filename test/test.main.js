@@ -1,5 +1,6 @@
 var path = require('path'),
     sys = require('sys'),
+    Step = require('Step'),
     MBTiles = require('../lib/tilelive/mbtiles'),
     Map = require('../lib/tilelive/map'),
     TileBatch = require('../lib/tilelive/batch'),
@@ -84,29 +85,44 @@ exports['Tile Batch'] = function(beforeExit) {
         }
     });
 
-    batch.setup(function(err) {
-        assert.isUndefined(err, 'Batch could be setup');
-    });
 
-    /*
-    batch.fillGridData(function(err, tiles) {
-        assert.isNull(err, 'The batch was not rendered.');
-    });
+    Step(
+        function() {
+            batch.setup(function(err) {
+                assert.isUndefined(err, 'Batch could be setup');
+                this();
+            }.bind(this));
+        },
+        function() {
+            batch.renderInteractionChunk(function(err, tiles) {
+                assert.isNull(err, 'The batch was not rendered.');
+                this();
+            }.bind(this));
+        },
+        function() {
+            batch.fillGridData(function(err, tiles) {
+                assert.isNull(err, 'The batch was not rendered.');
+                this();
+            }.bind(this));
+        },
+        function() {
+            batch.renderChunk(function(err, tiles) {
+                assert.isNull(err, 'The batch was not rendered.');
+                this();
+            }.bind(this));
+        },
+        function() {
+            batch.finish();
+        }
+    );
 
-    batch.renderChunk(function(err, tiles) {
-        assert.isNull(err, 'The batch was not rendered.');
-    });
-    */
-
-    batch.renderInteractionChunk(function(err, tiles) {
-        assert.isNull(err, 'The batch was not rendered.');
-    });
-    batch.finish();
 
     beforeExit(function() {
+        /*
         fs.stat(__dirname + '/tmp/batch.mbtiles', function(err, stats) {
             assert.isNull(err, 'The batch was not created.');
         });
         fs.unlinkSync(__dirname + '/tmp/batch.mbtiles');
+        */
     });
 };
