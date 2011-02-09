@@ -63,7 +63,7 @@ exports['Feature insertion'] = function() {
 };
     */
 
-exports['Tile Batch'] = function() {
+exports['Tile Batch'] = function(beforeExit) {
     var batch = new TileBatch({
         filepath: __dirname + '/tmp/batch.mbtiles',
         batchsize: 100,
@@ -85,23 +85,32 @@ exports['Tile Batch'] = function() {
         }
     });
 
+    var steps = {
+        setup: false,
+        render: false,
+        grid: false,
+        finish: false
+    };
 
     Step(
         function() {
             batch.setup(function(err) {
                 assert.isUndefined(err, 'Batch could be setup');
+                steps.setup = true;
                 this();
             }.bind(this));
         },
         function() {
             batch.renderChunk(function(err, tiles) {
                 assert.isNull(err, 'The batch was not rendered.');
+                steps.render = true;
                 this();
             }.bind(this));
         },
         function() {
             batch.fillGridData(function(err, tiles) {
                 assert.isNull(err, 'The batch was not rendered.');
+                steps.grid = true;
                 this();
             }.bind(this));
         },
@@ -109,7 +118,15 @@ exports['Tile Batch'] = function() {
             batch.finish();
         },
         function() {
+            steps.finish = true;
             fs.unlinkSync(__dirname + '/tmp/batch.mbtiles');
         }
     );
+
+    beforeExit(function() {
+        assert.ok(steps.setup, 'setup did not complete');
+        assert.ok(steps.render, 'renderChunk did not complete');
+        assert.ok(steps.grid, 'fillgridData did not complete');
+        assert.ok(steps.finish, 'finish did not complete');
+    });
 };
