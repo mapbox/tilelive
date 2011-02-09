@@ -69,11 +69,11 @@ exports['Tile Batch'] = function(beforeExit) {
         bbox: [-180.0,-85,180,85],
         format: 'png',
         minzoom: 0,
-        maxzoom: 4,
+        maxzoom: 1,
         mapfile: TEST_MAPFILE_64,
         mapfile_dir: __dirname + '/data/',
         interactivity: {
-            key: 'ISO3',
+            key_name: 'ISO3',
             layer: 0
         },
         metadata: {
@@ -88,16 +88,19 @@ exports['Tile Batch'] = function(beforeExit) {
         assert.isUndefined(err, 'Batch could be setup');
     });
 
+    /*
     batch.fillGridData(function(err, tiles) {
         assert.isNull(err, 'The batch was not rendered.');
     });
 
-    /*
     batch.renderChunk(function(err, tiles) {
         assert.isNull(err, 'The batch was not rendered.');
-        console.log(tiles);
     });
     */
+
+    batch.renderInteractionChunk(function(err, tiles) {
+        assert.isNull(err, 'The batch was not rendered.');
+    });
 
     beforeExit(function() {
         fs.stat(__dirname + '/tmp/batch.mbtiles', function(err, stats) {
