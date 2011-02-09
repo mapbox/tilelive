@@ -63,7 +63,7 @@ exports['Feature insertion'] = function() {
 };
     */
 
-exports['Tile Batch'] = function(beforeExit) {
+exports['Tile Batch'] = function() {
     var batch = new TileBatch({
         filepath: __dirname + '/tmp/batch.mbtiles',
         batchsize: 100,
@@ -94,6 +94,12 @@ exports['Tile Batch'] = function(beforeExit) {
             }.bind(this));
         },
         function() {
+            batch.renderChunk(function(err, tiles) {
+                assert.isNull(err, 'The batch was not rendered.');
+                this();
+            }.bind(this));
+        },
+        function() {
             batch.renderInteractionChunk(function(err, tiles) {
                 assert.isNull(err, 'The batch was not rendered.');
                 this();
@@ -106,23 +112,10 @@ exports['Tile Batch'] = function(beforeExit) {
             }.bind(this));
         },
         function() {
-            batch.renderChunk(function(err, tiles) {
-                assert.isNull(err, 'The batch was not rendered.');
-                this();
-            }.bind(this));
+            batch.finish();
         },
         function() {
-            batch.finish();
+            fs.unlinkSync(__dirname + '/tmp/batch.mbtiles');
         }
     );
-
-
-    beforeExit(function() {
-        /*
-        fs.stat(__dirname + '/tmp/batch.mbtiles', function(err, stats) {
-            assert.isNull(err, 'The batch was not created.');
-        });
-        fs.unlinkSync(__dirname + '/tmp/batch.mbtiles');
-        */
-    });
 };
