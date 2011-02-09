@@ -100,12 +100,6 @@ exports['Tile Batch'] = function() {
             }.bind(this));
         },
         function() {
-            batch.renderInteractionChunk(function(err, tiles) {
-                assert.isNull(err, 'The batch was not rendered.');
-                this();
-            }.bind(this));
-        },
-        function() {
             batch.fillGridData(function(err, tiles) {
                 assert.isNull(err, 'The batch was not rendered.');
                 this();
