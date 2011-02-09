@@ -12,6 +12,7 @@
       "sqlite"   : "https://github.com/developmentseed/node-sqlite/tarball/master",
       "underscore" : ">= 1.1.1",
       "generic-pool": ">= 1.0.3"
+      "compress": "https://github.com/egorich239/node-compress/tarball/v0.1.10"
   },
   "version"       : "1.0.5"
 }
