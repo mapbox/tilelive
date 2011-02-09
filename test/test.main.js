@@ -126,7 +126,7 @@ exports['Tile Batch'] = function(beforeExit) {
     beforeExit(function() {
         assert.ok(steps.setup, 'setup did not complete');
         assert.ok(steps.render, 'renderChunk did not complete');
-        assert.ok(steps.grid, 'fillgridData did not complete');
+        assert.ok(steps.grid, 'fillGridData did not complete');
         assert.ok(steps.finish, 'finish did not complete');
     });
 };
