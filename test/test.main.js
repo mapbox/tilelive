@@ -127,13 +127,10 @@ exports['Tile Batch'] = function(beforeExit) {
         function(err) {
             if (err) throw err;
             steps.finish = true;
-            fs.unlinkSync(__dirname + '/tmp/batch.mbtiles');
         }
     );
 
     beforeExit(function() {
-        fs.unlinkSync(__dirname + '/tmp/batch.mbtiles');
-
         assert.ok(steps.setup, 'setup did not complete');
         assert.ok(steps.render, 'renderChunk did not complete');
         assert.ok(steps.grid, 'fillGridData did not complete');
