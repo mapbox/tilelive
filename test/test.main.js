@@ -95,29 +95,34 @@ exports['Tile Batch'] = function(beforeExit) {
     Step(
         function() {
             batch.setup(function(err) {
+                if (err) return this(err);
                 assert.isUndefined(err, 'Batch could be setup');
                 steps.setup = true;
                 this();
             }.bind(this));
         },
-        function() {
+        function(err) {
+            if (err) return this(err);
             batch.renderChunk(function(err, tiles) {
                 assert.isNull(err, 'The batch was not rendered.');
                 steps.render = true;
                 this();
             }.bind(this));
         },
-        function() {
+        function(err) {
+            if (err) return this(err);
             batch.fillGridData(function(err, tiles) {
-                assert.isNull(err, 'The batch was not rendered.');
+                assert.isNull(err, 'The grid data was not filled.');
                 steps.grid = true;
                 this();
             }.bind(this));
         },
-        function() {
+        function(err) {
+            if (err) return this(err);
             batch.finish();
         },
-        function() {
+        function(err) {
+            if (err) return this(err);
             steps.finish = true;
             fs.unlinkSync(__dirname + '/tmp/batch.mbtiles');
         }
