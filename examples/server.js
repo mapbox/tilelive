@@ -2,7 +2,7 @@
  * Tile server using the node web framework Express (http://expressjs.com).
  */
 var express = require('express'),
-    Tile = require('tilelive').Tile,
+    Tile = require(__dirname + '/../lib/tilelive').Tile,
     app = express.createServer();
 
 app.get('/:scheme/:mapfile_64/:z/:x/:y.*', function(req, res) {
@@ -26,14 +26,14 @@ app.get('/:scheme/:mapfile_64/:z/:x/:y.*', function(req, res) {
             mapfile_dir: '/tmp/mapfiles'
         });
     } catch (err) {
-        res.send('Tile invalid: ' + err.message);
+        res.send('Tile invalid: ' + err.message + '\n');
     }
 
     tile.render(function(err, data) {
         if (!err) {
             res.send.apply(res, data);
         } else {
-            res.send('Tile rendering error: ' + err);
+            res.send('Tile rendering error: ' + err + '\n');
         }
     });
 });
