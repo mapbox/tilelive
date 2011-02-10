@@ -123,6 +123,7 @@ exports['Tile Batch'] = function(beforeExit) {
         function(err) {
             if (err) throw err;
             batch.finish();
+            this();
         },
         function(err) {
             if (err) throw err;
