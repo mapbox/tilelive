@@ -64,6 +64,10 @@ exports['Feature insertion'] = function() {
     */
 
 exports['Tile Batch'] = function(beforeExit) {
+    try {
+        fs.unlinkSync(__dirname + '/tmp/batch.mbtiles');
+    } catch(err) {}
+
     var batch = new TileBatch({
         filepath: __dirname + '/tmp/batch.mbtiles',
         batchsize: 100,
