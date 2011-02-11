@@ -1,6 +1,6 @@
 var path = require('path'),
     sys = require('sys'),
-    Step = require('Step'),
+    Step = require('step'),
     MBTiles = require('../lib/tilelive/mbtiles'),
     Map = require('../lib/tilelive/map'),
     TileBatch = require('../lib/tilelive/batch'),
