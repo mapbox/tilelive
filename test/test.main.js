@@ -85,7 +85,11 @@ exports['Tile Batch'] = function(beforeExit) {
             name: 'Test batch',
             type: 'overlay',
             description: 'test',
-            version: '1.1'
+            version: '1.1',
+            formatter: 'function(options, data) { '
+                + 'return "<strong>" + data.NAME + "</strong><br/>'
+                + '<small>Population: " + data.POP2005 + "</small>";'
+                + '}'
         }
     });
 
