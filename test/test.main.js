@@ -74,7 +74,7 @@ exports['Tile Batch'] = function(beforeExit) {
         bbox: [-180.0,-85,180,85],
         format: 'png',
         minzoom: 0,
-        maxzoom: 1,
+        maxzoom: 2,
         mapfile: TEST_MAPFILE_64,
         mapfile_dir: __dirname + '/data/',
         interactivity: {
