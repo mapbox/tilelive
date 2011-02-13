@@ -110,11 +110,21 @@ exports['Tile Batch'] = function(beforeExit) {
         },
         function(err) {
             if (err) throw err;
-            batch.renderChunk(function(err, tiles) {
+            var next = this;
+            var end = function(err, tiles) {
                 if (err) throw err;
                 steps.render = true;
-                this();
-            }.bind(this));
+                next();
+            };
+            var render = function() {
+                process.nextTick(function() {
+                    batch.renderChunk(function(err, tiles) {
+                        if (!tiles) return end(err, tiles);
+                        render();
+                    });
+                });
+            };
+            render();
         },
         function(err) {
             if (err) throw err;
