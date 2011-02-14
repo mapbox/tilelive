@@ -65,6 +65,10 @@ exports['Feature insertion'] = function() {
 
 exports['Tile Batch'] = function(beforeExit) {
     try {
+        fs.mkdirSync(__dirname + '/tmp', 0777);
+    } catch(err) {}
+
+    try {
         fs.unlinkSync(__dirname + '/tmp/batch.mbtiles');
     } catch(err) {}
 
