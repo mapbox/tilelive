@@ -2,7 +2,7 @@
   "name"          : "tilelive",
   "main"          : "./lib/tilelive/index",
   "description"   : "TileLive",
-  "url"           : "http://github.com/developmentseed/tilelive.js",
+  "url"           : "http://github.com/mapbox/tilelive.js",
   "keywords"      : ["mapping"],
   "contributors"  : ["Tom MacWright <tmcw>", "Will White <willwhite>", "Young Hahn <yhahn>"],
   "dependencies"  : {
