@@ -10,27 +10,43 @@ var path = require('path'),
     fs = require('fs');
 
 var TEST_MAPFILE = 'http://tilemill-testing.s3.amazonaws.com/tilelive_test/world.mml';
-var TEST_MAPFILE_64 = (new Buffer('http://tilemill-testing.s3.amazonaws.com/tilelive_test/world.mml')).toString('base64');
 
 exports['cartourl'] = function() {
     var t = new Tile({
         xyz: [0, 0, 0],
-        datasource: 'http://tilemill-testing.s3.amazonaws.com/tilelive_test/world.mml'
+        mapfile_dir: process.cwd() + '/test/tmp',
+        datasource: TEST_MAPFILE
     });
     t.render(function(err, data) {
         assert.isNull(err, 'The rendering should not return an error.');
         assert.ok(data, 'The rendering returned data.');
+        fs.writeFileSync('cartourl.png', data[0]);
     });
 };
 
 exports['cartolocal'] = function() {
     var t = new Tile({
         xyz: [0, 0, 0],
-        datasource: 'test/world.mml'
+        mapfile_dir: process.cwd() + '/test/tmp',
+        datasource: process.cwd() + '/test/data/world.mml'
     });
     t.render(function(err, data) {
         assert.isNull(err, 'The rendering should not return an error.');
         assert.ok(data, 'The rendering returned data.');
+        fs.writeFileSync('cartolocal.png', data[0]);
+    });
+};
+
+exports['xmllocal'] = function() {
+    var t = new Tile({
+        xyz: [0, 0, 0],
+        language: 'xml',
+        datasource: process.cwd() + '/test/data/stylesheet.xml'
+    });
+    t.render(function(err, data) {
+        assert.isNull(err, 'The rendering should not return an error.');
+        assert.ok(data, 'The rendering returned data.');
+        fs.writeFileSync('xmllocal.png', data[0]);
     });
 };
 
