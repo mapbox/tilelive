@@ -57,5 +57,12 @@ its web framework.
         });
     });
 
+# Changelog
+
+# 1.1
+
+* Tiles no longer accept `tile` as a scheme. TMS or XYZ are required; TMS is default.
+* options.mapfile is now options.datasource, and can accept a Carto MML object.
+
 [^1]: http://nodejs.org/
 [^2]: http://mapnik.org/
