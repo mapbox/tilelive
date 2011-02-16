@@ -1,14 +1,38 @@
 var path = require('path'),
     sys = require('sys'),
     Step = require('step'),
+    Tile = require('../lib/tilelive/tile'),
     MBTiles = require('../lib/tilelive/mbtiles'),
     Map = require('../lib/tilelive/map'),
     TileBatch = require('../lib/tilelive/batch'),
+    s64 = require('../lib/tilelive/safe64'),
     assert = require('assert'),
     fs = require('fs');
 
 var TEST_MAPFILE = 'http://tilemill-testing.s3.amazonaws.com/tilelive_test/world.mml';
 var TEST_MAPFILE_64 = (new Buffer('http://tilemill-testing.s3.amazonaws.com/tilelive_test/world.mml')).toString('base64');
+
+exports['cartourl'] = function() {
+    var t = new Tile({
+        xyz: [0, 0, 0],
+        datasource: 'http://tilemill-testing.s3.amazonaws.com/tilelive_test/world.mml'
+    });
+    t.render(function(err, data) {
+        assert.isNull(err, 'The rendering should not return an error.');
+        assert.ok(data, 'The rendering returned data.');
+    });
+};
+
+exports['cartolocal'] = function() {
+    var t = new Tile({
+        xyz: [0, 0, 0],
+        datasource: 'test/world.mml'
+    });
+    t.render(function(err, data) {
+        assert.isNull(err, 'The rendering should not return an error.');
+        assert.ok(data, 'The rendering returned data.');
+    });
+};
 
     /*
 exports['Database setup'] = function() {
@@ -61,8 +85,8 @@ exports['Feature insertion'] = function() {
         // fs.unlinkSync(__dirname + '/tmp/creation.mbtiles');
     });
 };
-    */
 
+/*
 exports['Tile Batch'] = function(beforeExit) {
     try {
         fs.mkdirSync(__dirname + '/tmp', 0777);
@@ -155,3 +179,4 @@ exports['Tile Batch'] = function(beforeExit) {
         assert.ok(steps.finish, 'finish did not complete');
     });
 };
+    */
