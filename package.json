@@ -8,10 +8,10 @@
   "dependencies"  : {
       "mapnik"     : ">= 0.1.2",
       "carto"      : ">= 0.0.40",
-      "node-get"   : ">= 0.0.2",
+      "node-get"   : "= 0.1.0",
       "sqlite"   : "https://github.com/willwhite/node-sqlite/tarball/blobbuild-combined",
       "underscore" : ">= 1.1.1",
-      "generic-pool": ">= 1.0.3"
+      "generic-pool": ">= 1.0.3",
       "compress": "https://github.com/egorich239/node-compress/tarball/v0.1.10"
   },
   "version"       : "1.0.5"
