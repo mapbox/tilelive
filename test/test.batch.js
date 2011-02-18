@@ -5,7 +5,6 @@ var path = require('path'),
     MBTiles = require('../lib/tilelive/mbtiles'),
     Map = require('../lib/tilelive/map'),
     TileBatch = require('../lib/tilelive/batch'),
-    s64 = require('../lib/tilelive/safe64'),
     assert = require('assert'),
     fs = require('fs');
 
@@ -13,51 +12,28 @@ var TEST_MAPFILE = 'http://tilemill-testing.s3.amazonaws.com/tilelive_test/world
 
 exports['Database setup'] = function() {
     var mb = new MBTiles(__dirname + '/tmp/creation.mbtiles');
-
-    mb.setup(function(err) {
-        assert.isUndefined(err, 'MBTiles setup threw an error');
-        fs.stat(__dirname + '/tmp/creation.mbtiles', function(err, stats) {
-            assert.isNull(err, 'The file was not created');
-        });
-    });
-    mb.db.close();
-
-    beforeExit(function() {
-        fs.unlinkSync(__dirname + '/tmp/creation.mbtiles');
-    });
-};
-
-exports['Feature insertion'] = function() {
-    var mb = new MBTiles(__dirname + '/tmp/creation.mbtiles');
-    mb.setup(function(err) {
-        assert.isUndefined(err, 'MBTiles setup threw an error');
-        fs.stat(__dirname + '/tmp/creation.mbtiles', function(err, stats) {
-            assert.isNull(err, 'The file was not created');
-        });
-    });
-
-    var map = new Map(TEST_MAPFILE_64, __dirname + '/tmp', true, {
-        width: 256,
-        height: 256
-    });
-
-    var key_name = 'ISO3';
-    map.localize(function(err) {
-        map.mapnik_map_acquire(function(err, map) {
-            var features = map.features(0, 0, 100);
-            features.forEach(function(feature) {
-                var k = feature[key_name];
-                var v = JSON.stringify(feature);
-                console.log(v);
+    Step(
+        function() {
+            mb.open(this);
+        },
+        function() {
+            var next = this;
+            mb.setup(function(err) {
+                assert.isUndefined(err, 'MBTiles setup threw an error');
+                fs.stat(__dirname + '/tmp/creation.mbtiles', function(err, stats) {
+                    assert.isNull(err, 'The file was not created');
+                });
+                next();
             });
-        });
-    });
 
-    mb.db.close();
-
-    beforeExit(function() {
-        // fs.unlinkSync(__dirname + '/tmp/creation.mbtiles');
-    });
+        },
+        function() {
+            mb.db.close(this);
+        },
+        function() {
+            fs.unlinkSync(__dirname + '/tmp/creation.mbtiles');
+        }
+    );
 };
 
 exports['Tile Batch'] = function(beforeExit) {
@@ -76,7 +52,7 @@ exports['Tile Batch'] = function(beforeExit) {
         format: 'png',
         minzoom: 0,
         maxzoom: 2,
-        mapfile: TEST_MAPFILE_64,
+        datasource: TEST_MAPFILE,
         mapfile_dir: __dirname + '/data/',
         interactivity: {
             key_name: 'ISO3',
