@@ -120,7 +120,7 @@ exports['Tile Batch'] = function(beforeExit) {
         },
         function(err) {
             if (err) throw err;
-            if (!batch.interactivity) return this();
+            if (!batch.options.interactivity) return this();
             times.grid = +new Date();
             batch.fillGridData(function(err, tiles) {
                 if (err) throw err;
@@ -149,7 +149,7 @@ exports['Tile Batch'] = function(beforeExit) {
 
         assert.ok(steps.setup, 'setup did not complete');
         assert.ok(steps.render, 'renderChunk did not complete');
-        assert.ok(steps.grid, 'fillGridData did not complete');
+        batch.options.interactivity && assert.ok(steps.grid, 'fillGridData did not complete');
         assert.ok(steps.finish, 'finish did not complete');
     });
 };
