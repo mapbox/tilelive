@@ -48,7 +48,12 @@ exports['Tile Batch'] = function(beforeExit) {
     var batch = new TileBatch({
         filepath: __dirname + '/tmp/batch.mbtiles',
         batchsize: 100,
-        bbox: [-180.0,-85,180,85],
+        bbox: [
+            -20037500,
+            -20037500,
+            20037500,
+            20037500
+        ],
         format: 'png',
         minzoom: 0,
         maxzoom: 2,
@@ -70,6 +75,12 @@ exports['Tile Batch'] = function(beforeExit) {
         }
     });
 
+    var times = {
+        setup: 0,
+        render: 0,
+        grid: 0,
+        finish: 0
+    };
     var steps = {
         setup: false,
         render: false,
@@ -79,18 +90,22 @@ exports['Tile Batch'] = function(beforeExit) {
 
     Step(
         function() {
+            times.setup = +new Date();
             batch.setup(function(err) {
                 if (err) throw err;
                 steps.setup = true;
+                times.setup = +new Date() - times.setup;
                 this();
             }.bind(this));
         },
         function(err) {
             if (err) throw err;
+            times.render = +new Date();
             var next = this;
             var end = function(err, tiles) {
                 if (err) throw err;
                 steps.render = true;
+                times.render = +new Date() - times.render;
                 next();
             };
             var render = function() {
@@ -105,23 +120,33 @@ exports['Tile Batch'] = function(beforeExit) {
         },
         function(err) {
             if (err) throw err;
+            if (!batch.interactivity) return this();
+            times.grid = +new Date();
             batch.fillGridData(function(err, tiles) {
                 if (err) throw err;
+                times.grid = +new Date() - times.grid;
                 steps.grid = true;
                 this();
             }.bind(this));
         },
         function(err) {
             if (err) throw err;
+            times.finish = +new Date();
             batch.finish(this);
         },
         function(err) {
             if (err) throw err;
+            times.finish = +new Date() - times.finish;
             steps.finish = true;
         }
     );
 
     beforeExit(function() {
+        console.log('setup:        %ss', times.setup * .001);
+        console.log('renderChunk:  %ss', times.render * .001);
+        console.log('fillGridData: %ss', times.grid * .001);
+        console.log('finish:       %ss', times.finish * .001);
+
         assert.ok(steps.setup, 'setup did not complete');
         assert.ok(steps.render, 'renderChunk did not complete');
         assert.ok(steps.grid, 'fillGridData did not complete');
