@@ -65,7 +65,7 @@ exports['Tile Batch'] = function(beforeExit) {
         },
         metadata: {
             name: 'Test batch',
-            type: 'overlay',
+            type: 'baselayer',
             description: 'test',
             version: '1.1',
             formatter: 'function(options, data) { '
