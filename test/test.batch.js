@@ -11,10 +11,10 @@ var path = require('path'),
 var TEST_MAPFILE = 'http://tilemill-testing.s3.amazonaws.com/tilelive_test/world.mml';
 
 exports['Database setup'] = function() {
-    var mb = new MBTiles(__dirname + '/tmp/creation.mbtiles');
+    var mb
     Step(
         function() {
-            mb.open(this);
+            mb = new MBTiles(__dirname + '/tmp/creation.mbtiles', this);
         },
         function() {
             var next = this;
