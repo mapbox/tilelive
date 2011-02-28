@@ -4,6 +4,7 @@
   "description"   : "TileLive",
   "url"           : "http://github.com/mapbox/tilelive.js",
   "keywords"      : ["mapping"],
+  "licenses"      : ["BSD"],
   "contributors"  : ["Tom MacWright <tmcw>", "Will White <willwhite>", "Young Hahn <yhahn>"],
   "dependencies"  : {
       "mapnik"     : ">= 0.1.2",
@@ -12,8 +13,10 @@
       "sqlite3"    : ">= 2.0.4",
       "underscore" : ">= 1.1.1",
       "generic-pool": ">= 1.0.3",
-      "compress": "https://github.com/kkaefer/node-compress/zipball/v0.1.10-b"
+      "compress": "https://github.com/kkaefer/node-compress/tarball/master"
   },
-  "version"       : "1.0.6"
+  "bin"           : {
+    "tilelive_server.js": "./bin/tilelive_server.js"
+  },
+  "version"       : "1.0.7"
 }
-

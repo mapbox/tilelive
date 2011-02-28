@@ -36,8 +36,6 @@ app.get('/', function(req, res) {
     res.send(template.join('\n'));
 });
 
-
-
 app.use(express.staticProvider(__dirname + '/'));
 
 function renderTile(res, mapfile, language, z, x, y) {
@@ -98,7 +96,7 @@ app.listen(PORT);
         background: transparent;
       }
     </style>
-    <script src="js/OpenLayers.js"></script>
+    <script src="http://openlayers.org/api/OpenLayers.js"></script>
     <script type="text/javascript">
     function init() {
         OpenLayers.ImgPath = 'http://js.mapbox.com/theme/dark/';
