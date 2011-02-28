@@ -66,14 +66,14 @@ Examples are given in `examples/`.
 
 # Changelog
 
-# 2.0
+# 2.0.0
 
 * `node-sqlite3` replaces `node-sqlite` for better performance and stability.
 * deep render grid support - `layer.json` now supports legends and interaction.
 * `server.js` removed from examples
 * `tilelive_server.js` added to `bin/`
 
-# 1.1
+# 1.1.0
 
 * Tiles no longer accept `tile` as a scheme. TMS or XYZ are required; TMS is default.
 * options.mapfile is now options.datasource, and can accept a Carto MML object.
