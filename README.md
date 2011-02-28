@@ -7,8 +7,15 @@ a light standalone web tile server.
 
 ## Examples
 
-See `examples/server.js` for an example tile server that leverages Express as
-its web framework.
+Tilelive includes a `tilelive_server.js` binary which can be used to serve a tileset from a `.mml` file (with [carto](https://github.com/mapbox/carto) or Mapnik XML).
+
+Usage:
+
+    tilelive_server.js world.mml
+
+    tilelive_server.js stylesheet.xml
+
+Examples are given in `examples/`.
 
 ## Requirements
 
@@ -58,6 +65,13 @@ its web framework.
     });
 
 # Changelog
+
+# 2.0
+
+* `node-sqlite3` replaces `node-sqlite` for better performance and stability.
+* deep render grid support - `layer.json` now supports legends and interaction.
+* `server.js` removed from examples
+* `tilelive_server.js` added to `bin/`
 
 # 1.1
 
