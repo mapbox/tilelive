@@ -1,3 +1,5 @@
+-- MBTiles schema
+
 CREATE TABLE IF NOT EXISTS map (
    zoom_level INTEGER,
    tile_column INTEGER,
