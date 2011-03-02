@@ -25,6 +25,18 @@ Examples are given in `examples/`.
 - [node-pool](https://github.com/coopernurse/node-pool)
 - [node-get](https://github.com/tmcw/node-get)
 
+## Install
+
+Install master:
+
+   git clone git://github.com/mapbox/tilelive.js.git
+   cd tilelive.js
+   npm install .
+
+Or install latest release via npm repositories:
+
+   npm install tilelive
+
 ## Usage
 
     var express = require('express'),
