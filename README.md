@@ -29,13 +29,13 @@ Examples are given in `examples/`.
 
 Install master:
 
-   git clone git://github.com/mapbox/tilelive.js.git
-   cd tilelive.js
-   npm install .
+    git clone git://github.com/mapbox/tilelive.js.git
+    cd tilelive.js
+    npm install .
 
 Or install latest release via npm repositories:
 
-   npm install tilelive
+    npm install tilelive
 
 ## Usage
 
