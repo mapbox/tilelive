@@ -37,6 +37,21 @@ Or install latest release via npm repositories:
 
     npm install tilelive
 
+If you want to use the example server 'tilelive_server.js' then also install express:
+
+    npm install express@1.0.7
+
+## Install troubleshooting
+
+Buggy versions of npm (or the apps package.json file) may cause installation to fail for some dependencies.
+
+For example you may need to install node-compress manually like:
+
+    git clone git://github.com/kkaefer/node-compress.git
+    cd node-compress
+    npm install .
+
+
 ## Usage
 
     var express = require('express'),
