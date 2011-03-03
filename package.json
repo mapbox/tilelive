@@ -7,12 +7,13 @@
   "licenses"      : ["BSD"],
   "contributors"  : ["Tom MacWright <tmcw>", "Will White <willwhite>", "Young Hahn <yhahn>"],
   "dependencies"  : {
-      "mapnik"     : ">= 0.2.11",
-      "carto"      : ">= 0.1.3",
-      "node-get"   : "= 0.1.0",
-      "sqlite3"    : ">= 2.0.8",
-      "underscore" : ">= 1.1.1",
+      "mapnik"      : ">= 0.2.12",
+      "carto"       : ">= 0.1.3",
+      "node-get"    : "= 0.1.0",
+      "sqlite3"     : ">= 2.0.8",
+      "underscore"  : ">= 1.1.1",
       "generic-pool": ">= 1.0.3",
+      "step"       : ">= 0.0.4",
       "compress": "https://github.com/kkaefer/node-compress/tarball/master"
   },
   "bin"           : {
