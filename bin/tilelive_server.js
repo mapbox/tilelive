@@ -73,7 +73,8 @@ if (args[1]) {
             req.params.y); 
     });
 } else {
-    sys.error('Please provide a mapfile.');
+    sys.puts("tilelive_server.js: please provide an input .xml or .mml map");
+    process.exit(1);
 }
 
 sys.debug('tilelive listening on port: ' + PORT);
