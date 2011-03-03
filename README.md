@@ -9,6 +9,8 @@ a light standalone web tile server.
 
 Tilelive includes a `tilelive_server.js` binary which can be used to serve a tileset from a `.mml` file (with [carto](https://github.com/mapbox/carto) or Mapnik XML).
 
+This server requires Express 0.1.x (see below for installation instructions).
+
 Usage:
 
     tilelive_server.js world.mml
@@ -20,10 +22,16 @@ Examples are given in `examples/`.
 ## Requirements
 
 - [node-mapnik](https://github.com/mapnik/node-mapnik)
-- [underscore](https://github.com/documentcloud/underscore)
 - [carto](https://github.com/mapbox/carto)
-- [node-pool](https://github.com/coopernurse/node-pool)
 - [node-get](https://github.com/tmcw/node-get)
+- [node-sqlite3](https://github.com/developmentseed/node-sqlite3)
+- [underscore](https://github.com/documentcloud/underscore)
+- [node-pool](https://github.com/coopernurse/node-pool) (aka generic-pool)
+- [step](https://github.com/creationix/step)
+- [node-compress](https://github.com/kkaefer/node-compress/tarball/master)
+
+Note: if you are looking for simple server examples see the [node-mapnik examples](https://github.com/mapnik/node-mapnik/tree/master/examples).
+
 
 ## Install
 
@@ -50,6 +58,16 @@ For example you may need to install node-compress manually like:
     git clone git://github.com/kkaefer/node-compress.git
     cd node-compress
     npm install .
+
+## Tests
+
+To run the tests you first need to install expresso:
+
+    npm install expresso
+
+Then from within this directory do:
+
+    expresso
 
 
 ## Usage
