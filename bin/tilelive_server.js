@@ -36,7 +36,7 @@ app.get('/', function(req, res) {
     res.send(template.join('\n'));
 });
 
-app.use(express.staticProvider(__dirname + '/'));
+app.use(express.static(__dirname + '/'));
 
 function renderTile(res, mapfile, language, z, x, y) {
     try {
@@ -54,7 +54,7 @@ function renderTile(res, mapfile, language, z, x, y) {
 
     tile.render(function(err, data) {
         if (!err) {
-            res.send.apply(res, data);
+            res.send(new Buffer(data[0], "binary"), data[1]);
         } else {
             res.send('Tile rendering error: ' + err + '\n');
         }
