@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS keymap (
 
 CREATE TABLE IF NOT EXISTS grid_utfgrid (
     grid_id TEXT,
-    grid_utfgrid TEXT
+    grid_utfgrid BLOB
 );
 
 CREATE TABLE IF NOT EXISTS images (
