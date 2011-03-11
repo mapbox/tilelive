@@ -14,7 +14,7 @@
       "underscore"  : ">= 1.1.1",
       "generic-pool": ">= 1.0.3",
       "step"        : ">= 0.0.4",
-      "compress"    : "https://github.com/kkaefer/node-compress/tarball/master"
+      "zlib"    : "https://github.com/kkaefer/node-zlib/tarball/master"
   },
   "bin"           : {
     "tilelive_server.js": "./bin/tilelive_server.js"
