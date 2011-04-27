@@ -111,6 +111,10 @@ Then from within this directory do:
 
 # Changelog
 
+# 2.0.1
+
+Minor release: adds `Pool` argument to `Tile.getMap()`, to let users dispose of used maps.
+
 # 2.0.0
 
 * `node-sqlite3` replaces `node-sqlite` for better performance and stability.
