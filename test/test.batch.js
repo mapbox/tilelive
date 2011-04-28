@@ -60,7 +60,7 @@ exports['Tile Batch'] = function(beforeExit) {
         datasource: TEST_MAPFILE,
         mapfile_dir: __dirname + '/data/',
         interactivity: {
-            key_name: 'ISO3',
+            key: 'ISO3',
             layer: 0
         },
         metadata: {
