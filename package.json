@@ -7,7 +7,7 @@
   "licenses"      : ["BSD"],
   "contributors"  : ["Tom MacWright <tmcw>", "Will White <willwhite>", "Young Hahn <yhahn>"],
   "dependencies"  : {
-      "mapnik"      : ">= 0.2.13",
+      "mapnik"      : "https://github.com/mapnik/node-mapnik/tarball/master",
       "carto"       : ">= 0.1.3",
       "node-get"    : ">= 0.1.0",
       "sqlite3"     : ">= 2.0.8",
