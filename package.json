@@ -19,5 +19,5 @@
   "bin"           : {
     "tilelive_server.js": "./bin/tilelive_server.js"
   },
-  "version"       : "2.0.1"
+  "version"       : "2.0.2"
 }
