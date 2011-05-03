@@ -5,20 +5,6 @@ configuration and advanced interaction output. It's powered by [Mapnik](http://m
 can be used to add a tile server to an existing web application or wrapped with
 a light standalone web tile server.
 
-## Examples
-
-Tilelive includes a `tilelive_server.js` binary which can be used to serve a tileset from a `.mml` file (with [carto](https://github.com/mapbox/carto) or Mapnik XML).
-
-This server requires Express 0.1.x (see below for installation instructions).
-
-Usage:
-
-    tilelive_server.js world.mml
-
-    tilelive_server.js stylesheet.xml
-
-Examples are given in `examples/`.
-
 ## Requirements
 
 - [node-mapnik](https://github.com/mapnik/node-mapnik)
@@ -29,9 +15,6 @@ Examples are given in `examples/`.
 - [node-pool](https://github.com/coopernurse/node-pool) (aka generic-pool)
 - [step](https://github.com/creationix/step)
 - [node-compress](https://github.com/kkaefer/node-compress/tarball/master)
-
-Note: if you are looking for simple server examples see the [node-mapnik examples](https://github.com/mapnik/node-mapnik/tree/master/examples).
-
 
 ## Install
 
@@ -45,10 +28,6 @@ Or install latest release via npm repositories:
 
     npm install tilelive
 
-If you want to use the example server 'tilelive_server.js' then also install express:
-
-    npm install express@1.0.7
-
 ## Install troubleshooting
 
 Buggy versions of npm (or the apps package.json file) may cause installation to fail for some dependencies.
@@ -59,18 +38,19 @@ For example you may need to install node-compress manually like:
     cd node-compress
     npm install .
 
-## Tests
+## Tests & Docs
 
 To run the tests you first need to install expresso:
 
-    npm install expresso
+    npm install --dev
 
 Then from within this directory do:
 
-    expresso
-
+    make
 
 ## Usage
+
+See [geode](https://github.com/mapbox/geode) for a working example of a tilelive powered server.
 
     var express = require('express'),
         Tile = require('tilelive').Tile,
@@ -117,7 +97,7 @@ This release is all distribution fixes:
 
 * Uses devDependencies to support docs and testing
 * Fixes test that depended on node-get
-* Removes tilelive_server example: will be replaced by geode.
+* Removes tilelive_server example: replaced by [geode](https://github.com/mapbox/geode).
 
 # 2.0.2
 
