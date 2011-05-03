@@ -57,6 +57,7 @@ exports['cartourl'] = function() {
         datasource: TEST_MAPFILE
     });
     t.render(function(err, data) {
+        throw err;
         assert.isNull(err, 'The rendering should not return an error.');
         assert.ok(data, 'The rendering returned data.');
         fs.writeFileSync(process.cwd() + '/test/tmp/cartourl.png', data[0]);

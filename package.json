@@ -1,23 +1,41 @@
 {
   "name"          : "tilelive",
   "main"          : "./lib/tilelive/index",
-  "description"   : "TileLive",
+  "description"   : "Map server with node-mapnik, carto, and mbtiles",
   "url"           : "http://github.com/mapbox/tilelive.js",
-  "keywords"      : ["mapping"],
-  "licenses"      : ["BSD"],
-  "contributors"  : ["Tom MacWright <tmcw>", "Will White <willwhite>", "Young Hahn <yhahn>"],
-  "dependencies"  : {
-      "mapnik"      : ">= 0.3.0",
-      "carto"       : ">= 0.1.4",
-      "node-get"    : ">= 0.1.0",
+  "keywords"      : ["map", "server", "mapnik", "tms"],
+  "licenses"      : [{
+    "type": "BSD"
+  }],
+  "repositories": [{
+    "type": "git",
+    "url": "http://github.com/mapbox/tilelive.js.git" 
+  }],
+  "contributors": [
+      "Tom MacWright <tmcw>",
+      "Will White <willwhite>",
+      "Dane Springmeyer <springmeyer>",
+      "Young Hahn <yhahn>"
+  ],
+  "dependencies": {
+      "mapnik"      : "https://github.com/mapnik/node-mapnik/tarball/master",
+      "carto"       : ">= 0.1.5",
+      "get"         : ">= 0.1.1",
       "sqlite3"     : ">= 2.0.8",
       "underscore"  : ">= 1.1.1",
       "generic-pool": ">= 1.0.3",
       "step"        : ">= 0.0.4",
       "zlib"        : ">= 1.0.2"
   },
-  "bin"           : {
-    "tilelive_server.js": "./bin/tilelive_server.js"
+  "devDependencies": {
+    "expresso" : ">= 0.7.6",
+    "docco" : ">= 0.2.0"
+  },
+  "bin": {
+    "seed.js": "./bin/seed.js"
+  },
+  "engines": {
+    "node": ">= 0.2.6"
   },
   "version"       : "2.0.2"
 }

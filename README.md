@@ -111,6 +111,14 @@ Then from within this directory do:
 
 # Changelog
 
+# 2.0.3
+
+This release is all distribution fixes:
+
+* Uses devDependencies to support docs and testing
+* Fixes test that depended on node-get
+* Removes tilelive_server example: will be replaced by geode.
+
 # 2.0.2
 
 * Now uses and requires node-mapnik 0.3.0
