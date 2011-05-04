@@ -18,18 +18,7 @@
       "Young Hahn <yhahn>"
   ],
   "dependencies": {
-      "mapnik"      : "https://github.com/mapnik/node-mapnik/tarball/master",
-      "carto"       : ">= 0.1.5",
-      "get"         : ">= 0.1.1",
-      "sqlite3"     : ">= 2.0.8",
-      "underscore"  : ">= 1.1.1",
-      "generic-pool": ">= 1.0.3",
-      "step"        : ">= 0.0.4",
-      "zlib"        : ">= 1.0.2"
-  },
-  "devDependencies": {
-    "expresso" : ">= 0.7.6",
-    "docco" : ">= 0.2.0"
+      "generic-pool": ">= 1.0.3"
   },
   "bin": {
     "seed.js": "./bin/seed.js"
