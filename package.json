@@ -1,30 +1,32 @@
 {
-  "name"          : "tilelive",
-  "main"          : "./lib/tilelive/index",
-  "description"   : "Map server with node-mapnik, carto, and mbtiles",
-  "url"           : "http://github.com/mapbox/tilelive.js",
-  "keywords"      : ["map", "server", "mapnik", "tms"],
-  "licenses"      : [{
-    "type": "BSD"
-  }],
-  "repositories": [{
-    "type": "git",
-    "url": "http://github.com/mapbox/tilelive.js.git" 
-  }],
-  "contributors": [
-      "Tom MacWright <tmcw>",
-      "Will White <willwhite>",
-      "Dane Springmeyer <springmeyer>",
-      "Young Hahn <yhahn>"
-  ],
-  "dependencies": {
-      "generic-pool": ">= 1.0.3"
-  },
-  "bin": {
-    "seed.js": "./bin/seed.js"
-  },
-  "engines": {
-    "node": ">= 0.2.6"
-  },
-  "version"       : "2.0.3"
+    "name"          : "tilelive",
+    "main"          : "./lib/tilelive/index",
+    "description"   : "Map server with node-mapnik, carto, and mbtiles",
+    "url"           : "http://github.com/mapbox/tilelive.js",
+    "keywords"      : ["map", "server", "mapnik", "tms"],
+    "licenses"      : [{
+        "type": "BSD"
+    }],
+    "repositories": [{
+        "type": "git",
+        "url": "http://github.com/mapbox/tilelive.js.git"
+    }],
+    "contributors": [
+        "Tom MacWright <tmcw>",
+        "Will White <willwhite>",
+        "Dane Springmeyer <springmeyer>",
+        "Young Hahn <yhahn>"
+    ],
+    "dependencies": {
+        "generic-pool": "1.0.x",
+        "step": "0.0.4",
+        "underscore": "1.1.x"
+    },
+    "bin": {
+        "seed.js": "./bin/seed.js"
+    },
+    "engines": {
+        "node": ">= 0.2.6"
+    },
+    "version"       : "2.0.3"
 }
