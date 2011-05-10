@@ -91,6 +91,11 @@ See [geode](https://github.com/mapbox/geode) for a working example of a tilelive
 
 # Changelog
 
+# 2.0.4
+
+* Fix bug with initializing invalid tiles
+* Add `jshint` and `make lint` command
+
 # 2.0.3
 
 This release is all distribution fixes:
