@@ -1,86 +1,77 @@
 # tilelive.js
 
 tilelive.js is a tile server for [node.js](http://nodejs.org/) which supports on-the-fly
-configuration and advanced interaction output. It's powered by [Mapnik](http://mapnik.org/) and
-can be used to add a tile server to an existing web application or wrapped with
-a light standalone web tile server.
+configuration and advanced interaction output. It can be used to add a tile server to an existing web application or wrapped with a light standalone web tile server.
 
-## Requirements
+## Backends
 
-- [node-mapnik](https://github.com/mapnik/node-mapnik)
-- [carto](https://github.com/mapbox/carto)
-- [node-get](https://github.com/tmcw/node-get)
-- [node-sqlite3](https://github.com/developmentseed/node-sqlite3)
-- [underscore](https://github.com/documentcloud/underscore)
-- [node-pool](https://github.com/coopernurse/node-pool) (aka generic-pool)
-- [step](https://github.com/creationix/step)
-- [node-compress](https://github.com/kkaefer/node-compress/tarball/master)
+tilelive.js supports backends for serving tiles and for storing them when creating [mbtiles](http://mbtiles.org) or other caches of tiles.
+
+Each backend is expected to export an object in the following form:
+
+    module.exports = {
+        // Return an object usable with the `Pool()` constructor from
+        // `generic-pool`. The resource will be pooled and passed back to
+        // other backend methods for serving and storing.
+        pool: function(datasource) {
+            return {
+                create: [Function],
+                destroy: [Function]
+            }
+        },
+
+        // For server backends.
+        // Serve a tile, grid, or other resource. The `callback` function
+        // should be called with `callback(err, data)` where `data` is an array
+        // such that `data[0]` is suitable as a response body and `data[1]`
+        // contains a hash of HTTP headers that describe the data.
+        serve: function(resource, options, callback) {},
+
+        // For storage backends.
+        // Store tiles, grids, or perform other tasks related to batch tile
+        // generation. Steps called include: setup, metadata, tiles, grids,
+        // and finish.
+        setup: function(step, resource, data, callback) {}
+    }
+
+To use tilelive to serve tiles from mbtiles install [tilelive-mbtiles](http://github.com/mapbox/tilelive-mbtiles). To serve dynamically rendered tiles using mapnik install [tilelive-mapnik](http://github.com/mapbox/tilelive-mapnik). To render tiles using mapnik and store them in the mbtiles format, install both.
 
 ## Install
 
 Install master:
 
-    git clone git://github.com/mapbox/tilelive.js.git
-    cd tilelive.js
+    git clone git://github.com/mapbox/tilelive.js.git tilelive
+    cd tilelive
     npm install .
 
 Or install latest release via npm repositories:
 
     npm install tilelive
 
-## Install troubleshooting
+## Tests
 
-Buggy versions of npm (or the apps package.json file) may cause installation to fail for some dependencies.
+To run the tests
 
-For example you may need to install node-compress manually like:
-
-    git clone git://github.com/kkaefer/node-compress.git
-    cd node-compress
-    npm install .
-
-## Tests & Docs
-
-To run the tests you first need to install expresso:
-
-    npm install --dev
-
-Then from within this directory do:
-
-    make
+    npm test
 
 ## Usage
 
 See [geode](https://github.com/mapbox/geode) for a working example of a tilelive powered server.
 
     var express = require('express'),
-        Tile = require('tilelive').Tile,
+        Server = require('tilelive').Server,
+        tilelive = new Server(require('tilelive-mapnik')),
         app = express.createServer();
 
     app.get('/:scheme/:mapfile_64/:z/:x/:y.*', function(req, res) {
-        /*
-         * scheme: (xyz|tms|tile (tms))
-         *
-         * format:
-         * - Tile: (png|jpg)
-         * - Data Tile: (geojson)
-         * - Grid Tile: (*.grid.json)
-         */
-        try {
-            var tile = new Tile({
-                scheme: req.params.scheme,
-                mapfile: req.params.mapfile_64,
-                xyz: [
-                    req.params.x,
-                    req.params.z,
-                    req.params.y],
-                format: req.params[0],
-                mapfile_dir: '/tmp/mapfiles'
-            });
-        } catch (err) {
-            res.send('Tile invalid: ' + err.message);
-        }
-
-        tile.render(function(err, data) {
+        tilelive.serve({
+            scheme: req.param('scheme'),
+            datasource: req.param('mapfile_64'),
+            x: req.param('x'),
+            y: req.param('y'),
+            z: req.param('z'),
+            format: req.params[0]
+        }, function(err, data) {
             if (!err) {
                 res.send.apply(res, data);
             } else {
@@ -90,6 +81,10 @@ See [geode](https://github.com/mapbox/geode) for a working example of a tilelive
     });
 
 # Changelog
+
+# 3.0.0
+
+Split out `tilelive-mapnik`, `tilelive-mbtiles` backends.
 
 # 2.0.3
 
