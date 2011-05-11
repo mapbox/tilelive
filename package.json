@@ -26,7 +26,7 @@
         "seed.js": "./bin/seed.js"
     },
     "engines": {
-        "node": ">= 0.2.6"
+        "node": ">= 0.4.0"
     },
     "version"       : "3.0.0"
 }
