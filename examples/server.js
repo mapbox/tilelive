@@ -1,35 +1,17 @@
-/**
- * Tile server using the node web framework Express (http://expressjs.com).
- */
-var express = require('express'),
-    Tile = require(__dirname + '/../lib/tilelive').Tile,
-    app = express.createServer();
+// Tile server using the node web framework Express (http://expressjs.com).
+var app = require('express').createServer(),
+    mapnik = require('tilelive-mapnik'),
+    tilelive = new (require('tilelive').Server)(mapnik);
 
-app.get('/:scheme/:mapfile_64/:z/:x/:y.*', function(req, res) {
-    /*
-     * scheme: (xyz|tms|tile (tms))
-     *
-     * format:
-     * - Tile: (png|jpg)
-     * - Data Tile: (geojson)
-     * - Grid Tile: (*.grid.json)
-     */
-    try {
-        var tile = new Tile({
-            scheme: req.params.scheme,
-            mapfile: req.params.mapfile_64,
-            xyz: [
-                req.params.x,
-                req.params.z,
-                req.params.y],
-            format: req.params[0],
-            mapfile_dir: '/tmp/mapfiles'
-        });
-    } catch (err) {
-        res.send('Tile invalid: ' + err.message + '\n');
-    }
-
-    tile.render(function(err, data) {
+app.get('/:z/:x/:y.*', function(req, res) {
+    var options = {
+        x: req.param('x'),
+        y: req.param('y'),
+        z: req.param('z'),
+        format: req.params[0],
+        datasource: __dirname + '/stylesheet.xml'
+    };
+    tilelive.serve(options, function(err, data) {
         if (!err) {
             res.send.apply(res, data);
         } else {
