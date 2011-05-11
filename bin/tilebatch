@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 
-// Interactivity:
+// Sample command to render with interactivity:
 //
 // bin/tilebatch --serve.key=ISO2 --serve.layer=world --serve.fields=NAME \
 //     --metadata.formatter="function(options,data) { return data.NAME }" \
-//     test/data/stylesheet.xml world.mbtiles
+//     http://tilemill-testing.s3.amazonaws.com/tilelive_test/world.mml \
+//     world.mbtiles
 
 var _ = require('underscore'),
     sys = require('sys'),
