@@ -19,11 +19,12 @@
     ],
     "dependencies": {
         "generic-pool": "1.0.x",
+        "optimist": "0.2.x",
         "step": "0.0.x",
         "underscore": "1.1.x"
     },
     "bin": {
-        "seed.js": "./bin/seed.js"
+        "tilebatch": "./bin/tilebatch"
     },
     "engines": {
         "node": ">= 0.4.0"

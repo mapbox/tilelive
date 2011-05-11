@@ -1,0 +1,89 @@
+#!/usr/bin/env node
+
+// Interactivity:
+//
+// bin/tilebatch --serve.key=ISO2 --serve.layer=world --serve.fields=NAME \
+//     --metadata.formatter="function(options,data) { return data.NAME }" \
+//     test/data/stylesheet.xml world.mbtiles
+
+var _ = require('underscore'),
+    sys = require('sys'),
+    Batch = require('tilelive').Batch,
+    argv = require('optimist')
+        .usage('Usage: $0 [OPTIONS] <datasource> <filepath>')
+        .default({
+            storage: 'tilelive-mbtiles',
+            renderer: 'tilelive-mapnik',
+            minzoom: 0,
+            maxzoom: 6
+        })
+        .argv;
+
+if (argv._.length < 2) {
+    sys.puts('<datasource> and <filepath> parameters are required.');
+    process.exit(1);
+}
+
+var storage,
+    renderer;
+
+try {
+    storage = require(argv.storage);
+} catch(e) {
+    sys.puts('Storage backend ' + argv.storage + ' was not found.');
+    process.exit(1);
+}
+
+try {
+    renderer = require(argv.renderer);
+} catch(e) {
+    sys.puts('Renderer backend ' + argv.renderer + ' was not found.');
+    process.exit(1);
+}
+
+argv.datasource = argv._[0];
+argv.filepath = argv._[1];
+argv.storage = storage;
+argv.renderer = renderer;
+
+// Collapse any dot flags into their respective objects.
+_(argv).each(function(value, key) {
+    var segments = key.split('.');
+    if (segments.length === 2) {
+        argv[segments[0]] = argv[segments[0]] || {};
+        argv[segments[0]][segments[1]] = value;
+        delete argv[key];
+    }
+});
+
+// Exceptions, special handling.
+argv.serve && argv.serve.fields && (argv.serve.fields = argv.serve.fields.split(','));
+argv.bbox && (argv.bbox = argv.bbox.split(','));
+
+var batch = new Batch(argv);
+var printed = 0;
+
+sys.puts('');
+sys.puts('Datasource:   ' + argv.datasource);
+sys.puts('Filepath:     ' + argv.filepath);
+sys.puts('Zoom levels:  ' + argv.minzoom + '-' + argv.maxzoom);
+sys.puts('Bounds:       ' + argv.metadata.bounds);
+sys.puts('Render grids: ' + batch.grid);
+sys.puts('00 --------------- 50 -------------- 100');
+
+batch.on('write', function(batch) {
+    var progress = Math.floor(batch.tilesCurrent / batch.tilesTotal * 40);
+    if (progress > printed) {
+        sys.print((new Array(progress - printed + 1)).join('#'));
+        printed = progress;
+    }
+});
+batch.on('end', function(batch) {
+    sys.puts('');
+    sys.puts('Total time:   '
+        + parseInt((batch.timeEnd - batch.timeStart) * .001)
+        + 's');
+    sys.puts('');
+});
+
+batch.execute();
