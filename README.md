@@ -48,6 +48,14 @@ Or install latest release via npm repositories:
 
     npm install tilelive
 
+## tilebatch
+
+tilelive can be used to create `mbtiles` files or possibly other formats using the `tilebatch` command.
+
+    tilebatch <datasource> <filepath>
+
+For a full list of options, run `tilebatch --help`.
+
 ## Tests
 
 To run the tests
