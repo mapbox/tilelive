@@ -11,7 +11,7 @@ var path = require('path'),
 
 var TEST_MAPFILE = 'http://tilemill-testing.s3.amazonaws.com/tilelive_test/world.mml';
 var TEST_MML = {
-    "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over",
+    "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over",
     "Stylesheet": [
         {
             "id": "style.mss",
@@ -22,7 +22,7 @@ var TEST_MML = {
         {
             "id": "world",
             "name": "world",
-            "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over",
+            "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over",
             "geometry": "polygon",
             "Datasource": {
                 "file": "http://tilemill-data.s3.amazonaws.com/world_borders_merc.zip",
@@ -33,7 +33,7 @@ var TEST_MML = {
 };
 var TEST_XML = '<?xml version="1.0" encoding="utf-8"?>' +
     '<!DOCTYPE Map[]>' +
-    '<Map srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over">' +
+    '<Map srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over">' +
     '<Style name="world" filter-mode="first">' +
     '<Rule>' +
     '<LineSymbolizer stroke="#000000" />' +
@@ -41,7 +41,7 @@ var TEST_XML = '<?xml version="1.0" encoding="utf-8"?>' +
     '</Style>' +
     '<Layer' +
     'name="world"' +
-    'srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over">' +
+    'srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over">' +
     '<StyleName>world</StyleName>' +
     '<Datasource>' +
     '<Parameter name="file">/home/devseed/tilemill/modules/tilelive.js/test/tmp/39906004488430c066551090d81caa77/world_borders_merc.shp</Parameter>' +
