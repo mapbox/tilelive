@@ -4,15 +4,14 @@
 //
 // bin/tilebatch --serve.key=ISO2 --serve.layer=world --serve.fields=NAME \
 //     --metadata.formatter="function(options,data) { return data.NAME }" \
-//     http://tilemill-testing.s3.amazonaws.com/tilelive_test/world.mml \
-//     world.mbtiles
+//     http://mapbox.github.com/tilelive-mapnik/test/world.mml world.mbtiles
 
 var _ = require('underscore'),
     sys = require('sys'),
     Batch = require('tilelive').Batch,
     argv = require('optimist')
         .default({
-            storage: 'tilelive-mbtiles',
+            storage: 'mbtiles',
             renderer: 'tilelive-mapnik'
         })
         .argv;
@@ -40,7 +39,7 @@ if (argv.help || argv._.length < 2) {
     sys.puts('');
     sys.puts('Options:');
     table([
-        ['--storage', 'Storage backend. (Default: tilelive-mbtiles)'],
+        ['--storage', 'Storage backend. (Default: mbtiles)'],
         ['--renderer', 'Renderer backend. (Default: tilelive-mapnik)'],
         ['--batchsize', 'Tile rendering batch size. (Default: 100)'],
         ['--bbox', 'Bounding box to render. (Default: -180,-90,180,-90)'],
@@ -51,7 +50,7 @@ if (argv.help || argv._.length < 2) {
     ]);
     sys.puts('');
     sys.puts('Example:');
-    sys.puts('  tilebatch http://tilemill-testing.s3.amazonaws.com/tilelive_test/world.mml world.mbtiles');
+    sys.puts('  tilebatch http://mapbox.github.com/tilelive-mapnik/test/world.mml');
     process.exit(1);
 }
 
