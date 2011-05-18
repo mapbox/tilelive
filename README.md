@@ -34,7 +34,7 @@ Each backend is expected to export an object in the following form:
         setup: function(step, resource, data, callback) {}
     }
 
-To use tilelive to serve tiles from mbtiles install [tilelive-mbtiles](http://github.com/mapbox/tilelive-mbtiles). To serve dynamically rendered tiles using mapnik install [tilelive-mapnik](http://github.com/mapbox/tilelive-mapnik). To render tiles using mapnik and store them in the mbtiles format, install both.
+To use tilelive to serve tiles from mbtiles install [mbtiles](http://github.com/mapbox/node-mbtiles). To serve dynamically rendered tiles using mapnik install [tilelive-mapnik](http://github.com/mapbox/tilelive-mapnik). To render tiles using mapnik and store them in the mbtiles format, install both.
 
 ## Install
 
@@ -92,7 +92,7 @@ See [geode](https://github.com/mapbox/geode) for a working example of a tilelive
 
 # 3.0.0
 
-Split out `tilelive-mapnik`, `tilelive-mbtiles` backends.
+Split out `tilelive-mapnik`, `mbtiles` backends.
 
 # 2.0.3
 
