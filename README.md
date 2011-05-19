@@ -64,29 +64,7 @@ To run the tests
 
 ## Usage
 
-See [geode](https://github.com/mapbox/geode) for a working example of a tilelive powered server.
-
-    var express = require('express'),
-        Server = require('tilelive').Server,
-        tilelive = new Server(require('tilelive-mapnik')),
-        app = express.createServer();
-
-    app.get('/:scheme/:mapfile_64/:z/:x/:y.*', function(req, res) {
-        tilelive.serve({
-            scheme: req.param('scheme'),
-            datasource: req.param('mapfile_64'),
-            x: req.param('x'),
-            y: req.param('y'),
-            z: req.param('z'),
-            format: req.params[0]
-        }, function(err, data) {
-            if (!err) {
-                res.send.apply(res, data);
-            } else {
-                res.send('Tile rendering error: ' + err);
-            }
-        });
-    });
+See `examples` or [geode](https://github.com/mapbox/geode) for examples of a tilelive powered server.
 
 # Changelog
 
@@ -122,5 +100,3 @@ Minor release: adds `Pool` argument to `Tile.getMap()`, to let users dispose of 
 * Tiles no longer accept `tile` as a scheme. TMS or XYZ are required; TMS is default.
 * options.mapfile is now options.datasource, and can accept a Carto MML object.
 
-[^1]: http://nodejs.org/
-[^2]: http://mapnik.org/
