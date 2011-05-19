@@ -18,7 +18,7 @@
         "Young Hahn <yhahn>"
     ],
     "dependencies": {
-        "generic-pool": "1.0.x",
+        "generic-pool": "https://github.com/tmcw/node-pool/tarball/error_parameter",
         "optimist": "0.2.x",
         "step": "0.0.x",
         "underscore": "1.1.x"
