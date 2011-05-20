@@ -50,7 +50,7 @@ if (argv.help || argv._.length < 2) {
     ]);
     sys.puts('');
     sys.puts('Example:');
-    sys.puts('  tilebatch http://mapbox.github.com/tilelive-mapnik/test/world.mml');
+    sys.puts('  tilebatch http://mapbox.github.com/tilelive-mapnik/test/world.mml world.mbtiles');
     process.exit(1);
 }
 
