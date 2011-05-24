@@ -11,6 +11,11 @@
         "type": "git",
         "url": "http://github.com/mapbox/tilelive.js.git"
     }],
+    "author": {
+      "name": "MapBox",
+      "url": "http://mapbox.com/",
+      "email": "info@mapbox.com"
+    },
     "contributors": [
         "Tom MacWright <tmcw>",
         "Will White <willwhite>",
