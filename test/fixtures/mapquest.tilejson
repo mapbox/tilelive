@@ -1,0 +1,9 @@
+{
+    "name": "MapQuest Open",
+    "scheme": "tms",
+    "tiles": [ "http://otile1.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg" ],
+    "minzoom": 0,
+    "maxzoom": 18,
+    "bounds": [ -180, -85, 180, 85 ],
+    "center": [ 0, 0, 2 ]
+}
