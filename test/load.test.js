@@ -147,20 +147,6 @@ exports['test loading all'] = function(beforeExit) {
             center: [ 0, 5.0000000006793215, 2 ],
             legend: null,
             scheme: 'xyz'
-        }, {
-            basename: 'plain_3.mbtiles',
-            id: 'plain_3',
-            name: 'plain_3',
-            type: 'baselayer',
-            description: '',
-            version: '1.0.0',
-            formatter: null,
-            bounds: [ -12.480468747741963, 34.59704151068267, 42.53906249240259, 71.52490903141549 ],
-            minzoom: 4,
-            maxzoom: 8,
-            center: [ 15.029296872330317, 53.06097527104908, 6 ],
-            legend: null,
-            scheme: 'xyz'
         }]);
     });
 
