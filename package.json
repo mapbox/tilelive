@@ -1,7 +1,8 @@
 {
     "name"          : "tilelive",
-    "main"          : "./lib/tilelive/index",
-    "description"   : "Map server with backends for mapnik and mbtiles",
+    "version"       : "4.0.0",
+    "main"          : "./lib/tilelive.js",
+    "description"   : "Frontend for various tile backends, mapnik and mbtiles",
     "url"           : "http://github.com/mapbox/tilelive.js",
     "keywords"      : ["map", "server", "mapnik", "tms"],
     "licenses"      : [{
@@ -40,7 +41,6 @@
     "engines": {
         "node": "0.4.x"
     },
-    "version"       : "3.0.2",
     "scripts": {
         "pretest": "npm install --dev",
         "test": "make test"
