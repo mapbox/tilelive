@@ -1,5 +1,8 @@
 var assert = require('assert');
+
 var tilelive = require('..');
+tilelive.protocols['mbtiles:'] = require('mbtiles');
+tilelive.protocols['tilejson:'] = require('tilejson');
 
 exports['test loading invalid url'] = function(beforeExit) {
     var completed = false;
@@ -118,7 +121,8 @@ exports['test loading all'] = function(beforeExit) {
             maxzoom: 4,
             center: [ 0, 7.500000001278025, 2 ],
             legend: null,
-            scheme: 'xyz'
+            scheme: 'tms',
+            size: 561152
         }, {
             basename: 'plain_2.mbtiles',
             id: 'plain_2',
@@ -132,7 +136,8 @@ exports['test loading all'] = function(beforeExit) {
             maxzoom: 4,
             center: [ 0, 5.0000000006793215, 2 ],
             legend: null,
-            scheme: 'xyz'
+            scheme: 'tms',
+            size: 874496,
         }, {
             basename: 'plain_4.mbtiles',
             id: 'plain_4',
@@ -146,7 +151,8 @@ exports['test loading all'] = function(beforeExit) {
             maxzoom: 4,
             center: [ 0, 5.0000000006793215, 2 ],
             legend: null,
-            scheme: 'xyz'
+            scheme: 'tms',
+            size: 684032
         }]);
     });
 

@@ -33,7 +33,9 @@
     "devDependencies": {
         "docco": "0.3.x",
         "expresso": "0.7.x",
-        "jshint": "0.2.0"
+        "jshint": "0.2.0",
+        "mbtiles": "https://github.com/mapbox/node-mbtiles/tarball/tilelive-refactoring",
+        "tilejson": "https://github.com/mapbox/node-tilejson/tarball/master"
     },
     "bin": {
         "tilebatch": "./bin/tilebatch"

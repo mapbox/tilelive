@@ -1,5 +1,8 @@
 var assert = require('assert');
+
 var tilelive = require('..');
+tilelive.protocols['mbtiles:'] = require('mbtiles');
+tilelive.protocols['tilejson:'] = require('tilejson');
 
 exports['test listing'] = function(beforeExit) {
     var completed = false;
