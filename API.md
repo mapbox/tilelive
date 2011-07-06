@@ -1,3 +1,53 @@
+```
+function Tilesource(options, callback) {
+    // call callback when done.
+}
+```
+
+```
+// z, x, y is XYZ
+Tilesource.prototype.getTile = function(z, x, y, callback) {
+    // when initialization is incomplete, this will fail always.
+
+    // obtains tile and calls callback:
+    function(err, tile, options) {
+        // err is set when the tile does not exist or when retrieval failed.
+        // otherwise, tile is a buffer containing the compressed image data
+    }
+};
+```
+
+```javascript
+// z, x, y is XYZ
+Tilesource.prototype.getGrid = function(z, x, y, callback) {
+    // when initialization is incomplete, this will fail always.
+
+    // obtains tile and calls callback:
+    function(err, tile, options) {
+        // err is set when the tile does not exist or when retrieval failed.
+        // otherwise, tile is a buffer containing the compressed image data
+    }
+};
+```
+
+```javascript
+Tilesource.prototype.getInfo = function(callback) {
+    // when initialization is incomplete, this will fail always.
+
+    // obtains tile and calls callback:
+    function(err, data) {
+        // err is set when information retrieval failed.
+        // otherwise, data is a hash containing all the information.
+    }
+};
+```
+
+```javascript
+function Tilesink() {
+    // Constructor is identical to the the Tilesource constructor.
+    // Tilesink and Tilesource should be one object.
+}
+```
 
 ```javascript
 Tilesink.prototype.startWriting = function(callback) {
