@@ -12,24 +12,20 @@ var commands = {
     'copy': '[from] [to] --bbox="[bbox]" --zoom=0-4 --concurrency=100'
 };
 
-function formatDuration(ms) {
-    var seconds = ms / 1000;
-    var parts = [];
+function lpad(str, len, chr) {
+    if (!chr) chr = ' ';
+    str = String(str);
+    len = Math.max(0, len - str.length + 1);
+    return Array(len).join(chr) + str;
+}
 
-    var days = (seconds / 86400) | 0;
-    if (days) parts.push(days + ' ' + (days !== 1 ? 'days' : 'day'));
-    seconds -= days * 86400;
-
-    var hours = (hours / 3600) | 0;
-    if (parts.length || days) parts.push(hours + ' ' + (hours !== 1 ? 'hours' : 'hour'));
+function formatHMS(ms) {
+    var seconds = ms / 1000 | 0;
+    var hours = (seconds / 3600) | 0;
     seconds -= hours * 3600;
-
-    var minutes = (minutes / 60) | 0;
-    if (parts.length || minutes) parts.push(minutes + ' ' + (minutes !== 1 ? 'minutes' : 'minute'));
+    var minutes = (seconds / 60) | 0;
     seconds -= minutes * 60;
-
-    parts.push(seconds.toFixed(3) + ' ' + (seconds !== 1 ? 'seconds' : 'second'));
-    return parts.join(' ');
+    return lpad(hours, 2, '0') + ':' + lpad(minutes, 2, '0') + ':' + lpad(seconds, 2, '0');
 }
 
 switch (argv._[0]) {
@@ -57,7 +53,6 @@ switch (argv._[0]) {
         console.warn('         bbox: %s', util.inspect(bbox));
         console.warn('         zoom: %s', util.inspect(zoom));
         console.warn('  concurrency: %s', util.inspect(concurrency));
-        console.warn('');
 
         tilelive.load(from, function(err, source) {
             if (err) throw err;
@@ -66,22 +61,68 @@ switch (argv._[0]) {
 
                 var copy = tilelive.copy(source, sink, bbox, zoom[0], zoom[1], concurrency);
                 copy.notFound = 0;
-                copy.on('progress', function() {
 
-                });
+                console.warn('');
+                console.warn('|0% --------- 50% -------- 100%|  done |   copied |   failed |    total |   speed |  elapsed |   ETA in');
+                           // |==============================| 50.3% | 00000000 | 00000000 | 200.0/s | 00:00:00 | 00:09:04
+
+                var spinner = '-\\|/', spinnerPos = 3;
+                var lastProgress = 0;
+                function progress() {
+                    var progress = (copy.copied + copy.failed) / copy.total;
+                    if (progress >= 1) return;
+                    util.print('\r|');
+                    var bits = Math.floor(progress * 30) + 1;
+                    util.print(Array(bits).join('='));
+                    util.print(spinner[spinnerPos = (spinnerPos + 1) % 4]);
+                    util.print(Array(31 - bits).join(' '));
+                    util.print('| ');
+                    util.print(lpad((progress * 100).toFixed(1), 4));
+                    util.print('% | ');
+                    util.print(lpad(copy.copied, 8));
+                    util.print(' | ');
+                    util.print(lpad(copy.failed, 8));
+                    util.print(' | ');
+                    util.print(lpad(copy.total, 8));
+                    util.print(' | ');
+                    var speed = copy.copied + copy.failed - lastProgress;
+                    if (speed >= 1000) util.print(lpad(speed.toFixed(0), 5));
+                    else util.print(lpad(speed.toFixed(1), 5));
+                    util.print('/s | ');
+                    util.print(formatHMS(Date.now() - copy.started));
+                    util.print(' | ');
+                    var remaining = (Date.now() - copy.started) / (copy.copied + copy.failed) * (copy.total - copy.copied - copy.failed);
+                    util.print(formatHMS(remaining));
+                    lastProgress = copy.copied + copy.failed;
+                }
+
+                var timeout = setInterval(progress, 1000);
+                progress();
+
                 copy.on('warning', function(err) {
                     if (err.message === 'Tile does not exist') copy.notFound++;
                 });
+
+                var finished = false;
                 copy.on('finished', function() {
-                    console.warn('Finished.');
-                    console.warn('       copied: %d', copy.copied);
-                    console.warn('       failed: %d (%d not found)', copy.failed, copy.notFound);
-                    console.warn('     duration: %s', formatDuration(Date.now() - copy.started));
+                    clearTimeout(timeout);
+                    finished = true;
                     process.exit();
                 });
                 copy.on('error', function(err) {
+                    clearTimeout(timeout);
                     console.warn(err);
                 });
+
+                function exit() {
+                    console.warn('');
+                    console.warn(finished ? 'Finished.' : 'Aborted.');
+                    console.warn('       copied: %d', copy.copied);
+                    console.warn('       failed: %d (%d not found)', copy.failed, copy.notFound);
+                    console.warn('     duration: %s', formatHMS(Date.now() - copy.started));
+                    console.warn('    avg speed: %d tiles/s', ((copy.copied + copy.failed) / (Date.now() - copy.started) * 1000).toFixed(1));
+                }
+                process.on('exit', exit).on('SIGINT', process.exit);
             });
         });
 
