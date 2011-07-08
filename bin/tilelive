@@ -5,8 +5,8 @@ var util = require('util');
 var argv = require('optimist').argv;
 var tilelive = require('..');
 
-tilelive.protocols['mbtiles:'] = require('mbtiles');
-tilelive.protocols['tilejson:'] = require('tilejson');
+require('mbtiles').registerProtocols(tilelive);
+require('tilejson').registerProtocols(tilelive);
 
 var commands = {
     'copy': '[from] [to] --bbox="[bbox]" --zoom=0-4 --concurrency=100'
