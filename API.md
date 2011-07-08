@@ -1,10 +1,10 @@
-```
+```javascript
 function Tilesource(options, callback) {
     // call callback when done.
 }
 ```
 
-```
+```javascript
 // z, x, y is XYZ
 Tilesource.prototype.getTile = function(z, x, y, callback) {
     // when initialization is incomplete, this will fail always.
