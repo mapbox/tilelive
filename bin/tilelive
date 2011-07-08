@@ -63,7 +63,7 @@ switch (argv._[0]) {
                 copy.notFound = 0;
 
                 console.warn('');
-                console.warn('|0% --------- 50% -------- 100%|  done |   copied |   failed |    total |    speed |  elapsed |   ETA in');
+                console.warn('|0% --------- 50% -------- 100%|  done |   copied |   failed |    total |   speed |  elapsed |   ETA in');
 
                 var spinner = '-\\|/', spinnerPos = 3;
                 var lastProgress = 0;
