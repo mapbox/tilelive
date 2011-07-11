@@ -9,7 +9,7 @@ require('mbtiles').registerProtocols(tilelive);
 require('tilejson').registerProtocols(tilelive);
 
 var commands = {
-    'copy': '[from] [to] --bbox="[bbox]" --zoom=0-4 --concurrency=100'
+    'copy': '[from] [to] [--bbox="..."] [--zoom=0-4] [--concurrency=100] [--copy-tiles] [--copy-grids]'
 };
 
 function lpad(str, len, chr) {
@@ -47,6 +47,9 @@ switch (argv._[0]) {
         var concurrency = parseInt(argv.concurrency || 100, 10);
         if (isNaN(concurrency)) usage('Invalid concurrency: ' + util.inspect(argv.concurrency));
 
+        var tiles = Boolean(argv['copy-tiles']);
+        var grids = Boolean(argv['copy-grids']);
+
         console.warn('Starting...');
         console.warn('         from: %s', url.format(from));
         console.warn('           to: %s', url.format(to));
@@ -59,7 +62,16 @@ switch (argv._[0]) {
             tilelive.load(to, function(err, sink) {
                 if (err) throw err;
 
-                var copy = tilelive.copy(source, sink, bbox, zoom[0], zoom[1], concurrency);
+                var copy = tilelive.copy({
+                    source: source,
+                    sink: sink,
+                    bbox: bbox,
+                    minZoom: zoom[0],
+                    maxZoom: zoom[1],
+                    concurrency: concurrency,
+                    tiles: tiles,
+                    grids: grids
+                });
                 copy.notFound = 0;
 
                 console.warn('');
@@ -100,6 +112,7 @@ switch (argv._[0]) {
 
                 copy.on('warning', function(err) {
                     if (err.message === 'Tile does not exist') copy.notFound++;
+                    else if (err.message === 'Grid does not exist') copy.notFound++;
                 });
 
                 var finished = false;
