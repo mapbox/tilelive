@@ -74,7 +74,7 @@ See `examples` or [geode](https://github.com/mapbox/geode) for examples of a til
 
 # Changelog
 
-# 4.0.0
+## 4.0.0
 
 * Updated to use Tilestore/Tilesink/Tilesource interface
 * Uses the TileJSON format internally
@@ -82,11 +82,11 @@ See `examples` or [geode](https://github.com/mapbox/geode) for examples of a til
 * Interfaces updated to XYZ. Order of parameters is now z, x, y
 * Added copy command
 
-# 3.0.0
+## 3.0.0
 
 Split out `tilelive-mapnik`, `mbtiles` backends.
 
-# 2.0.3
+## 2.0.3
 
 This release is all distribution fixes:
 
@@ -94,22 +94,22 @@ This release is all distribution fixes:
 * Fixes test that depended on node-get
 * Removes tilelive_server example: replaced by [geode](https://github.com/mapbox/geode).
 
-# 2.0.2
+## 2.0.2
 
 * Now uses and requires node-mapnik 0.3.0
 
-# 2.0.1
+## 2.0.1
 
 Minor release: adds `Pool` argument to `Tile.getMap()`, to let users dispose of used maps.
 
-# 2.0.0
+## 2.0.0
 
 * `node-sqlite3` replaces `node-sqlite` for better performance and stability.
 * deep render grid support - `layer.json` now supports legends and interaction.
 * `server.js` removed from examples
 * `tilelive_server.js` added to `bin/`
 
-# 1.1.0
+## 1.1.0
 
 * Tiles no longer accept `tile` as a scheme. TMS or XYZ are required; TMS is default.
 * options.mapfile is now options.datasource, and can accept a Carto MML object.
