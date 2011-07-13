@@ -21,7 +21,8 @@
         "Tom MacWright <tmcw>",
         "Will White <willwhite>",
         "Dane Springmeyer <springmeyer>",
-        "Young Hahn <yhahn>"
+        "Young Hahn <yhahn>",
+        "Konstantin Käfer <kkaefer>"
     ],
     "dependencies": {
         "generic-pool": "1.0.x",
@@ -34,8 +35,8 @@
         "docco": "0.3.x",
         "expresso": "0.7.x",
         "jshint": "0.2.0",
-        "mbtiles": "https://github.com/mapbox/node-mbtiles/tarball/tilelive-refactoring",
-        "tilejson": "https://github.com/mapbox/node-tilejson/tarball/master"
+        "mbtiles": "0.1.x",
+        "tilejson": "0.0.x"
     },
     "bin": {
         "tilebatch": "./bin/tilebatch"
