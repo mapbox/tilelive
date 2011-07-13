@@ -1,60 +1,66 @@
 # tilelive.js
 
-tilelive.js is a tile server for [node.js](http://nodejs.org/) which supports on-the-fly
-configuration and advanced interaction output. It can be used to add a tile server to an existing web application or wrapped with a light standalone web tile server.
+tilelive.js is an interface for tilestore modules for [node.js](http://nodejs.org/). It defines an [API](https://github.com/mapbox/tilelive.js/blob/master/API.md) to interact with implementations for a particular tile store.
 
 ## Backends
 
-tilelive.js supports backends for serving tiles and for storing them when creating [mbtiles](http://mbtiles.org) or other caches of tiles.
+- [MBTiles](https://github.com/mapbox/node-mbtiles)
+- [TileJSON](https://github.com/mapbox/node-tilejson)
+- [Mapnik](https://github.com/mapbox/tilelive-mapnik)
 
-Each backend is expected to export an object in the following form:
+## Usage
 
-    module.exports = {
-        // Return an object usable with the `Pool()` constructor from
-        // `generic-pool`. The resource will be pooled and passed back to
-        // other backend methods for serving and storing.
-        pool: function(datasource) {
-            return {
-                create: [Function],
-                destroy: [Function]
-            }
-        },
+Tilelive doesn't ship with any Tilestore backends by default. To use a particular backend, register it with tilelive using `require('[implementation]').registerProtocols(tilelive);`.
 
-        // For server backends.
-        // Serve a tile, grid, or other resource. The `callback` function
-        // should be called with `callback(err, data)` where `data` is an array
-        // such that `data[0]` is suitable as a response body and `data[1]`
-        // contains a hash of HTTP headers that describe the data.
-        serve: function(resource, options, callback) {},
+* `tilelive.list(source, callback)`: Lists all tilesets in a directory. `source` is a folder that is used by registered implementations to search for individual tilesets. `callback` receives an error object (or `null`) and a hash hash with keys being Tilestore IDs and values being Tilestore URIs. Example:
 
-        // For storage backends.
-        // Store tiles, grids, or perform other tasks related to batch tile
-        // generation. Steps called include: setup, metadata, tiles, grids,
-        // and finish.
-        setup: function(step, resource, data, callback) {}
-    }
+```javascript
+{
+    "world-light": "mbtiles:///path/to/file/world-light.mbtiles",
+    "mapquest": "tilejson:///path/to/file/mapquest.tilejson"
+}
+```
 
-To use tilelive to serve tiles from mbtiles install [mbtiles](http://github.com/mapbox/node-mbtiles). To serve dynamically rendered tiles using mapnik install [tilelive-mapnik](http://github.com/mapbox/tilelive-mapnik). To render tiles using mapnik and store them in the mbtiles format, install both.
+* `tilelive.findID(source, id, callback)`: Looks for a particular tileset ID in a directory. `callback` receives an error object (or `null`) and the URI of the tileset.
 
-## Install
 
-Install master:
+* `tilelive.load(uri, callback)`: Loads the Tilestore object associated with the specified `uri`. `callback` receives an error object (or `null`) and the Tilestore object.
 
-    git clone git://github.com/mapbox/tilelive.js.git tilelive
-    cd tilelive
-    npm install .
+* `tilelive.info(uri, callback)`: Loads the Tilestore object associated with the specified `uri` and retrieves its metadata in a [TileJSON](http://github.com/mapbox/tilejson) compliant format. `callback` receives an error object (or `null`), the metadata hash and the Tilestore object.
 
-Or install latest release via npm repositories:
+* `tilelive.all(source, callback)`: Loads metadata in a [TileJSON](http://github.com/mapbox/tilejson) compliant format for all tilesets in the `source` directory. `callback` receives an error object (or `null`) and an array with TileJSON metadata about each tileset in that directory.
 
-    npm install tilelive
 
-## tilebatch
+* `tilelive.verify(tilejson)`: Validates a TileJSON object and returns error objects for invalid entries.
 
-tilelive can be used to create `mbtiles` files or possibly other formats using the `tilebatch` command.
+* `tilelive.copy(args, callback)`: Copies data from one tilestore into another tilestore. `args` is a configuration hash with these keys:
 
-    tilebatch <datasource> <filepath>
+  * `source`: a Tilestore object that implements the Tilesource interface
+  * `sink`: a Tilestore object that implements the Tilesink interface
+  * `bbox`: an array with W/S/E/N boundaries in WGS84 format (-180...180, -90...90)
+  * `minZoom`: the minimum zoom for data to be copied (inclusive)
+  * `maxZoom`: the maximum zoom for data to be copied (inclusive)
+  * `concurrency`: (default: `100`) how many data objects should be copied simultaneously.
+  * `callback`: (optional) called when copying is complete
+  * `tiles`: copy tiles (`true` or `false`)
+  * `grids`: copy grids (`true` or `false`)
 
-For a full list of options, run `tilebatch --help`.
+  This function returns an EventEmitter that has these events emitted:
+
+  * `warning`: An error occurred during copying. `err` is the first argument.
+  * `error`: An error occured while initializing the tilesource/tilesink.
+  * `finished`: Copying completed
+
+  The EventEmitter also has these properties. They are updated continuously while copying. Check them occassionally to report status to the user.
+
+  * `copied`: Number of elements that have been copied so far
+  * `failed`: Number of elements that couldn't be copied.
+  * `total`: Total number of elements to be copied.
+  * `started`: Timestamp of when the action started in milliseconds after epoch
+
+## bin/tilelive
+
+tilelive can be used to copy data between tilestores. For a full list of options, run `bin/tilelive`.
 
 ## Tests
 
@@ -68,11 +74,19 @@ See `examples` or [geode](https://github.com/mapbox/geode) for examples of a til
 
 # Changelog
 
-# 3.0.0
+## 4.0.0
+
+* Updated to use Tilestore/Tilesink/Tilesource interface
+* Uses the TileJSON format internally
+* Switched to Tilestore URIs
+* Interfaces updated to XYZ. Order of parameters is now z, x, y
+* Added copy command
+
+## 3.0.0
 
 Split out `tilelive-mapnik`, `mbtiles` backends.
 
-# 2.0.3
+## 2.0.3
 
 This release is all distribution fixes:
 
@@ -80,22 +94,22 @@ This release is all distribution fixes:
 * Fixes test that depended on node-get
 * Removes tilelive_server example: replaced by [geode](https://github.com/mapbox/geode).
 
-# 2.0.2
+## 2.0.2
 
 * Now uses and requires node-mapnik 0.3.0
 
-# 2.0.1
+## 2.0.1
 
 Minor release: adds `Pool` argument to `Tile.getMap()`, to let users dispose of used maps.
 
-# 2.0.0
+## 2.0.0
 
 * `node-sqlite3` replaces `node-sqlite` for better performance and stability.
 * deep render grid support - `layer.json` now supports legends and interaction.
 * `server.js` removed from examples
 * `tilelive_server.js` added to `bin/`
 
-# 1.1.0
+## 1.1.0
 
 * Tiles no longer accept `tile` as a scheme. TMS or XYZ are required; TMS is default.
 * options.mapfile is now options.datasource, and can accept a Carto MML object.

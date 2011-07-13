@@ -1,7 +1,8 @@
 {
     "name"          : "tilelive",
-    "main"          : "./lib/tilelive/index",
-    "description"   : "Map server with backends for mapnik and mbtiles",
+    "version"       : "4.0.0",
+    "main"          : "./lib/tilelive.js",
+    "description"   : "Frontend for various tile backends, mapnik and mbtiles",
     "url"           : "http://github.com/mapbox/tilelive.js",
     "keywords"      : ["map", "server", "mapnik", "tms"],
     "licenses"      : [{
@@ -20,7 +21,8 @@
         "Tom MacWright <tmcw>",
         "Will White <willwhite>",
         "Dane Springmeyer <springmeyer>",
-        "Young Hahn <yhahn>"
+        "Young Hahn <yhahn>",
+        "Konstantin Käfer <kkaefer>"
     ],
     "dependencies": {
         "generic-pool": "1.0.x",
@@ -32,7 +34,9 @@
     "devDependencies": {
         "docco": "0.3.x",
         "expresso": "0.7.x",
-        "jshint": "0.2.0"
+        "jshint": "0.2.0",
+        "mbtiles": "0.1.x",
+        "tilejson": "0.0.x"
     },
     "bin": {
         "tilebatch": "./bin/tilebatch"
@@ -40,7 +44,6 @@
     "engines": {
         "node": "0.4.x"
     },
-    "version"       : "3.0.2",
     "scripts": {
         "pretest": "npm install --dev",
         "test": "make test"
