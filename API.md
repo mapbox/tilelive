@@ -85,16 +85,28 @@ Tilesink.prototype.stopWriting = function(callback) {
 ```
 
 ```javascript
+Tilesink.prototype.putInfo = function(info, callback) {
+    // Stores metadata into the tilesink. Info is a key-value hash with metadata.
+    // Implementations may decide to reject invalid keys.
+
+    function callback(err) {
+        // err is null when the metadata could be written successfully.
+        // err is an Error object otherwise.
+    }
+};
+```
+
+```javascript
 Tilesink.prototype.putTile = function(z, x, y, tile, callback) {
     // Stores a tile into the data store. Parameters are in XYZ format.
     // `tile` must be a Buffer containing the compressed image.
-    
+
     function callback(err) {
         // err is null when the write request was received successfully.
         // This doesn't mean that the tile was already written to the data store.
         // err is an Error object otherwise.
     }
-    
+
     // Implementations may decide to cache multiple tile requests and only
     // commit them to the data store periodically to improve performance.
     // Therefore, users MUST NOT rely on this function to persist changes.
