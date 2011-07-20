@@ -29,20 +29,11 @@
         "sphericalmercator": "1.0.0",
         "underscore": "1.1.x"
     },
-    "devDependencies": {
-        "docco": "0.3.x",
-        "expresso": "0.7.x",
-        "jshint": "0.2.0"
-    },
     "bin": {
         "tilebatch": "./bin/tilebatch"
     },
     "engines": {
         "node": "0.4.x"
     },
-    "version"       : "3.0.2",
-    "scripts": {
-        "pretest": "npm install --dev",
-        "test": "make test"
-    }
+    "version"       : "3.0.3"
 }
