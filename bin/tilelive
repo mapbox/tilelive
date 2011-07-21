@@ -82,11 +82,10 @@ switch (argv._[0]) {
                 var lastProgress = 0;
                 function progress() {
                     var progress = (copy.copied + copy.failed) / copy.total;
-                    if (progress >= 1) return;
                     util.print('\r|');
                     var bits = Math.floor(progress * 30) + 1;
                     util.print(Array(bits).join('='));
-                    util.print(spinner[spinnerPos = (spinnerPos + 1) % 4]);
+                    if (progress < 1) util.print(spinner[spinnerPos = (spinnerPos + 1) % 4]);
                     util.print(Array(31 - bits).join(' '));
                     util.print('| ');
                     util.print(lpad((progress * 100).toFixed(1), 4));
@@ -120,6 +119,7 @@ switch (argv._[0]) {
                 copy.on('finished', function() {
                     clearTimeout(timeout);
                     finished = true;
+                    progress();
                     process.exit();
                 });
                 copy.on('error', function(err) {
