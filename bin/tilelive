@@ -7,6 +7,7 @@ var tilelive = require('..');
 
 require('mbtiles').registerProtocols(tilelive);
 require('tilejson').registerProtocols(tilelive);
+require('tilelive-mapnik').registerProtocols(tilelive);
 
 var commands = {
     'copy': '[from] [to] [--bbox="..."] [--zoom=0-4] [--concurrency=100] [--copy-tiles] [--copy-grids]'
