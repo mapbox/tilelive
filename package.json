@@ -39,7 +39,7 @@
         "tilejson": "0.0.x"
     },
     "bin": {
-        "tilebatch": "./bin/tilebatch"
+        "tilelive": "./bin/tilelive"
     },
     "engines": {
         "node": "0.4.x"
