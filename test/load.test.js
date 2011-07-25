@@ -96,6 +96,12 @@ exports['test loading all'] = function(beforeExit) {
     tilelive.all('test/fixtures', function(err, info) {
         completed = true;
         if (err) throw err;
+
+        // Sort tilesets before deepEqual.
+        info.sort(function(a, b) {
+            return (a.basename || '0') < (b.basename || '0') ? -1 : 1;
+        });
+
         assert.deepEqual(info, [{
             name: 'MapQuest Open',
             scheme: 'tms',
@@ -122,7 +128,7 @@ exports['test loading all'] = function(beforeExit) {
             center: [ 0, 7.500000001278025, 2 ],
             legend: null,
             scheme: 'tms',
-            size: 561152
+            filesize: 561152
         }, {
             basename: 'plain_2.mbtiles',
             id: 'plain_2',
@@ -137,7 +143,7 @@ exports['test loading all'] = function(beforeExit) {
             center: [ 0, 5.0000000006793215, 2 ],
             legend: null,
             scheme: 'tms',
-            size: 874496,
+            filesize: 874496,
         }, {
             basename: 'plain_4.mbtiles',
             id: 'plain_4',
@@ -152,7 +158,7 @@ exports['test loading all'] = function(beforeExit) {
             center: [ 0, 5.0000000006793215, 2 ],
             legend: null,
             scheme: 'tms',
-            size: 684032
+            filesize: 684032
         }]);
     });
 
