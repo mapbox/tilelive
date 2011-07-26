@@ -32,7 +32,7 @@ function formatHMS(ms) {
 switch (argv._[0]) {
     case 'copy':
         // if (!argv._[1]) usage();
-        var from = url.parse(argv._[1] || '');
+        var from = url.parse(argv._[1] || '', true);
         if (!from.protocol) usage('Invalid from protocol: ' + argv._[1]);
 
         var to = url.parse(argv._[2] || '');
