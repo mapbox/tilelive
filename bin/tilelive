@@ -38,7 +38,7 @@ switch (argv._[0]) {
         var to = url.parse(argv._[2] || '');
         if (!to.protocol) usage('Invalid to protocol: ' + argv._[2]);
 
-        var bbox = String(argv.bbox || '-180,-90,180,90').split(/\s*[, ]\s*/).map(parseFloat);
+        var bbox = String(argv.bbox || '-180,-85.05112877980659,180,85.05112877980659').split(/\s*[, ]\s*/).map(parseFloat);
         if (bbox.length !== 4) usage('Invalid bounding box: ' + util.inspect(argv.bbox));
 
         var zoom = String(argv.zoom || 0).split(/\s*[,-]\s*/).map(parseFloat);
