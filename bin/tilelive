@@ -84,11 +84,11 @@ switch (argv._[0]) {
                     var progress = (copy.copied + copy.failed) / copy.total;
                     util.print('\r|');
                     var bits = Math.floor(progress * 30) + 1;
-                    util.print(Array(bits).join('='));
+                    util.print(Array(Math.max(0, bits)).join('='));
                     if (progress < 1) util.print(spinner[spinnerPos = (spinnerPos + 1) % 4]);
-                    util.print(Array(31 - bits).join(' '));
+                    util.print(Array(Math.max(0, 31 - bits)).join(' '));
                     util.print('| ');
-                    util.print(lpad((progress * 100).toFixed(1), 4));
+                    util.print(lpad((progress * 100).toFixed(progress < 1 ? 1 : 0), 4));
                     util.print('% | ');
                     util.print(lpad(copy.copied, 8));
                     util.print(' | ');
