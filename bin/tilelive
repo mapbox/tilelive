@@ -148,9 +148,10 @@ switch (argv._[0]) {
                         console.warn('  peak memory: %d bytes', copy.peakMemory);
                         console.warn('    avg speed: %d tiles/s', ((copy.copied + copy.failed) / (Date.now() - copy.started) * 1000).toFixed(1));
                     } else {
-                        console.log('%d,%d,%d,%d,%d,%d',
+                        console.log('%d,%d,%d,%d,%d,%d,%d',
                             concurrency,
                             source.metatile,
+                            source.bufferSize,
                             copy.peakMemory,
                             zoom[0],
                             zoom[1],
