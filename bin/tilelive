@@ -152,8 +152,8 @@ switch (argv._[0]) {
                             concurrency,
                             source.metatile,
                             copy.peakMemory,
-                            args.minZoom,
-                            args.maxZoom,
+                            zoom[0],
+                            zoom[1],
                             ((copy.copied + copy.failed) / (Date.now() - copy.started) * 1000)
                         );
                     }
