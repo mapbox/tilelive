@@ -2,6 +2,7 @@
 
 var url = require('url');
 var util = require('util');
+var os = require('os');
 var argv = require('optimist').argv;
 var tilelive = require('..');
 
@@ -45,22 +46,13 @@ switch (argv._[0]) {
         if (zoom.length === 1) zoom[1] = zoom[0];
         if (zoom.length != 2 || isNaN(zoom[0]) || isNaN(zoom[1])) usage('Invalid zoom range: ' + util.inspect(argv.zoom));
 
-        var concurrency = parseInt(argv.concurrency || 100, 10);
+        var concurrency = parseInt(argv.concurrency || os.cpus().length * 25, 10);
         if (isNaN(concurrency)) usage('Invalid concurrency: ' + util.inspect(argv.concurrency));
 
         var benchmark = argv.benchmark;
 
         var tiles = Boolean(argv['copy-tiles']);
         var grids = Boolean(argv['copy-grids']);
-
-        if (!benchmark) {
-            console.warn('Starting...');
-            console.warn('         from: %s', url.format(from));
-            console.warn('           to: %s', url.format(to));
-            console.warn('         bbox: %s', util.inspect(bbox));
-            console.warn('         zoom: %s', util.inspect(zoom));
-            console.warn('  concurrency: %s', util.inspect(concurrency));
-        }
 
         tilelive.load(from, function(err, source) {
             if (err) throw err;
@@ -81,6 +73,12 @@ switch (argv._[0]) {
                 copy.peakMemory = 0;
 
                 if (!benchmark) {
+                    console.warn('Starting...');
+                    console.warn('         from: %s', url.format(from));
+                    console.warn('           to: %s', url.format(to));
+                    console.warn('         bbox: %s', util.inspect(bbox));
+                    console.warn('         zoom: %s', util.inspect(zoom));
+                    console.warn('  concurrency: %s', util.inspect(concurrency));
                     console.warn('     metatile: %s', util.inspect(source.metatile));
                     console.warn('');
                     console.warn('|0% --------- 50% -------- 100%|  done |   copied |   failed |    total |   speed |  elapsed |   ETA in');
@@ -150,10 +148,12 @@ switch (argv._[0]) {
                         console.warn('  peak memory: %d bytes', copy.peakMemory);
                         console.warn('    avg speed: %d tiles/s', ((copy.copied + copy.failed) / (Date.now() - copy.started) * 1000).toFixed(1));
                     } else {
-                        console.log('%d,%d,%d,%d',
+                        console.log('%d,%d,%d,%d,%d,%d',
                             concurrency,
                             source.metatile,
                             copy.peakMemory,
+                            args.minZoom,
+                            args.maxZoom,
                             ((copy.copied + copy.failed) / (Date.now() - copy.started) * 1000)
                         );
                     }
