@@ -48,15 +48,19 @@ switch (argv._[0]) {
         var concurrency = parseInt(argv.concurrency || 100, 10);
         if (isNaN(concurrency)) usage('Invalid concurrency: ' + util.inspect(argv.concurrency));
 
+        var benchmark = argv.benchmark;
+
         var tiles = Boolean(argv['copy-tiles']);
         var grids = Boolean(argv['copy-grids']);
 
-        console.warn('Starting...');
-        console.warn('         from: %s', url.format(from));
-        console.warn('           to: %s', url.format(to));
-        console.warn('         bbox: %s', util.inspect(bbox));
-        console.warn('         zoom: %s', util.inspect(zoom));
-        console.warn('  concurrency: %s', util.inspect(concurrency));
+        if (!benchmark) {
+            console.warn('Starting...');
+            console.warn('         from: %s', url.format(from));
+            console.warn('           to: %s', url.format(to));
+            console.warn('         bbox: %s', util.inspect(bbox));
+            console.warn('         zoom: %s', util.inspect(zoom));
+            console.warn('  concurrency: %s', util.inspect(concurrency));
+        }
 
         tilelive.load(from, function(err, source) {
             if (err) throw err;
@@ -74,41 +78,49 @@ switch (argv._[0]) {
                     grids: grids
                 });
                 copy.notFound = 0;
+                copy.peakMemory = 0;
 
-                console.warn('');
-                console.warn('|0% --------- 50% -------- 100%|  done |   copied |   failed |    total |   speed |  elapsed |   ETA in');
+                if (!benchmark) {
+                    console.warn('     metatile: %s', util.inspect(source.metatile));
+                    console.warn('');
+                    console.warn('|0% --------- 50% -------- 100%|  done |   copied |   failed |    total |   speed |  elapsed |   ETA in');
 
-                var spinner = '-\\|/', spinnerPos = 3;
-                var lastProgress = 0;
-                function progress() {
-                    var progress = (copy.copied + copy.failed) / copy.total;
-                    util.print('\r|');
-                    var bits = Math.floor(progress * 30) + 1;
-                    util.print(Array(Math.max(0, bits)).join('='));
-                    if (progress < 1) util.print(spinner[spinnerPos = (spinnerPos + 1) % 4]);
-                    util.print(Array(Math.max(0, 31 - bits)).join(' '));
-                    util.print('| ');
-                    util.print(lpad((progress * 100).toFixed(progress < 1 ? 1 : 0), 4));
-                    util.print('% | ');
-                    util.print(lpad(copy.copied, 8));
-                    util.print(' | ');
-                    util.print(lpad(copy.failed, 8));
-                    util.print(' | ');
-                    util.print(lpad(copy.total, 8));
-                    util.print(' | ');
-                    var speed = copy.copied + copy.failed - lastProgress;
-                    if (speed >= 1000) util.print(lpad(speed.toFixed(0), 5));
-                    else util.print(lpad(speed.toFixed(1), 5));
-                    util.print('/s | ');
-                    util.print(formatHMS(Date.now() - copy.started));
-                    util.print(' | ');
-                    var remaining = (Date.now() - copy.started) / (copy.copied + copy.failed) * (copy.total - copy.copied - copy.failed);
-                    util.print(formatHMS(remaining));
-                    lastProgress = copy.copied + copy.failed;
+                    var spinner = '-\\|/', spinnerPos = 3;
+                    var lastProgress = 0;
+                    function progress() {
+                        var progress = (copy.copied + copy.failed) / copy.total;
+                        util.print('\r|');
+                        var bits = Math.floor(progress * 30) + 1;
+                        util.print(Array(Math.max(0, bits)).join('='));
+                        if (progress < 1) util.print(spinner[spinnerPos = (spinnerPos + 1) % 4]);
+                        util.print(Array(Math.max(0, 31 - bits)).join(' '));
+                        util.print('| ');
+                        util.print(lpad((progress * 100).toFixed(progress < 1 ? 1 : 0), 4));
+                        util.print('% | ');
+                        util.print(lpad(copy.copied, 8));
+                        util.print(' | ');
+                        util.print(lpad(copy.failed, 8));
+                        util.print(' | ');
+                        util.print(lpad(copy.total, 8));
+                        util.print(' | ');
+                        var speed = copy.copied + copy.failed - lastProgress;
+                        if (speed >= 1000) util.print(lpad(speed.toFixed(0), 5));
+                        else util.print(lpad(speed.toFixed(1), 5));
+                        util.print('/s | ');
+                        util.print(formatHMS(Date.now() - copy.started));
+                        util.print(' | ');
+                        var remaining = (Date.now() - copy.started) / (copy.copied + copy.failed) * (copy.total - copy.copied - copy.failed);
+                        util.print(formatHMS(remaining));
+                        lastProgress = copy.copied + copy.failed;
+                    }
+
+                    var timeout = setInterval(progress, 1000);
+                    progress();
                 }
 
-                var timeout = setInterval(progress, 1000);
-                progress();
+                var memoryTimeout = setInterval(function() {
+                    copy.peakMemory = Math.max(copy.peakMemory, process.memoryUsage().rss);
+                }, 1000);
 
                 copy.on('warning', function(err) {
                     if (err.message === 'Tile does not exist') copy.notFound++;
@@ -118,8 +130,9 @@ switch (argv._[0]) {
                 var finished = false;
                 copy.on('finished', function() {
                     clearTimeout(timeout);
+                    clearTimeout(memoryTimeout);
                     finished = true;
-                    progress();
+                    if (!benchmark) progress();
                     process.exit();
                 });
                 copy.on('error', function(err) {
@@ -128,12 +141,22 @@ switch (argv._[0]) {
                 });
 
                 function exit() {
-                    console.warn('');
-                    console.warn(finished ? 'Finished.' : 'Aborted.');
-                    console.warn('       copied: %d', copy.copied);
-                    console.warn('       failed: %d (%d not found)', copy.failed, copy.notFound);
-                    console.warn('     duration: %s', formatHMS(Date.now() - copy.started));
-                    console.warn('    avg speed: %d tiles/s', ((copy.copied + copy.failed) / (Date.now() - copy.started) * 1000).toFixed(1));
+                    if (!benchmark) {
+                        console.warn('');
+                        console.warn(finished ? 'Finished.' : 'Aborted.');
+                        console.warn('       copied: %d', copy.copied);
+                        console.warn('       failed: %d (%d not found)', copy.failed, copy.notFound);
+                        console.warn('     duration: %s', formatHMS(Date.now() - copy.started));
+                        console.warn('  peak memory: %d bytes', copy.peakMemory);
+                        console.warn('    avg speed: %d tiles/s', ((copy.copied + copy.failed) / (Date.now() - copy.started) * 1000).toFixed(1));
+                    } else {
+                        console.log('concurrency=%d metatile=%d peakmem=%d speed=%d',
+                            concurrency,
+                            source.metatile,
+                            copy.peakMemory,
+                            ((copy.copied + copy.failed) / (Date.now() - copy.started) * 1000)
+                        );
+                    }
                 }
 
                 // Make sure we always report the status when exiting, even when force-quitting.
