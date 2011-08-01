@@ -133,7 +133,7 @@ switch (argv._[0]) {
                     clearTimeout(memoryTimeout);
                     finished = true;
                     if (!benchmark) progress();
-                    process.exit();
+                    process.exit(0);
                 });
                 copy.on('error', function(err) {
                     clearTimeout(timeout);
@@ -150,7 +150,7 @@ switch (argv._[0]) {
                         console.warn('  peak memory: %d bytes', copy.peakMemory);
                         console.warn('    avg speed: %d tiles/s', ((copy.copied + copy.failed) / (Date.now() - copy.started) * 1000).toFixed(1));
                     } else {
-                        console.log('concurrency=%d metatile=%d peakmem=%d speed=%d',
+                        console.log('%d,%d,%d,%d',
                             concurrency,
                             source.metatile,
                             copy.peakMemory,
@@ -160,7 +160,9 @@ switch (argv._[0]) {
                 }
 
                 // Make sure we always report the status when exiting, even when force-quitting.
-                process.on('exit', exit).on('SIGINT', process.exit);
+                process.on('exit', exit).on('SIGINT', function() {
+                    process.exit(1);
+                });
             });
         });
 
