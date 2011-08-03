@@ -36,7 +36,8 @@
         "expresso": "0.7.x",
         "jshint": "0.2.0",
         "mbtiles": "0.1.x",
-        "tilejson": "0.0.x"
+        "tilejson": "0.0.x",
+        "tilelive-mapnik": "0.2.x"
     },
     "bin": {
         "tilelive": "./bin/tilelive"
