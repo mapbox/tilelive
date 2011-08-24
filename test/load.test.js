@@ -27,6 +27,7 @@ exports['test loading url'] = function(beforeExit) {
         assert.equal(typeof source.getTile, 'function');
         assert.equal(typeof source.getGrid, 'function');
         assert.equal(typeof source.getInfo, 'function');
+        source._close();
     });
 
     beforeExit(function() {
@@ -34,27 +35,32 @@ exports['test loading url'] = function(beforeExit) {
     });
 };
 
-
 exports['test loading metadata'] = function(beforeExit) {
     var completed = false;
 
-    tilelive.info('mbtiles://' + __dirname + '/fixtures/plain_2.mbtiles', function(err, info) {
+    tilelive.info('mbtiles://' + __dirname + '/fixtures/plain_2.mbtiles', function(err, info, handler) {
         completed = true;
         if (err) throw err;
-        assert.deepEqual(info, { basename: 'plain_2.mbtiles',
-            id: 'plain_2',
-            name: 'plain_2',
-            type: 'baselayer',
-            description: '',
-            version: '1.0.0',
-            formatter: 'function(options, data) { if (options.format === \'full\') { return \'\' + data.NAME + \' (Population: \' + data.POP2005 + \')\'; } else { return \'\' + data.NAME + \'\'; } }',
-            bounds: [ -179.9999999749438, -69.99999999526695, 179.9999999749438, 79.99999999662558 ],
-            minzoom: 0,
-            maxzoom: 4,
-            center: [ 0, 5.0000000006793215, 2 ],
-            legend: null,
-            scheme: 'xyz'
+        assert.deepEqual(info, { filesize: 874496,
+              scheme: 'tms',
+              basename: 'plain_2.mbtiles',
+              id: 'plain_2',
+              name: 'plain_2',
+              type: 'baselayer',
+              description: '',
+              version: '1.0.0',
+              formatter: 'function(options, data) { if (options.format === \'full\') { return \'\' + data.NAME + \' (Population: \' + data.POP2005 + \')\'; } else { return \'\' + data.NAME + \'\'; } }',
+              bounds: 
+               [ -179.9999999749438,
+                 -69.99999999526695,
+                 179.9999999749438,
+                 79.99999999662558 ],
+              minzoom: 0,
+              maxzoom: 4,
+              center: [ 0, 5.0000000006793215, 2 ],
+              legend: null
         });
+        handler._close();
     });
 
     beforeExit(function() {
@@ -62,11 +68,10 @@ exports['test loading metadata'] = function(beforeExit) {
     });
 };
 
-
 exports['test loading metadata'] = function(beforeExit) {
     var completed = false;
 
-    tilelive.info('tilejson://' + __dirname + '/fixtures/mapquest.tilejson', function(err, info) {
+    tilelive.info('tilejson://' + __dirname + '/fixtures/mapquest.tilejson', function(err, info, handler) {
         completed = true;
         if (err) throw err;
         assert.deepEqual(info, {
@@ -82,6 +87,7 @@ exports['test loading metadata'] = function(beforeExit) {
             scheme: 'tms',
             tiles: [ 'http://otile1.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg' ]
         });
+        handler._close();
     });
 
     beforeExit(function() {
@@ -89,11 +95,10 @@ exports['test loading metadata'] = function(beforeExit) {
     });
 };
 
-
 exports['test loading all'] = function(beforeExit) {
     var completed = false;
 
-    tilelive.all('test/fixtures', function(err, info) {
+    tilelive.all('test/fixtures', function(err, info, handlers) {
         completed = true;
         if (err) throw err;
 
@@ -101,7 +106,6 @@ exports['test loading all'] = function(beforeExit) {
         info.sort(function(a, b) {
             return (a.basename || '0') < (b.basename || '0') ? -1 : 1;
         });
-
         assert.deepEqual(info, [{
             name: 'MapQuest Open',
             scheme: 'tms',
@@ -160,10 +164,12 @@ exports['test loading all'] = function(beforeExit) {
             scheme: 'tms',
             filesize: 684032
         }]);
+        for (i = 0; i < handlers.length; i++) {
+            handlers[i]._close();
+        }
     });
 
     beforeExit(function() {
         assert.ok(completed, "Callback didn't complete");
     });
 };
-
