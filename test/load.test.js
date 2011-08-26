@@ -117,7 +117,19 @@ exports['test loading all'] = function(beforeExit) {
             id: 'mapquest',
             description: '',
             version: '1.0.0',
-            legend: null 
+            legend: null
+        },{ filesize: 16384,
+            scheme: 'tms',
+            basename: 'faulty.mbtiles',
+            id: 'faulty',
+            bounds: [ -180, -100, 180, 100 ],
+            center: null,
+            name: '',
+            description: '',
+            version: '1.0.0',
+            legend: null,
+            minzoom: 0,
+            maxzoom: 22
         },{ filesize: 561152,
             scheme: 'tms',
             basename: 'plain_1.mbtiles',
