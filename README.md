@@ -74,6 +74,11 @@ See `examples` or [geode](https://github.com/mapbox/geode) for examples of a til
 
 # Changelog
 
+## 4.1.0
+
+* Tilesources are not verify()'ed automatically during info(). Clients must now
+  do this.
+
 ## 4.0.0
 
 * Updated to use Tilestore/Tilesink/Tilesource interface
