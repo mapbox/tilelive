@@ -1,10 +1,11 @@
-var assert = require('assert'), Step = require('step'), fs = require('fs');
+var Step = require('step');
+var fs = require('fs');
 
 var tilelive = require('..');
 tilelive.protocols['mbtiles:'] = require('mbtiles');
 tilelive.protocols['tilejson:'] = require('tilejson');
 
-exports['test copying'] = function(beforeExit) {
+exports['test copying'] = function(beforeExit, assert) {
     var completed = false, source, sink;
     Step(function() {
         var next = this;
@@ -30,8 +31,6 @@ exports['test copying'] = function(beforeExit) {
             maxZoom: 5,
             tiles: true
         }, function(err) {
-            source._close();
-            sink._close();
             next();
             if (err) throw err;
         });

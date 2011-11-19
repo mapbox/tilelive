@@ -1,10 +1,8 @@
-var assert = require('assert');
-
 var tilelive = require('..');
 tilelive.protocols['mbtiles:'] = require('mbtiles');
 tilelive.protocols['tilejson:'] = require('tilejson');
 
-exports['test loading invalid url'] = function(beforeExit) {
+exports['test loading invalid url'] = function(beforeExit, assert) {
     var completed = false;
 
     tilelive.load('http://foo/bar', function(err, source) {
@@ -18,7 +16,7 @@ exports['test loading invalid url'] = function(beforeExit) {
     });
 };
 
-exports['test loading url'] = function(beforeExit) {
+exports['test loading url'] = function(beforeExit, assert) {
     var completed = false;
 
     tilelive.load('mbtiles://' + __dirname + '/fixtures/plain_2.mbtiles', function(err, source) {
@@ -27,7 +25,6 @@ exports['test loading url'] = function(beforeExit) {
         assert.equal(typeof source.getTile, 'function');
         assert.equal(typeof source.getGrid, 'function');
         assert.equal(typeof source.getInfo, 'function');
-        source._close();
     });
 
     beforeExit(function() {
@@ -35,7 +32,7 @@ exports['test loading url'] = function(beforeExit) {
     });
 };
 
-exports['test loading metadata'] = function(beforeExit) {
+exports['test loading metadata'] = function(beforeExit, assert) {
     var completed = false;
 
     tilelive.info('mbtiles://' + __dirname + '/fixtures/plain_2.mbtiles', function(err, info, handler) {
@@ -60,7 +57,6 @@ exports['test loading metadata'] = function(beforeExit) {
               center: [ 0, 5.0000000006793215, 2 ],
               legend: null
         });
-        handler._close();
     });
 
     beforeExit(function() {
@@ -68,7 +64,7 @@ exports['test loading metadata'] = function(beforeExit) {
     });
 };
 
-exports['test loading metadata'] = function(beforeExit) {
+exports['test loading metadata'] = function(beforeExit, assert) {
     var completed = false;
 
     tilelive.info('tilejson://' + __dirname + '/fixtures/mapquest.tilejson', function(err, info, handler) {
@@ -87,7 +83,6 @@ exports['test loading metadata'] = function(beforeExit) {
             scheme: 'tms',
             tiles: [ 'http://otile1.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg' ]
         });
-        handler._close();
     });
 
     beforeExit(function() {
@@ -95,7 +90,7 @@ exports['test loading metadata'] = function(beforeExit) {
     });
 };
 
-exports['test loading all'] = function(beforeExit) {
+exports['test loading all'] = function(beforeExit, assert) {
     var completed = false;
 
     tilelive.all('test/fixtures', function(err, info, handlers) {
@@ -172,9 +167,6 @@ exports['test loading all'] = function(beforeExit) {
             for (j in data[i]) {
                 assert.deepEqual(data[i][j], info[i][j]);
             }
-        }
-        for (i = 0; i < handlers.length; i++) {
-            handlers[i]._close();
         }
     });
 

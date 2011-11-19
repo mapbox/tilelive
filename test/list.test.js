@@ -1,10 +1,8 @@
-var assert = require('assert');
-
 var tilelive = require('..');
 tilelive.protocols['mbtiles:'] = require('mbtiles');
 tilelive.protocols['tilejson:'] = require('tilejson');
 
-exports['test listing'] = function(beforeExit) {
+exports['test listing'] = function(beforeExit, assert) {
     var completed = false;
 
     tilelive.list('test/fixtures', function(err, sources) {
@@ -25,7 +23,7 @@ exports['test listing'] = function(beforeExit) {
 };
 
 
-exports['test findID'] = function(beforeExit) {
+exports['test findID'] = function(beforeExit, assert) {
     var completed = {};
 
     tilelive.findID('test/fixtures', 'mapquest', function(err, uri) {
