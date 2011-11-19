@@ -25,25 +25,25 @@
         "Konstantin Käfer <kkaefer>"
     ],
     "dependencies": {
-        "generic-pool": "1.0.x",
+        "generic-pool": "~1.0.8",
         "optimist": "0.2.x",
-        "step": "0.0.x",
+        "step": "~0.0.4",
         "sphericalmercator": "1.0.0",
         "underscore": "1.1.x"
     },
     "devDependencies": {
         "docco": "0.3.x",
-        "expresso": "0.7.x",
+        "expresso": "~0.9.x",
         "jshint": "0.2.0",
-        "mbtiles": "0.1.x",
-        "tilejson": "0.0.x",
-        "tilelive-mapnik": "0.2.x"
+        "mbtiles": "https://github.com/mapbox/node-mbtiles/tarball/node-v6",
+        "tilejson": "https://github.com/mapbox/node-tilejson/tarball/node-v6",
+        "tilelive-mapnik": "https://github.com/mapbox/tilelive-mapnik/tarball/node-v6"
     },
     "bin": {
         "tilelive": "./bin/tilelive"
     },
     "engines": {
-        "node": "0.4.x"
+        "node": "~0.6.x"
     },
     "scripts": {
         "pretest": "npm install --dev",
