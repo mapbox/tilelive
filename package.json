@@ -35,7 +35,6 @@
         "docco": "0.3.x",
         "expresso": "~0.9.x",
         "jshint": "0.2.0",
-        "sqlite3": "~2.1.1",
         "mbtiles": "https://github.com/mapbox/node-mbtiles/tarball/node-v6",
         "tilejson": "https://github.com/mapbox/node-tilejson/tarball/node-v6",
         "tilelive-mapnik": "https://github.com/mapbox/tilelive-mapnik/tarball/node-v6"
