@@ -10,11 +10,11 @@ require('bigtiles').registerProtocols(tilelive);
 
 var optimist = require('optimist');
 var argv = optimist
+    .describe('state', 'State file')
+    .describe('scheme', 'One of [file, scanline, pyramid]')
     .describe('from', 'Source URL')
     .describe('to', 'Destination URL')
-    .describe('scheme', 'One of [file]')
     .describe('list', 'If scheme=file, the filename containing the coordinates to render')
-    .describe('state', 'State file')
     .argv;
 
 
@@ -25,10 +25,11 @@ if (argv.state) {
     argv = optimist
         .demand('from')
         .demand('to')
+        .demand('list')
         .argv;
 
     var scheme = new FileScheme({
-        filename: 'list.txt',
+        filename: argv.list,
         concurrency: 8
     });
     var task = new CopyTask(argv.from, argv.to, scheme);
@@ -40,11 +41,13 @@ task.on('load', task.start);
 task.on('progress', report);
 
 task.on('finished', function() {
-    console.warn('finished', task.stats);
+    console.warn('\nfinished');
 });
 
 task.on('error', function(err) {
-    throw err;
+    util.print('\r\033[K');
+    console.warn(err.stack);
+    report();
 });
 
 
