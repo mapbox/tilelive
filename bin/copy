@@ -1,9 +1,10 @@
+#!/usr/bin/env node
 var fs = require('fs');
 var util = require('util');
-var FileScheme = require('./lib/filescheme');
-var CopyTask = require('./lib/copytask');
+var FileScheme = require('../lib/filescheme');
+var CopyTask = require('../lib/copytask');
 
-var tilelive = require('./');
+var tilelive = require('../');
 require('tilelive-mapnik').registerProtocols(tilelive);
 require('bigtiles').registerProtocols(tilelive);
 
