@@ -1,0 +1,60 @@
+var fs = require('fs');
+var util = require('util');
+var FileScheme = require('./lib/filescheme');
+var CopyTask = require('./lib/copytask');
+
+var tilelive = require('./');
+require('tilelive-mapnik').registerProtocols(tilelive);
+require('bigtiles').registerProtocols(tilelive);
+
+var optimist = require('optimist');
+var argv = optimist
+    .describe('from', 'Source URL')
+    .describe('to', 'Destination URL')
+    .describe('scheme', 'One of [file]')
+    .describe('list', 'If scheme=file, the filename containing the coordinates to render')
+    .describe('state', 'State file')
+    .argv;
+
+
+if (argv.state) {
+    var state = JSON.parse(fs.readFileSync(argv.state, 'utf8'));
+    var task = CopyTask.unserialize(state);
+} else {
+    argv = optimist
+        .demand('from')
+        .demand('to')
+        .argv;
+
+    var scheme = new FileScheme({
+        filename: 'list.txt',
+        concurrency: 8
+    });
+    var task = new CopyTask(argv.from, argv.to, scheme);
+}
+
+report();
+task.on('load', task.start);
+
+task.on('progress', report);
+
+task.on('finished', function() {
+    console.warn('finished', task.stats);
+});
+
+task.on('error', function(err) {
+    throw err;
+});
+
+
+function report() {
+    var stats = task.stats;
+    util.print('\r\033[K');
+    util.print('copied: ' + stats.processed + '/' + stats.total);
+    util.print('\tspeed: ' + stats.speed + '/s');
+    util.print('\tremaining: ' + stats.remaining);
+    util.print('\tunique: ' + stats.unique);
+    util.print('\tdupes: ' + stats.duplicate);
+    util.print('\tskipped: ' + stats.skipped);
+    util.print('\tfailed: ' + stats.failed);
+}
