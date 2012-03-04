@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 var fs = require('fs');
 var util = require('util');
-var FileScheme = require('../lib/filescheme');
+var path = require('path');
+var Scheme = require('../lib/scheme');
 var CopyTask = require('../lib/copytask');
 
 var tilelive = require('../');
@@ -10,35 +11,73 @@ require('bigtiles').registerProtocols(tilelive);
 
 var optimist = require('optimist');
 var argv = optimist
-    .describe('state', 'State file')
-    .describe('scheme', 'One of [file, scanline, pyramid]')
-    .describe('from', 'Source URL')
-    .describe('to', 'Destination URL')
-    .describe('list', 'If scheme=file, the filename containing the coordinates to render')
+    .options('job', { 'alias': 'j', 'describe': 'Job file (will be resumed if it exists)', 'demand': true })
+    .options('scheme', { 'alias': 's', 'describe': 'One of [file, scanline, pyramid]' })
+    .options('from', { 'describe': 'Source tilesource URI' })
+    .options('to', { 'describe': 'Destination tilesink URI' })
+    .options('list', { 'alias': 'l', 'describe': 'If scheme=file, the coordinates file' })
+    .options('concurrency', { 'alias': 'c', 'default': 8, 'describe': 'Number of parallel copy operations' })
+    .options('bbox', { 'describe': 'WGS84 bounding box' })
+    .options('minzoom', { 'describe': 'Zoom level from which to start copying (inclusive)' })
+    .options('maxzoom', { 'describe': 'Zoom level until which to copy (inclusive)' })
+    .options('metatile', { 'describe': 'Metatile side length in number of tiles' })
     .argv;
 
+argv.job = path.resolve(argv.job);
 
-if (argv.state) {
-    var state = JSON.parse(fs.readFileSync(argv.state, 'utf8'));
-    var task = CopyTask.unserialize(state);
-} else {
-    argv = optimist
-        .demand('from')
-        .demand('to')
-        .demand('list')
-        .argv;
-
-    var scheme = new FileScheme({
-        filename: argv.list,
-        concurrency: 8
-    });
-    var task = new CopyTask(argv.from, argv.to, scheme);
+try {
+    var job = fs.readFileSync(argv.job, 'utf8');
+} catch(err) {
+    if (err.code !== 'EBADF') throw err;
 }
 
-report();
-task.on('load', task.start);
+if (job) {
+    job = JSON.parse(job);
+    var scheme = Scheme.unserialize(job.scheme);
+    var task = new CopyTask(job.source, job.sink, scheme, argv.job);
+} else {
+    argv = optimist.demand('scheme').demand('from').demand('to').argv;
+    console.warn('Creating new job ' + argv.job);
+    var scheme = Scheme.create(argv.scheme, argv);
+    var task = new CopyTask(argv.from, argv.to, scheme, argv.job);
+}
 
-task.on('progress', report);
+task.on('load', function() {
+    task.start();
+});
+
+function formatDuration(duration) {
+    duration = duration / 1000 | 0;
+    var seconds = duration % 60;
+    duration -= seconds;
+    var minutes = (duration % 3600) / 60;
+    duration -= minutes * 60;
+    var hours = (duration % 86400) / 3600;
+    duration -= hours * 3600;
+    var days = duration / 86400;
+
+    return days + 'd ' + hours + 'h ' + minutes + 'm ' + seconds + 's';
+}
+
+function formatNumber(number, decimals) {
+    var num = parseFloat(number).toFixed(decimals || 0).split('.');
+    for (var i = num[0].length - 3; i > 0; i -= 3) {
+        num[0] = num[0].substring(0, i) + ',' + num[0].substring(i);
+    }
+    return num.join('.');
+}
+
+task.on('progress', function(stats) {
+    util.print('\r\033[K');
+    util.print(formatDuration(stats.date - task.started));
+    util.print('\tcopied: ' + formatNumber(stats.processed) + '/' + formatNumber(stats.total));
+    util.print('\tspeed: ' + formatNumber(stats.speed) + '/s');
+    util.print('\tremaining: ' + formatNumber(stats.remaining));
+    util.print('\tunique: ' + formatNumber(stats.unique));
+    util.print('\tdupes: ' + formatNumber(stats.duplicate));
+    util.print('\tskipped: ' + formatNumber(stats.skipped));
+    util.print('\tfailed: ' + formatNumber(stats.failed));
+});
 
 task.on('finished', function() {
     console.warn('\nfinished');
@@ -51,14 +90,3 @@ task.on('error', function(err) {
 });
 
 
-function report() {
-    var stats = task.stats;
-    util.print('\r\033[K');
-    util.print('copied: ' + stats.processed + '/' + stats.total);
-    util.print('\tspeed: ' + stats.speed + '/s');
-    util.print('\tremaining: ' + stats.remaining);
-    util.print('\tunique: ' + stats.unique);
-    util.print('\tdupes: ' + stats.duplicate);
-    util.print('\tskipped: ' + stats.skipped);
-    util.print('\tfailed: ' + stats.failed);
-}
