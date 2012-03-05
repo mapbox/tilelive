@@ -1,13 +1,10 @@
 var assert = require('assert');
+var Scheme = require('../lib/scheme');
 var PyramidScheme = require('../lib/pyramidscheme');
 
-function SourceSink() {
-
-}
 
 
 describe('pyramid enumeration scheme', function() {
-
     it('should enumerate all tiles if the source doesn\'t skip', function(done) {
         var scheme = new PyramidScheme({
             minzoom: 0,
@@ -32,6 +29,7 @@ describe('pyramid enumeration scheme', function() {
             stack: [],
             box: [],
             finished: false,
+            paused: true,
             pending: []
         });
 
@@ -119,7 +117,7 @@ describe('pyramid enumeration scheme', function() {
         var tiles = [];
         scheme.task = {
             render: function(tile) {
-                tiles.push(tile.toJSON());
+                tiles.push(tile.toString());
                 scheme.unique(tile);
             },
             finished: function() {
@@ -144,7 +142,7 @@ describe('pyramid enumeration scheme', function() {
         var tiles = [];
         scheme.task = {
             render: function(tile) {
-                tiles.push(tile.toJSON());
+                tiles.push(tile.toString());
                 process.nextTick(function() {
                     scheme.unique(tile);
                 });
@@ -178,7 +176,7 @@ describe('pyramid enumeration scheme', function() {
         var tiles = [];
         scheme.task = {
             render: function(tile) {
-                tiles.push(tile.toJSON());
+                tiles.push(tile.toString());
                 process.nextTick(function() {
                     if (tile.key !== false) {
                         scheme.duplicate(tile);
@@ -201,6 +199,56 @@ describe('pyramid enumeration scheme', function() {
                 assert.deepEqual(tiles, [ '0/0/0', '1/0/0', '1/1/0', '1/0/1', '1/1/1',
                     '2/2/0', '2/3/0', '2/2/1', '2/3/1', '2/0/2/42', '2/1/2/42',
                     '2/0/3/42', '2/1/3/42', '2/2/2', '2/3/2', '2/2/3', '2/3/3' ]);
+                done();
+            }
+        };
+
+        scheme.start()
+    });
+});
+
+describe('pyramid enumeration scheme serialization', function() {
+    it('should serialize the pyramid scheme', function(done) {
+        var scheme = new PyramidScheme({
+            minzoom: 0,
+            maxzoom: 3,
+            concurrency: 4,
+            metatile: 2
+        });
+
+        var scheme2;
+
+        var state = '{"type":"pyramid","concurrency":4,"minzoom":0,"maxzoom":3,"metatile":2,"bounds":{"0":{"minX":0,"minY":0,"maxX":0,"maxY":0},"1":{"minX":0,"minY":0,"maxX":1,"maxY":1},"2":{"minX":0,"minY":0,"maxX":3,"maxY":3},"3":{"minX":0,"minY":0,"maxX":7,"maxY":7}},"stats":{"history":[],"total":85,"pending":0,"unique":8,"duplicate":0,"failed":0,"skipped":0},"pos":{"z":0,"x":0,"y":0},"stack":[{"z":2,"x":2,"y":2,"size":2,"members":[{"z":2,"x":2,"y":2,"key":false},{"z":2,"x":3,"y":2,"key":false},{"z":2,"x":2,"y":3,"key":false},{"z":2,"x":3,"y":3,"key":false}],"children":[]},{"z":2,"x":0,"y":2,"size":2,"members":[{"z":2,"x":0,"y":2,"key":false},{"z":2,"x":1,"y":2,"key":false},{"z":2,"x":0,"y":3,"key":false},{"z":2,"x":1,"y":3,"key":false}],"children":[]},{"z":2,"x":2,"y":0,"size":2,"members":[{"z":2,"x":2,"y":0,"key":false},{"z":2,"x":3,"y":0,"key":false},{"z":2,"x":2,"y":1,"key":false},{"z":2,"x":3,"y":1,"key":false}],"children":[]},{"z":2,"x":0,"y":0,"size":2,"members":[{"z":2,"x":1,"y":1,"key":false}],"children":[{"z":3,"x":0,"y":0,"key":false},{"z":3,"x":1,"y":0,"key":false},{"z":3,"x":0,"y":1,"key":false},{"z":3,"x":1,"y":1,"key":false},{"z":3,"x":2,"y":0,"key":false},{"z":3,"x":3,"y":0,"key":false},{"z":3,"x":2,"y":1,"key":false},{"z":3,"x":3,"y":1,"key":false},{"z":3,"x":0,"y":2,"key":false},{"z":3,"x":1,"y":2,"key":false},{"z":3,"x":0,"y":3,"key":false},{"z":3,"x":1,"y":3,"key":false}]}],"box":[],"finished":false,"pending":[],"paused":true}';
+
+        var i = 0;
+        scheme.task = {
+            render: function(tile) {
+                if (i++ === 8) {
+                    var stringified = JSON.stringify(scheme);
+                    assert.equal(state, stringified);
+                    scheme2 = Scheme.unserialize(JSON.parse(stringified));
+                    assert.equal(state, JSON.stringify(scheme2));
+
+                    scheme2.task = {
+                        render: function(tile) {
+                            scheme2.unique(tile);
+                        },
+                        finished: function() {
+                            assert.equal(scheme2.stats.total, 85);
+                            assert.equal(scheme2.stats.unique, 85);
+                            assert.equal(scheme2.stats.pending, 0);
+                        }
+                    };
+
+                    scheme2.start();
+                }
+
+                scheme.unique(tile);
+            },
+            finished: function() {
+                assert.equal(scheme.stats.total, 85);
+                assert.equal(scheme.stats.unique, 85);
+                assert.equal(scheme.stats.pending, 0);
                 done();
             }
         };
