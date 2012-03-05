@@ -4,61 +4,69 @@ var tilelive = require('..');
 tilelive.protocols['mbtiles:'] = require('mbtiles');
 tilelive.protocols['tilejson:'] = require('tilejson');
 
-exports['test copying'] = function(beforeExit) {
-    var completed = false, source, sink;
-    Step(function() {
-        var next = this;
-        tilelive.load('mbtiles://' + __dirname + '/fixtures/plain_1.mbtiles', function(err, s) {
-            if (err) throw err;
-            source = s;
-            next();
-        });
-    }, function() {
-        var next = this;
-        tilelive.load('mbtiles://' + __dirname + '/copy.mbtiles', function(err, s) {
-            if (err) throw err;
-            sink = s;
-            next();
-        });
-    }, function() {
-        var next = this;
-        tilelive.copy({
-            source: source,
-            sink: sink,
-            bbox: [ -10, -10, 10, 10 ],
-            minZoom: 3,
-            maxZoom: 5,
-            tiles: true
-        }, function(err) {
-            source._close();
-            sink._close();
-            next();
-            if (err) throw err;
-        });
-    }, function() {
-        tilelive.info('mbtiles://' + __dirname + '/copy.mbtiles', function(err, info) {
-            if (err) throw err;
-            var data = {
-                scheme: 'tms',
-                basename: 'copy.mbtiles',
-                id: 'copy',
-                minzoom: 3,
-                maxzoom: 4,
-                center: [ 0, 0, 4 ],
-                name: '',
-                description: '',
-                version: '1.0.0',
-                legend: null 
-             };
-            for (i in data) {
-                assert.deepEqual(data[i], info[i]);
-            }
-            fs.unlinkSync(__dirname + '/copy.mbtiles');
-            completed = true;
-        });
-    });
+describe('copying', function() {
+    describe('workflow', function() {
+        var source, sink;
 
-    beforeExit(function() {
-        assert.ok(completed, "Callback didn't complete");
+        before(function() {
+            try { fs.unlinkSync(__dirname + '/copy.mbtiles'); }
+            catch(err) { if (err.code !== 'ENOENT') throw err; }
+        });
+
+        it('should open the source', function(done) {
+            tilelive.load('mbtiles://' + __dirname + '/fixtures/plain_1.mbtiles', function(err, s) {
+                source = s;
+                done(err);
+            });
+        });
+
+        it('should open the sink', function(done) {
+            tilelive.load('mbtiles://' + __dirname + '/copy.mbtiles', function(err, s) {
+                sink = s;
+                done(err);
+            });
+        });
+
+        it('should copy', function(done) {
+            tilelive.copy({
+                source: source,
+                sink: sink,
+                bbox: [ -10, -10, 10, 10 ],
+                minZoom: 3,
+                maxZoom: 5,
+                tiles: true
+            }, function(err) {
+                source.close(function(err) {
+                    if (err) done(err);
+                    else sink.close(done);
+                });
+            });
+        });
+
+        it('should verify the information', function(done) {
+            tilelive.info('mbtiles://' + __dirname + '/copy.mbtiles', function(err, info) {
+                if (err) throw err;
+                assert.deepEqual({
+                    scheme: 'tms',
+                    basename: 'copy.mbtiles',
+                    id: 'copy',
+                    filesize: 39936,
+                    minzoom: 3,
+                    maxzoom: 4,
+                    bounds: [ -45, -40.97989806962013, 45, 40.97989806962013 ],
+                    center: [ 0, 0, 4 ],
+                    name: '',
+                    description: '',
+                    version: '1.0.0',
+                    legend: null
+                }, info);
+                done();
+            });
+        })
+
+        after(function() {
+            try { fs.unlinkSync(__dirname + '/copy.mbtiles'); }
+            catch(err) { if (err.code !== 'ENOENT') throw err; }
+        });
     });
-};
+});

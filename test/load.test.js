@@ -1,184 +1,151 @@
 var assert = require('assert');
+var Step = require('step');
 
 var tilelive = require('..');
 tilelive.protocols['mbtiles:'] = require('mbtiles');
 tilelive.protocols['tilejson:'] = require('tilejson');
 
-exports['test loading invalid url'] = function(beforeExit) {
-    var completed = false;
+var data = [
+    {
+        name: 'MapQuest Open',
+        scheme: 'tms',
+        tiles: [ 'http://otile1.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg' ],
+        minzoom: 0,
+        maxzoom: 18,
+        bounds: [ -180, -85, 180, 85 ],
+        center: [ 0, 0, 2 ],
+        id: 'mapquest',
+        description: '',
+        version: '1.0.0',
+        legend: null
+    },
+    {
+        scheme: 'tms',
+        basename: 'faulty.mbtiles',
+        id: 'faulty',
+        filesize: 16384,
+        bounds: [ -180, -100, 180, 100 ],
+        name: '',
+        description: '',
+        version: '1.0.0',
+        legend: null,
+        minzoom: 0,
+        maxzoom: 22,
+        center: null
+    },
+    {
+        scheme: 'tms',
+        basename: 'plain_1.mbtiles',
+        id: 'plain_1',
+        filesize: 561152,
+        name: 'plain_1',
+        type: 'baselayer',
+        description: 'demo description',
+        version: '1.0.3',
+        formatter: null,
+        bounds:
+         [ -179.9999999749438,
+           -69.99999999526695,
+           179.9999999749438,
+           84.99999999782301 ],
+        minzoom: 0,
+        maxzoom: 4,
+        center: [ 0, 7.500000001278025, 2 ],
+        legend: null
+    },
+    {
+        scheme: 'tms',
+        basename: 'plain_2.mbtiles',
+        id: 'plain_2',
+        filesize: 874496,
+        name: 'plain_2',
+        type: 'baselayer',
+        description: '',
+        version: '1.0.0',
+        formatter: 'function(options, data) { if (options.format === \'full\') { return \'\' + data.NAME + \' (Population: \' + data.POP2005 + \')\'; } else { return \'\' + data.NAME + \'\'; } }',
+        bounds:
+         [ -179.9999999749438,
+           -69.99999999526695,
+           179.9999999749438,
+           79.99999999662558 ],
+        minzoom: 0,
+        maxzoom: 4,
+        center: [ 0, 5.0000000006793215, 2 ],
+        legend: null
+    },
+    {
+        scheme: 'tms',
+        basename: 'plain_4.mbtiles',
+        id: 'plain_4',
+        filesize: 684032,
+        name: 'plain_2',
+        type: 'baselayer',
+        description: '',
+        version: '1.0.0',
+        formatter: 'function(options, data) { if (options.format === \'full\') { return \'\' + data.NAME + \' (Population: \' + data.POP2005 + \')\'; } else { return \'\' + data.NAME + \'\'; } }',
+        bounds:
+         [ -179.9999999749438,
+           -69.99999999526695,
+           179.9999999749438,
+           79.99999999662558 ],
+        minzoom: 0,
+        maxzoom: 4,
+        center: [ 0, 5.0000000006793215, 2 ],
+        legend: null
+    }
+];
 
-    tilelive.load('http://foo/bar', function(err, source) {
-        completed = true;
-        assert.ok(err);
-        assert.equal(err.message, 'Invalid tilesource protocol');
-    });
-
-    beforeExit(function() {
-        assert.ok(completed, "Callback didn't complete");
-    });
-};
-
-exports['test loading url'] = function(beforeExit) {
-    var completed = false;
-
-    tilelive.load('mbtiles://' + __dirname + '/fixtures/plain_2.mbtiles', function(err, source) {
-        completed = true;
-        if (err) throw err;
-        assert.equal(typeof source.getTile, 'function');
-        assert.equal(typeof source.getGrid, 'function');
-        assert.equal(typeof source.getInfo, 'function');
-        source._close();
-    });
-
-    beforeExit(function() {
-        assert.ok(completed, "Callback didn't complete");
-    });
-};
-
-exports['test loading metadata'] = function(beforeExit) {
-    var completed = false;
-
-    tilelive.info('mbtiles://' + __dirname + '/fixtures/plain_2.mbtiles', function(err, info, handler) {
-        completed = true;
-        if (err) throw err;
-        assert.deepEqual(info, { filesize: 874496,
-              scheme: 'tms',
-              basename: 'plain_2.mbtiles',
-              id: 'plain_2',
-              name: 'plain_2',
-              type: 'baselayer',
-              description: '',
-              version: '1.0.0',
-              formatter: 'function(options, data) { if (options.format === \'full\') { return \'\' + data.NAME + \' (Population: \' + data.POP2005 + \')\'; } else { return \'\' + data.NAME + \'\'; } }',
-              bounds: 
-               [ -179.9999999749438,
-                 -69.99999999526695,
-                 179.9999999749438,
-                 79.99999999662558 ],
-              minzoom: 0,
-              maxzoom: 4,
-              center: [ 0, 5.0000000006793215, 2 ],
-              legend: null
+describe('loading', function() {
+    it('should refuse loading an invalid url', function(done) {
+        tilelive.load('http://foo/bar', function(err) {
+            assert.ok(err);
+            assert.equal(err.message, 'Invalid tilesource protocol');
+            done();
         });
-        handler._close();
     });
 
-    beforeExit(function() {
-        assert.ok(completed, "Callback didn't complete");
-    });
-};
-
-exports['test loading metadata'] = function(beforeExit) {
-    var completed = false;
-
-    tilelive.info('tilejson://' + __dirname + '/fixtures/mapquest.tilejson', function(err, info, handler) {
-        completed = true;
-        if (err) throw err;
-        assert.deepEqual(info, {
-            id: 'mapquest',
-            name: 'MapQuest Open',
-            description: '',
-            version: '1.0.0',
-            bounds: [ -180, -85, 180, 85 ],
-            minzoom: 0,
-            maxzoom: 18,
-            center: [ 0, 0, 2 ],
-            legend: null,
-            scheme: 'tms',
-            tiles: [ 'http://otile1.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg' ]
+    it('should load an existing mbtiles file', function(done) {
+        tilelive.load('mbtiles://' + __dirname + '/fixtures/plain_2.mbtiles', function(err, source) {
+            if (err) throw err;
+            assert.equal(typeof source.getTile, 'function');
+            assert.equal(typeof source.getGrid, 'function');
+            assert.equal(typeof source.getInfo, 'function');
+            source.close(done);
         });
-        handler._close();
     });
 
-    beforeExit(function() {
-        assert.ok(completed, "Callback didn't complete");
-    });
-};
-
-exports['test loading all'] = function(beforeExit) {
-    var completed = false;
-
-    tilelive.all('test/fixtures', function(err, info, handlers) {
-        completed = true;
-        if (err) throw err;
-
-        // Sort tilesets before deepEqual.
-        info.sort(function(a, b) {
-            return (a.basename || '0') < (b.basename || '0') ? -1 : 1;
+    it('should load metadata about an existing mbtiles file', function(done) {
+        tilelive.info('mbtiles://' + __dirname + '/fixtures/plain_2.mbtiles', function(err, info, handler) {
+            if (err) throw err;
+            assert.deepEqual(info, data[3]);
+            handler.close(done);
         });
-        data = [{
-            name: 'MapQuest Open',
-            scheme: 'tms',
-            tiles: [ 'http://otile1.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg' ],
-            minzoom: 0,
-            maxzoom: 18,
-            bounds: [ -180, -85, 180, 85 ],
-            center: [ 0, 0, 2 ],
-            id: 'mapquest',
-            description: '',
-            version: '1.0.0',
-            legend: null
-        },{ filesize: 16384,
-            scheme: 'tms',
-            basename: 'faulty.mbtiles',
-            id: 'faulty',
-            bounds: [ -180, -100, 180, 100 ],
-            center: null,
-            name: '',
-            description: '',
-            version: '1.0.0',
-            legend: null,
-            minzoom: 0,
-            maxzoom: 22
-        },{ filesize: 561152,
-            scheme: 'tms',
-            basename: 'plain_1.mbtiles',
-            id: 'plain_1',
-            name: 'plain_1',
-            type: 'baselayer',
-            description: 'demo description',
-            version: '1.0.3',
-            formatter: null,
-            minzoom: 0,
-            maxzoom: 4,
-            legend: null
-        },{ filesize: 874496,
-            scheme: 'tms',
-            basename: 'plain_2.mbtiles',
-            id: 'plain_2',
-            name: 'plain_2',
-            type: 'baselayer',
-            description: '',
-            version: '1.0.0',
-            formatter: 'function(options, data) { if (options.format === \'full\') { return \'\' + data.NAME + \' (Population: \' + data.POP2005 + \')\'; } else { return \'\' + data.NAME + \'\'; } }',
-            minzoom: 0,
-            maxzoom: 4,
-            legend: null
-        },{ filesize: 684032,
-            scheme: 'tms',
-            basename: 'plain_4.mbtiles',
-            id: 'plain_4',
-            name: 'plain_2',
-            type: 'baselayer',
-            description: '',
-            version: '1.0.0',
-            formatter: 'function(options, data) { if (options.format === \'full\') { return \'\' + data.NAME + \' (Population: \' + data.POP2005 + \')\'; } else { return \'\' + data.NAME + \'\'; } }',
-            minzoom: 0,
-            maxzoom: 4,
-            legend: null
-        }];
-
-        for (i = 0; i < data.length; i++) {
-            for (j in data[i]) {
-                assert.deepEqual(data[i][j], info[i][j]);
-            }
-        }
-        for (i = 0; i < handlers.length; i++) {
-            handlers[i]._close();
-        }
     });
 
-    beforeExit(function() {
-        assert.ok(completed, "Callback didn't complete");
+    it('should load metadata from an existing tilejson file', function(done) {
+        tilelive.info('tilejson://' + __dirname + '/fixtures/mapquest.tilejson', function(err, info, handler) {
+            if (err) throw err;
+            assert.deepEqual(info, data[0]);
+            handler.close(done);
+        });
     });
-};
+
+    it('should load all tile sources in a directory', function(done) {
+        tilelive.all('test/fixtures', function(err, info, handlers) {
+            if (err) throw err;
+
+            // Sort tilesets before deepEqual.
+            info.sort(function(a, b) {
+                return (a.basename || '0') < (b.basename || '0') ? -1 : 1;
+            });
+
+            assert.deepEqual(data, info);
+
+            Step(function() {
+                for (var i = 0; i < handlers.length; i++) {
+                    handlers[i].close(this.parallel());
+                }
+            }, done);
+        });
+    });
+});

@@ -33,7 +33,7 @@
     },
     "devDependencies": {
         "docco": "0.3.x",
-        "expresso": "0.7.x",
+        "mocha": "~0",
         "jshint": "0.2.0",
         "mbtiles": "0.1.x",
         "tilejson": "0.0.x",
@@ -46,7 +46,6 @@
         "node": "0.4.x"
     },
     "scripts": {
-        "pretest": "npm install --dev",
         "test": "make test"
     }
 }
