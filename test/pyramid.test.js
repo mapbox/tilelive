@@ -28,8 +28,6 @@ describe('pyramid enumeration scheme', function() {
             pos: { z: 0, x: -1, y: 0 },
             stack: [],
             box: [],
-            finished: false,
-            paused: true,
             pending: []
         });
 
