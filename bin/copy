@@ -102,5 +102,3 @@ function formatNumber(number, decimals) {
     }
     return num.join('.');
 }
-
-
