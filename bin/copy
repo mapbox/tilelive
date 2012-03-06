@@ -6,6 +6,7 @@ var Scheme = require('../lib/scheme');
 var CopyTask = require('../lib/copytask');
 
 var tilelive = require('../');
+require('../lib/dummyprotocol').registerProtocols(tilelive);
 require('tilelive-mapnik').registerProtocols(tilelive);
 require('bigtiles').registerProtocols(tilelive);
 
@@ -33,18 +34,53 @@ try {
 
 if (job) {
     job = JSON.parse(job);
+    console.warn('Continuing job ' + argv.job);
     var scheme = Scheme.unserialize(job.scheme);
     var task = new CopyTask(job.source, job.sink, scheme, argv.job);
 } else {
-    argv = optimist.demand('scheme').demand('from').demand('to').argv;
+    optimist.demand('scheme').demand('from').demand('to').argv;
     console.warn('Creating new job ' + argv.job);
     var scheme = Scheme.create(argv.scheme, argv);
     var task = new CopyTask(argv.from, argv.to, scheme, argv.job);
 }
 
-task.on('load', function() {
-    task.start();
+var errorfile = path.join(path.dirname(argv.job), path.basename(argv.job) + '-failed');
+console.warn('Writing errors to ' + errorfile);
+
+fs.open(errorfile, 'a', function(err, fd) {
+    if (err) throw err;
+
+    task.on('error', function(err, tile) {
+        util.print('\r\033[K');
+        console.warn(tile.toString() + ': ' + err.message);
+        fs.write(fd, JSON.stringify(tile) + '\n');
+        report(task.stats.snapshot());
+    });
+
+    task.start(function(err) {
+        if (err) throw err;
+    });
 });
+
+
+task.on('progress', report);
+
+task.on('finished', function() {
+    console.warn('\nfinished');
+});
+
+
+function report(stats) {
+    util.print('\r\033[K');
+    util.print(formatDuration(stats.date - task.started));
+    util.print('\tcopied: ' + formatNumber(stats.processed) + '/' + formatNumber(stats.total));
+    util.print('\tspeed: ' + formatNumber(stats.speed) + '/s');
+    util.print('\tremaining: ' + formatNumber(stats.remaining));
+    util.print('\tunique: ' + formatNumber(stats.unique));
+    util.print('\tdupes: ' + formatNumber(stats.duplicate));
+    util.print('\tskipped: ' + formatNumber(stats.skipped));
+    util.print('\tfailed: ' + formatNumber(stats.failed));
+}
 
 function formatDuration(duration) {
     duration = duration / 1000 | 0;
@@ -66,27 +102,5 @@ function formatNumber(number, decimals) {
     }
     return num.join('.');
 }
-
-task.on('progress', function(stats) {
-    util.print('\r\033[K');
-    util.print(formatDuration(stats.date - task.started));
-    util.print('\tcopied: ' + formatNumber(stats.processed) + '/' + formatNumber(stats.total));
-    util.print('\tspeed: ' + formatNumber(stats.speed) + '/s');
-    util.print('\tremaining: ' + formatNumber(stats.remaining));
-    util.print('\tunique: ' + formatNumber(stats.unique));
-    util.print('\tdupes: ' + formatNumber(stats.duplicate));
-    util.print('\tskipped: ' + formatNumber(stats.skipped));
-    util.print('\tfailed: ' + formatNumber(stats.failed));
-});
-
-task.on('finished', function() {
-    console.warn('\nfinished');
-});
-
-task.on('error', function(err) {
-    util.print('\r\033[K');
-    console.warn(err.stack);
-    report();
-});
 
 
