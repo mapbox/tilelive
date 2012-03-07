@@ -239,7 +239,11 @@ describe('scanline enumeration scheme serialization', function() {
                 if (i++ === 8) {
                     // Tests that pending items change the pos of the serialized version,
                     // respecting metatiling settings.
-                    assert.deepEqual('{"type":"scanline","concurrency":4,"minzoom":0,"maxzoom":3,"metatile":2,"bounds":{"0":{"minX":0,"minY":0,"maxX":0,"maxY":0},"1":{"minX":0,"minY":0,"maxX":1,"maxY":1},"2":{"minX":0,"minY":0,"maxX":3,"maxY":3},"3":{"minX":0,"minY":0,"maxX":7,"maxY":7}},"stats":{"history":[],"total":85,"pending":0,"unique":8,"duplicate":0,"failed":0,"skipped":0},"pos":{"z":2,"x":-2,"y":0},"box":[],"finished":false,"pending":[],"paused":true}', JSON.stringify(scheme));
+                    var stringified = JSON.stringify(scheme);
+                    assert.deepEqual('{"type":"scanline","concurrency":4,"minzoom":0,"maxzoom":3,"metatile":2,"bounds":{"0":{"minX":0,"minY":0,"maxX":0,"maxY":0},"1":{"minX":0,"minY":0,"maxX":1,"maxY":1},"2":{"minX":0,"minY":0,"maxX":3,"maxY":3},"3":{"minX":0,"minY":0,"maxX":7,"maxY":7}},"stats":{"history":[],"total":85,"pending":0,"unique":8,"duplicate":0,"failed":0,"skipped":0},"pos":{"z":2,"x":-2,"y":0},"box":[],"finished":false,"pending":[],"paused":true}', stringified);
+
+                    var scheme2 = Scheme.unserialize(JSON.parse(stringified));
+                    assert.equal(stringified, JSON.stringify(scheme2));
                 }
                 scheme.unique(tile);
             },
