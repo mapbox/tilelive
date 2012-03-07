@@ -221,3 +221,33 @@ describe('scanline enumeration scheme', function() {
         scheme.start()
     });
 });
+
+describe('scanline enumeration scheme serialization', function() {
+    it('should serialize the scanline scheme', function(done) {
+        var scheme = new ScanlineScheme({
+            minzoom: 0,
+            maxzoom: 3,
+            concurrency: 4,
+            metatile: 2
+        });
+
+        assert.deepEqual('{"type":"scanline","concurrency":4,"minzoom":0,"maxzoom":3,"metatile":2,"bounds":{"0":{"minX":0,"minY":0,"maxX":0,"maxY":0},"1":{"minX":0,"minY":0,"maxX":1,"maxY":1},"2":{"minX":0,"minY":0,"maxX":3,"maxY":3},"3":{"minX":0,"minY":0,"maxX":7,"maxY":7}},"stats":{"history":[],"total":85,"pending":0,"unique":0,"duplicate":0,"failed":0,"skipped":0},"pos":{"z":0,"x":-2,"y":0},"box":[],"finished":false,"pending":[],"paused":true}', JSON.stringify(scheme));
+
+        var i = 0;
+        scheme.task = {
+            render: function(tile) {
+                if (i++ === 8) {
+                    // Tests that pending items change the pos of the serialized version,
+                    // respecting metatiling settings.
+                    assert.deepEqual('{"type":"scanline","concurrency":4,"minzoom":0,"maxzoom":3,"metatile":2,"bounds":{"0":{"minX":0,"minY":0,"maxX":0,"maxY":0},"1":{"minX":0,"minY":0,"maxX":1,"maxY":1},"2":{"minX":0,"minY":0,"maxX":3,"maxY":3},"3":{"minX":0,"minY":0,"maxX":7,"maxY":7}},"stats":{"history":[],"total":85,"pending":0,"unique":8,"duplicate":0,"failed":0,"skipped":0},"pos":{"z":2,"x":-2,"y":0},"box":[],"finished":false,"pending":[],"paused":true}', JSON.stringify(scheme));
+                }
+                scheme.unique(tile);
+            },
+            finished: function() {
+                done();
+            }
+        };
+
+        scheme.start();
+    });
+});
