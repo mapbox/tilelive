@@ -16,7 +16,8 @@ describe('pyramid enumeration scheme', function() {
             type: 'pyramid',
             concurrency: 8,
             minzoom: 0,
-            maxzoom: 3,
+            maxzoom: 0,
+            maxdepth: 3,
             metatile: 1,
             bounds: {
                 0: { minX: 0, minY: 0, maxX: 0, maxY: 0 },
@@ -216,7 +217,7 @@ describe('pyramid enumeration scheme serialization', function() {
 
         var scheme2;
 
-        var state = '{"type":"pyramid","concurrency":4,"minzoom":0,"maxzoom":3,"metatile":2,"bounds":{"0":{"minX":0,"minY":0,"maxX":0,"maxY":0},"1":{"minX":0,"minY":0,"maxX":1,"maxY":1},"2":{"minX":0,"minY":0,"maxX":3,"maxY":3},"3":{"minX":0,"minY":0,"maxX":7,"maxY":7}},"stats":{"history":[],"total":85,"pending":0,"unique":8,"duplicate":0,"failed":0,"skipped":0},"pos":{"z":0,"x":0,"y":0},"stack":[{"z":2,"x":2,"y":2,"size":2,"members":[{"z":2,"x":2,"y":2,"key":false},{"z":2,"x":3,"y":2,"key":false},{"z":2,"x":2,"y":3,"key":false},{"z":2,"x":3,"y":3,"key":false}],"children":[]},{"z":2,"x":0,"y":2,"size":2,"members":[{"z":2,"x":0,"y":2,"key":false},{"z":2,"x":1,"y":2,"key":false},{"z":2,"x":0,"y":3,"key":false},{"z":2,"x":1,"y":3,"key":false}],"children":[]},{"z":2,"x":2,"y":0,"size":2,"members":[{"z":2,"x":2,"y":0,"key":false},{"z":2,"x":3,"y":0,"key":false},{"z":2,"x":2,"y":1,"key":false},{"z":2,"x":3,"y":1,"key":false}],"children":[]},{"z":2,"x":0,"y":0,"size":2,"members":[{"z":2,"x":1,"y":1,"key":false}],"children":[{"z":3,"x":0,"y":0,"key":false},{"z":3,"x":1,"y":0,"key":false},{"z":3,"x":0,"y":1,"key":false},{"z":3,"x":1,"y":1,"key":false},{"z":3,"x":2,"y":0,"key":false},{"z":3,"x":3,"y":0,"key":false},{"z":3,"x":2,"y":1,"key":false},{"z":3,"x":3,"y":1,"key":false},{"z":3,"x":0,"y":2,"key":false},{"z":3,"x":1,"y":2,"key":false},{"z":3,"x":0,"y":3,"key":false},{"z":3,"x":1,"y":3,"key":false}]}],"box":[],"finished":false,"pending":[],"paused":true}';
+        var state = '{"type":"pyramid","concurrency":4,"minzoom":0,"maxzoom":0,"maxdepth":3,"metatile":2,"bounds":{"0":{"minX":0,"minY":0,"maxX":0,"maxY":0},"1":{"minX":0,"minY":0,"maxX":1,"maxY":1},"2":{"minX":0,"minY":0,"maxX":3,"maxY":3},"3":{"minX":0,"minY":0,"maxX":7,"maxY":7}},"stats":{"history":[],"total":85,"pending":0,"unique":8,"duplicate":0,"failed":0,"skipped":0},"pos":{"z":0,"x":0,"y":0},"stack":[{"z":2,"x":2,"y":2,"size":2,"members":[{"z":2,"x":2,"y":2,"key":false},{"z":2,"x":3,"y":2,"key":false},{"z":2,"x":2,"y":3,"key":false},{"z":2,"x":3,"y":3,"key":false}],"children":[]},{"z":2,"x":0,"y":2,"size":2,"members":[{"z":2,"x":0,"y":2,"key":false},{"z":2,"x":1,"y":2,"key":false},{"z":2,"x":0,"y":3,"key":false},{"z":2,"x":1,"y":3,"key":false}],"children":[]},{"z":2,"x":2,"y":0,"size":2,"members":[{"z":2,"x":2,"y":0,"key":false},{"z":2,"x":3,"y":0,"key":false},{"z":2,"x":2,"y":1,"key":false},{"z":2,"x":3,"y":1,"key":false}],"children":[]},{"z":2,"x":0,"y":0,"size":2,"members":[{"z":2,"x":1,"y":1,"key":false}],"children":[{"z":3,"x":0,"y":0,"key":false},{"z":3,"x":1,"y":0,"key":false},{"z":3,"x":0,"y":1,"key":false},{"z":3,"x":1,"y":1,"key":false},{"z":3,"x":2,"y":0,"key":false},{"z":3,"x":3,"y":0,"key":false},{"z":3,"x":2,"y":1,"key":false},{"z":3,"x":3,"y":1,"key":false},{"z":3,"x":0,"y":2,"key":false},{"z":3,"x":1,"y":2,"key":false},{"z":3,"x":0,"y":3,"key":false},{"z":3,"x":1,"y":3,"key":false}]}],"box":[],"finished":false,"pending":[],"paused":true}';
 
         var i = 0;
         scheme.task = {
