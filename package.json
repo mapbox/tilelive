@@ -43,7 +43,7 @@
         "tilelive": "./bin/tilelive"
     },
     "engines": {
-        "node": "0.4.x"
+        "node": ">=0.4.x"
     },
     "scripts": {
         "test": "make test"
