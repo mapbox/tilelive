@@ -1,0 +1,104 @@
+#!/usr/bin/env node
+var fs = require('fs');
+var util = require('util');
+var path = require('path');
+var Scheme = require('../lib/scheme');
+var CopyTask = require('../lib/copytask');
+
+var tilelive = require('../');
+require('../lib/dummyprotocol').registerProtocols(tilelive);
+require('tilelive-mapnik').registerProtocols(tilelive);
+require('bigtiles').registerProtocols(tilelive);
+
+var optimist = require('optimist');
+var argv = optimist
+    .options('job', { 'alias': 'j', 'describe': 'Job file (will be resumed if it exists)', 'demand': true })
+    .options('scheme', { 'alias': 's', 'describe': 'One of [file, scanline, pyramid]' })
+    .options('from', { 'describe': 'Source tilesource URI' })
+    .options('to', { 'describe': 'Destination tilesink URI' })
+    .options('list', { 'alias': 'l', 'describe': 'If scheme=file, the coordinates file' })
+    .options('concurrency', { 'alias': 'c', 'default': 8, 'describe': 'Number of parallel copy operations' })
+    .options('bbox', { 'describe': 'WGS84 bounding box' })
+    .options('minzoom', { 'describe': 'Zoom level from which to start copying (inclusive)' })
+    .options('maxzoom', { 'describe': 'Zoom level until which to copy (inclusive)' })
+    .options('metatile', { 'describe': 'Metatile side length in number of tiles' })
+    .argv;
+
+argv.job = path.resolve(argv.job);
+
+try {
+    var job = fs.readFileSync(argv.job, 'utf8');
+} catch(err) {
+    if (err.code !== 'EBADF') throw err;
+}
+
+if (job) {
+    job = JSON.parse(job);
+    console.warn('Continuing job ' + argv.job);
+    var scheme = Scheme.unserialize(job.scheme);
+    var task = new CopyTask(job.source, job.sink, scheme, argv.job);
+} else {
+    optimist.demand('scheme').demand('from').demand('to').argv;
+    console.warn('Creating new job ' + argv.job);
+    var scheme = Scheme.create(argv.scheme, argv);
+    var task = new CopyTask(argv.from, argv.to, scheme, argv.job);
+}
+
+var errorfile = path.join(path.dirname(argv.job), path.basename(argv.job) + '-failed');
+console.warn('Writing errors to ' + errorfile);
+
+fs.open(errorfile, 'a', function(err, fd) {
+    if (err) throw err;
+
+    task.on('error', function(err, tile) {
+        util.print('\r\033[K');
+        console.warn(tile.toString() + ': ' + err.message);
+        fs.write(fd, JSON.stringify(tile) + '\n');
+        report(task.stats.snapshot());
+    });
+
+    task.start(function(err) {
+        if (err) throw err;
+    });
+});
+
+
+task.on('progress', report);
+
+task.on('finished', function() {
+    console.warn('\nfinished');
+});
+
+
+function report(stats) {
+    util.print('\r\033[K');
+    util.print(formatDuration(stats.date - task.started));
+    util.print('\tcopied: ' + formatNumber(stats.processed) + '/' + formatNumber(stats.total));
+    util.print('\tspeed: ' + formatNumber(stats.speed) + '/s');
+    util.print('\tremaining: ' + formatNumber(stats.remaining));
+    util.print('\tunique: ' + formatNumber(stats.unique));
+    util.print('\tdupes: ' + formatNumber(stats.duplicate));
+    util.print('\tskipped: ' + formatNumber(stats.skipped));
+    util.print('\tfailed: ' + formatNumber(stats.failed));
+}
+
+function formatDuration(duration) {
+    duration = duration / 1000 | 0;
+    var seconds = duration % 60;
+    duration -= seconds;
+    var minutes = (duration % 3600) / 60;
+    duration -= minutes * 60;
+    var hours = (duration % 86400) / 3600;
+    duration -= hours * 3600;
+    var days = duration / 86400;
+
+    return days + 'd ' + hours + 'h ' + minutes + 'm ' + seconds + 's';
+}
+
+function formatNumber(number, decimals) {
+    var num = parseFloat(number).toFixed(decimals || 0).split('.');
+    for (var i = num[0].length - 3; i > 0; i -= 3) {
+        num[0] = num[0].substring(0, i) + ',' + num[0].substring(i);
+    }
+    return num.join('.');
+}
