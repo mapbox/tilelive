@@ -11,6 +11,7 @@ describe('listing', function() {
                 'plain_1': 'mbtiles://' + __dirname + '/fixtures/plain_1.mbtiles',
                 'plain_2': 'mbtiles://' + __dirname + '/fixtures/plain_2.mbtiles',
                 'plain_4': 'mbtiles://' + __dirname + '/fixtures/plain_4.mbtiles',
+                'resume': 'mbtiles://' + __dirname + '/fixtures/resume.mbtiles',
                 'mapquest': 'tilejson://' + __dirname + '/fixtures/mapquest.tilejson'
             }, sources);
             done(err);

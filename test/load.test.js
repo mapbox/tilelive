@@ -92,6 +92,20 @@ var data = [
         maxzoom: 4,
         center: [ 0, 5.0000000006793215, 2 ],
         legend: null
+    },
+    {
+        scheme: 'tms',
+        basename: 'resume.mbtiles',
+        id: 'resume',
+        filesize: 16384,
+        name: '',
+        description: '',
+        version: '1.0.0',
+        legend: null,
+        minzoom: 0,
+        maxzoom: 22,
+        bounds: [ -180, -85.05112877980659, 180, 85.05112877980659 ],
+        center: null
     }
 ];
 

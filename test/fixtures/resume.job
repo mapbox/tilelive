@@ -1,0 +1,158 @@
+{
+    "started": 1335822062812,
+    "ended": 1335822066903,
+    "from": {
+        "protocol": "mbtiles:",
+        "slashes": true,
+        "host": "",
+        "hostname": "",
+        "href": "mbtiles://{DIRNAME}/fixtures/plain_1.mbtiles",
+        "pathname": "{DIRNAME}/fixtures/plain_1.mbtiles",
+        "path": "{DIRNAME}/fixtures/plain_1.mbtiles",
+        "query": {
+            "batch": 100
+        }
+    },
+    "to": {
+        "protocol": "mbtiles:",
+        "slashes": true,
+        "host": "",
+        "hostname": "",
+        "href": "mbtiles://{DIRNAME}/resumed.mbtiles",
+        "pathname": "{DIRNAME}/resumed.mbtiles",
+        "path": "{DIRNAME}/resumed.mbtiles",
+        "query": {
+            "batch": 100
+        }
+    },
+    "scheme": {
+        "type": "scanline",
+        "concurrency": 8,
+        "minzoom": 0,
+        "maxzoom": 4,
+        "metatile": 1,
+        "bounds": {
+            "0": {
+                "minX": 0,
+                "minY": 0,
+                "maxX": 0,
+                "maxY": 0
+            },
+            "1": {
+                "minX": 0,
+                "minY": 0,
+                "maxX": 1,
+                "maxY": 1
+            },
+            "2": {
+                "minX": 0,
+                "minY": 0,
+                "maxX": 3,
+                "maxY": 3
+            },
+            "3": {
+                "minX": 0,
+                "minY": 0,
+                "maxX": 7,
+                "maxY": 7
+            },
+            "4": {
+                "minX": 0,
+                "minY": 0,
+                "maxX": 15,
+                "maxY": 15
+            }
+        },
+        "stats": {
+            "history": [
+                {
+                    "date": 1335822062812,
+                    "total": 341,
+                    "pending": 0,
+                    "unique": 0,
+                    "duplicate": 0,
+                    "failed": 0,
+                    "skipped": 0,
+                    "remaining": 341,
+                    "processed": 0,
+                    "speed": 0
+                },
+                {
+                    "date": 1335822063814,
+                    "total": 341,
+                    "pending": 0,
+                    "unique": 0,
+                    "duplicate": 0,
+                    "failed": 0,
+                    "skipped": 0,
+                    "remaining": 341,
+                    "processed": 0,
+                    "speed": 0
+                },
+                {
+                    "date": 1335822064814,
+                    "total": 341,
+                    "pending": 0,
+                    "unique": 0,
+                    "duplicate": 0,
+                    "failed": 0,
+                    "skipped": 0,
+                    "remaining": 341,
+                    "processed": 0,
+                    "speed": 0
+                },
+                {
+                    "date": 1335822065815,
+                    "total": 341,
+                    "pending": 0,
+                    "unique": 0,
+                    "duplicate": 0,
+                    "failed": 0,
+                    "skipped": 0,
+                    "remaining": 341,
+                    "processed": 0,
+                    "speed": 0
+                },
+                {
+                    "date": 1335822066179,
+                    "total": 341,
+                    "pending": 0,
+                    "unique": 0,
+                    "duplicate": 0,
+                    "failed": 0,
+                    "skipped": 0,
+                    "remaining": 341,
+                    "processed": 0,
+                    "speed": 0
+                },
+                {
+                    "date": 1335822066903,
+                    "total": 341,
+                    "pending": 0,
+                    "unique": 0,
+                    "duplicate": 0,
+                    "failed": 0,
+                    "skipped": 0,
+                    "remaining": 341,
+                    "processed": 0,
+                    "speed": 0
+                }
+            ],
+            "total": 341,
+            "pending": 0,
+            "unique": 0,
+            "duplicate": 0,
+            "failed": 0,
+            "skipped": 0
+        },
+        "pos": {
+            "z": 0,
+            "x": -1,
+            "y": 0
+        },
+        "box": [],
+        "finished": false,
+        "pending": [],
+        "paused": true
+    }
+}
