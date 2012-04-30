@@ -74,6 +74,15 @@ See `examples` or [geode](https://github.com/mapbox/geode) for examples of a til
 
 # Changelog
 
+## 4.3.0
+
+* Bug fixes for CopyTask.
+* Removes use of `putDuplicateTile` from TileSink interface.
+
+## 4.2.0
+
+* Rewritten copy command with swappable schemes.
+
 ## 4.1.0
 
 * Tilesources are not verify()'ed automatically during info(). Clients must now
