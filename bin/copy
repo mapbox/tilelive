@@ -7,8 +7,11 @@ var CopyTask = require('../lib/copytask');
 
 var tilelive = require('../');
 require('../lib/dummyprotocol').registerProtocols(tilelive);
-require('tilelive-mapnik').registerProtocols(tilelive);
-require('bigtiles').registerProtocols(tilelive);
+try {
+    require('mbtiles').registerProtocols(tilelive);
+    require('tilelive-mapnik').registerProtocols(tilelive);
+    require('tilejson').registerProtocols(tilelive);
+} catch(err) {};
 
 var optimist = require('optimist');
 var argv = optimist
@@ -29,14 +32,14 @@ argv.job = path.resolve(argv.job);
 try {
     var job = fs.readFileSync(argv.job, 'utf8');
 } catch(err) {
-    if (err.code !== 'EBADF') throw err;
+    if (err.code !== 'EBADF' && err.code !== 'ENOENT') throw err;
 }
 
 if (job) {
     job = JSON.parse(job);
     console.warn('Continuing job ' + argv.job);
     var scheme = Scheme.unserialize(job.scheme);
-    var task = new CopyTask(job.source, job.sink, scheme, argv.job);
+    var task = new CopyTask(job.from, job.to, scheme, argv.job);
 } else {
     optimist.demand('scheme').demand('from').demand('to').argv;
     console.warn('Creating new job ' + argv.job);
@@ -51,6 +54,7 @@ fs.open(errorfile, 'a', function(err, fd) {
     if (err) throw err;
 
     task.on('error', function(err, tile) {
+        if (err.message === 'Tile does not exist') return;
         util.print('\r\033[K');
         console.warn(tile.toString() + ': ' + err.message);
         fs.write(fd, JSON.stringify(tile) + '\n');
