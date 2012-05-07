@@ -61,7 +61,7 @@ var data = [
         name: 'plain_2',
         type: 'baselayer',
         description: '',
-        version: '1.0.0',
+        version: '1.0.3-alpha',
         formatter: 'function(options, data) { if (options.format === \'full\') { return \'\' + data.NAME + \' (Population: \' + data.POP2005 + \')\'; } else { return \'\' + data.NAME + \'\'; } }',
         bounds:
          [ -179.9999999749438,
@@ -131,6 +131,7 @@ describe('loading', function() {
     it('should load metadata about an existing mbtiles file', function(done) {
         tilelive.info('mbtiles://' + __dirname + '/fixtures/plain_2.mbtiles', function(err, info, handler) {
             if (err) throw err;
+            assert.ifError(tilelive.verify(info));
             assert.deepEqual(info, data[3]);
             handler.close(done);
         });
