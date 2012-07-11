@@ -33,17 +33,17 @@
     },
     "devDependencies": {
         "docco": "~0.3.0",
-        "mocha": "~0.14",
-        "jshint": "~0.5.9",
+        "mocha": "~1.2",
+        "jshint": "~0.7",
         "mbtiles": "~0.2.0",
         "tilejson": "~0.1.0",
-        "tilelive-mapnik": "~0.3.0"
+        "tilelive-mapnik": "~0.4.2"
     },
     "bin": {
         "tilelive": "./bin/tilelive"
     },
     "engines": {
-        "node": "~0.6.x"
+        "node": ">= 0.6.0"
     },
     "scripts": {
         "test": "make test"
