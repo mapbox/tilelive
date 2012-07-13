@@ -5,7 +5,7 @@
 docco = ./node_modules/docco/bin/docco
 
 test:
-	mocha -R spec -t 10000
+	./node_modules/mocha/bin/_mocha -R spec -t 10000
 
 check: test
 
