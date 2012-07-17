@@ -16,7 +16,4 @@ test:
 
 check: test
 
-doc:
-	$(docco) lib/tilelive/*.js
-
 .PHONY: test
