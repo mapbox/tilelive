@@ -7,11 +7,9 @@ var CopyTask = require('../lib/copytask');
 
 var tilelive = require('../');
 require('../lib/dummyprotocol').registerProtocols(tilelive);
-try {
-    require('mbtiles').registerProtocols(tilelive);
-    require('tilelive-mapnik').registerProtocols(tilelive);
-    require('tilejson').registerProtocols(tilelive);
-} catch(err) {};
+try { require('mbtiles').registerProtocols(tilelive); } catch(err) {};
+try { require('tilelive-mapnik').registerProtocols(tilelive); } catch(err) {};
+try { require('tilejson').registerProtocols(tilelive); } catch(err) {};
 
 var optimist = require('optimist');
 var argv = optimist
