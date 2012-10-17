@@ -40,7 +40,8 @@
         "tilelive-mapnik": "~0.4.2"
     },
     "bin": {
-        "tilelive": "./bin/tilelive"
+        "tilelive": "./bin/tilelive",
+        "tilelive-copy": "./bin/copy"
     },
     "engines": {
         "node": ">= 0.6.0 && < 0.9.0"
