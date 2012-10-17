@@ -10,6 +10,7 @@ require('../lib/dummyprotocol').registerProtocols(tilelive);
 try { require('mbtiles').registerProtocols(tilelive); } catch(err) {};
 try { require('tilelive-mapnik').registerProtocols(tilelive); } catch(err) {};
 try { require('tilejson').registerProtocols(tilelive); } catch(err) {};
+try { require('tilelive-file').registerProtocols(tilelive); } catch(err) {};
 
 var optimist = require('optimist');
 var argv = optimist
