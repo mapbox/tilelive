@@ -11,6 +11,7 @@ try { require('mbtiles').registerProtocols(tilelive); } catch(err) {};
 try { require('tilelive-mapnik').registerProtocols(tilelive); } catch(err) {};
 try { require('tilejson').registerProtocols(tilelive); } catch(err) {};
 try { require('tilelive-file').registerProtocols(tilelive); } catch(err) {};
+try { require('tilelive-s3').registerProtocols(tilelive); } catch(err) {};
 
 var optimist = require('optimist');
 var argv = optimist
