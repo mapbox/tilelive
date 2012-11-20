@@ -1,3 +1,7 @@
+## 4.3.3
+
+* Remove uncaughtException handler from CopyTask.
+
 ## 4.3.2
 
 * More lenient validation of north and south bbox values.
