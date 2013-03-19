@@ -30,19 +30,15 @@ describe('copying', function() {
         });
 
         it('should copy', function(done) {
-            tilelive.copy({
-                source: source,
-                sink: sink,
+            var scheme = tilelive.Scheme.create('scanline', {
                 bbox: [ -10, -10, 10, 10 ],
-                minZoom: 3,
-                maxZoom: 5,
-                tiles: true
-            }, function(err) {
-                source.close(function(err) {
-                    if (err) done(err);
-                    else sink.close(done);
-                });
+                minzoom: 3,
+                maxzoom: 5
             });
+            var task = new tilelive.CopyTask(source, sink, scheme);
+            task.on('error', done);
+            task.on('finished', done);
+            task.start();
         });
 
         it('should verify the information', function(done) {

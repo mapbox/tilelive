@@ -39,7 +39,6 @@
         "tilelive-mapnik": "~0.4.2"
     },
     "bin": {
-        "tilelive": "./bin/tilelive",
         "tilelive-copy": "./bin/copy"
     },
     "engines": {
