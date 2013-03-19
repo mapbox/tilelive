@@ -1,3 +1,18 @@
+## 4.3.3
+
+* Remove uncaughtException handler from CopyTask.
+
+## 4.3.2
+
+* More lenient validation of north and south bbox values.
+* CopyTask treats 'Tile|Grid does not exist' errors as skips.
+* CopyTask can now accept loaded tilelive sources.
+* Add "all" and "clean" rules to Makefile, by @strk.
+
+## 4.3.1
+
+* Node v0.8 support.
+
 ## 4.3.0
 
 * Bug fixes for CopyTask.

@@ -1,6 +1,6 @@
 {
     "name"          : "tilelive",
-    "version"       : "4.3.1",
+    "version"       : "4.3.3",
     "main"          : "./lib/tilelive.js",
     "description"   : "Frontend for various tile backends, mapnik and mbtiles",
     "url"           : "http://github.com/mapbox/tilelive.js",
@@ -25,7 +25,6 @@
         "Konstantin Käfer <kkaefer>"
     ],
     "dependencies": {
-        "generic-pool": "~1.0.9",
         "optimist": "~0.3.1",
         "step": "~0.0.5",
         "sphericalmercator": "~1.0.1",
