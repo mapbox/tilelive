@@ -1,91 +1,96 @@
 #!/usr/bin/env node
 var fs = require('fs');
+var url = require('url');
 var util = require('util');
 var path = require('path');
 var Scheme = require('../lib/scheme');
 var CopyTask = require('../lib/copytask');
-
-var tilelive = require('../');
-require('../lib/dummyprotocol').registerProtocols(tilelive);
-try { require('mbtiles').registerProtocols(tilelive); } catch(err) {};
-try { require('tilelive-mapnik').registerProtocols(tilelive); } catch(err) {};
-try { require('tilejson').registerProtocols(tilelive); } catch(err) {};
-try { require('tilelive-file').registerProtocols(tilelive); } catch(err) {};
-try { require('tilelive-s3').registerProtocols(tilelive); } catch(err) {};
-
 var optimist = require('optimist');
+var tilelive = require('../');
+
 var argv = optimist
-    .options('job', { 'alias': 'j', 'describe': 'Job file (will be resumed if it exists)', 'demand': true })
-    .options('scheme', { 'alias': 's', 'describe': 'One of [file, scanline, pyramid]' })
-    .options('from', { 'describe': 'Source tilesource URI' })
-    .options('to', { 'describe': 'Destination tilesink URI' })
-    .options('list', { 'alias': 'l', 'describe': 'If scheme=file, the coordinates file' })
-    .options('concurrency', { 'alias': 'c', 'default': 8, 'describe': 'Number of parallel copy operations' })
-    .options('bbox', { 'describe': 'WGS84 bounding box' })
-    .options('minzoom', { 'describe': 'Zoom level from which to start copying (inclusive)' })
-    .options('maxzoom', { 'describe': 'Zoom level until which to copy (inclusive)' })
-    .options('metatile', { 'describe': 'Metatile side length in number of tiles' })
+    .options('job', {
+        'alias': 'j',
+        'describe': 'Job file (will be resumed if it exists)'
+    })
+    .options('scheme', {
+        'alias': 's',
+        'default': 'scanline',
+        'describe': 'One of [file, scanline, pyramid]'
+    })
+    .options('list', {
+        'alias': 'l',
+        'describe': 'If scheme=file, the coordinates file'
+    })
+    .options('concurrency', {
+        'alias': 'c',
+        'default': 8,
+        'describe': 'Number of parallel copy operations'
+    })
+    .options('bbox', {
+        'describe': 'WGS84 bounding box',
+        'default': [-180, -85.0511, 180, 85.0511]
+    })
+    .options('minzoom', {
+        'describe': 'Zoom level from which to start copying (inclusive)',
+        'default': 0
+    })
+    .options('maxzoom', {
+        'describe': 'Zoom level until which to copy (inclusive)',
+        'default': 8
+    })
+    .options('metatile', {
+        'describe': 'Metatile side length in number of tiles',
+        'default': 1
+    })
     .argv;
 
-argv.job = path.resolve(argv.job);
-
-try {
-    var job = fs.readFileSync(argv.job, 'utf8');
-} catch(err) {
-    if (err.code !== 'EBADF' && err.code !== 'ENOENT') throw err;
-}
-
-if (job) {
-    job = JSON.parse(job);
+if (argv.job) {
+    try {
+        var job = JSON.parse(fs.readFileSync(path.resolve(argv.job), 'utf8'));
+    } catch(err) {
+        if (err.code !== 'EBADF' && err.code !== 'ENOENT') throw err;
+    }
     console.warn('Continuing job ' + argv.job);
+    auto(job.from);
+    auto(job.to);
     var scheme = Scheme.unserialize(job.scheme);
     var task = new CopyTask(job.from, job.to, scheme, argv.job);
 } else {
-    optimist.demand('scheme').demand('from').demand('to').argv;
-    console.warn('Creating new job ' + argv.job);
+    optimist.demand(0).demand(1).argv;
     if (argv.bbox && !Array.isArray(argv.bbox))
         argv.bbox = argv.bbox.split(',').map(parseFloat);
+    var from = auto(argv._[0]);
+    var to = auto(argv._[1]);
     var scheme = Scheme.create(argv.scheme, argv);
-    var task = new CopyTask(argv.from, argv.to, scheme, argv.job);
+    var task = new CopyTask(from, to, scheme, argv.job);
 }
 
-var errorfile = path.join(path.dirname(argv.job), path.basename(argv.job) + '-failed');
-console.warn('Writing errors to ' + errorfile);
-
-fs.open(errorfile, 'a', function(err, fd) {
-    if (err) throw err;
-
-    task.on('error', function(err, tile) {
-        if (err.message === 'Tile does not exist') return;
-        util.print('\r\033[K');
-        console.warn(tile.toString() + ': ' + err.message);
-        fs.write(fd, JSON.stringify(tile) + '\n');
-        report(task.stats.snapshot());
-    });
-
-    task.start(function(err) {
-        if (err) throw err;
-    });
-});
-
-
 task.on('progress', report);
-
-task.on('finished', function() {
-    console.warn('\nfinished');
-});
+task.on('finished', function() { console.warn('\nFinished.'); });
+task.start(function(err) { if (err) throw err; });
 
 
 function report(stats) {
-    util.print('\r\033[K');
-    util.print(formatDuration(stats.date - task.started));
-    util.print('\tcopied: ' + formatNumber(stats.processed) + '/' + formatNumber(stats.total));
-    util.print('\tspeed: ' + formatNumber(stats.speed) + '/s');
-    util.print('\tremaining: ' + formatNumber(stats.remaining));
-    util.print('\tunique: ' + formatNumber(stats.unique));
-    util.print('\tdupes: ' + formatNumber(stats.duplicate));
-    util.print('\tskipped: ' + formatNumber(stats.skipped));
-    util.print('\tfailed: ' + formatNumber(stats.failed));
+    var progress = stats.processed / stats.total;
+    var remaining = timeRemaining(progress, task.started);
+    util.print(util.format('\r\033[K[%s] %s%% %s/%s @ %s/s | ✓ %s ■ %s □ %s ✕ %s | %s left',
+        pad(formatDuration(stats.date - task.started), 4, true),
+        pad(((progress || 0) * 100).toFixed(4), 8, true),
+        pad(formatNumber(stats.processed),6,true),
+        pad(formatNumber(stats.total),6,true),
+        pad(formatNumber(stats.speed),4,true),
+        formatNumber(stats.unique),
+        formatNumber(stats.duplicate),
+        formatNumber(stats.skipped),
+        formatNumber(stats.failed),
+        formatDuration(remaining)
+    ));
+}
+
+function pad(str, len, r) {
+    while (str.length < len) str = r ? ' ' + str : str + ' ';
+    return str;
 }
 
 function formatDuration(duration) {
@@ -98,13 +103,39 @@ function formatDuration(duration) {
     duration -= hours * 3600;
     var days = duration / 86400;
 
-    return days + 'd ' + hours + 'h ' + minutes + 'm ' + seconds + 's';
+    return (days > 0 ? days + 'd ' : '') +
+           (hours > 0 || days > 0 ? hours + 'h ' : '') +
+           (minutes > 0 || hours > 0 || days > 0 ? minutes + 'm ' : '') +
+           seconds + 's';
 }
 
-function formatNumber(number, decimals) {
-    var num = parseFloat(number).toFixed(decimals || 0).split('.');
-    for (var i = num[0].length - 3; i > 0; i -= 3) {
-        num[0] = num[0].substring(0, i) + ',' + num[0].substring(i);
+function formatNumber(num) {
+    num = num || 0;
+    if (num >= 1e6) {
+        return (num / 1e6).toFixed(2) + 'm';
+    } else if (num >= 1e3) {
+        return (num / 1e3).toFixed(1) + 'k';
+    } else {
+        return num.toFixed(0);
     }
     return num.join('.');
+}
+
+function timeRemaining(progress, started) {
+    return Math.floor(
+        (Date.now() - started) * (1 / progress) -
+        (Date.now() - started)
+    );
+}
+
+function auto(uri) {
+    uri = url.parse(uri);
+
+    // Attempt to load any modules that may match keyword pattern.
+    var keyword = path.extname(uri.pathname).replace('.','');
+    try { require(keyword).registerProtocols(tilelive); } catch(err) {};
+    try { require('tilelive-' + keyword).registerProtocols(tilelive); } catch(err) {};
+
+    uri.protocol = uri.protocol || keyword + ':';
+    return uri;
 }
