@@ -132,7 +132,9 @@ function auto(uri) {
     uri = url.parse(uri);
 
     // Attempt to load any modules that may match keyword pattern.
-    var keyword = path.extname(uri.pathname).replace('.','');
+    var keyword = uri.protocol
+        ? uri.protocol.replace(':','')
+        : path.extname(uri.pathname).replace('.','');
     try { require(keyword).registerProtocols(tilelive); } catch(err) {};
     try { require('tilelive-' + keyword).registerProtocols(tilelive); } catch(err) {};
 
