@@ -1,3 +1,8 @@
+## 4.4.0
+
+* Remove deprecated tilelive.copy method in favor of CopyTask.
+* Rewrite tilelive-copy with better interface and detection of protocols.
+
 ## 4.3.3
 
 * Remove uncaughtException handler from CopyTask.
