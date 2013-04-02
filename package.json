@@ -1,6 +1,6 @@
 {
     "name"          : "tilelive",
-    "version"       : "4.4.0",
+    "version"       : "4.4.1",
     "main"          : "./lib/tilelive.js",
     "description"   : "Frontend for various tile backends, mapnik and mbtiles",
     "url"           : "http://github.com/mapbox/tilelive.js",
