@@ -4,7 +4,7 @@ var FileScheme = require('../lib/filescheme');
 
 describe('file enumeration scheme', function() {
     ['flat', 'json'].forEach(function(format) {
-        it('should parse ' +format+ ' input', function(done) {
+        it('should parse ' + format + ' input', function(done) {
             var scheme = new FileScheme({ list: __dirname + '/fixtures/filescheme.' + format });
             assert.deepEqual(scheme, {
                 type: 'file',
@@ -20,6 +20,10 @@ describe('file enumeration scheme', function() {
                     history: [],
                     total: 5
                 },
+                raw: require('fs').readFileSync(__dirname + '/fixtures/filescheme.' + format, 'utf8'),
+                last: '',
+                chunk: 1e6,
+                offset: 1e6,
                 pending: []
             });
             var tiles = [];
