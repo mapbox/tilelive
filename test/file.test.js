@@ -40,5 +40,36 @@ describe('file enumeration scheme', function() {
             scheme.start()
         });
     });
+    it('should read in chunks', function(done) {
+        var scheme = new FileScheme({ list: __dirname + '/fixtures/filescheme.flat', chunk:10 });
+        assert.deepEqual(scheme, {
+            type: 'file',
+            concurrency: 8,
+            list: [
+                { z: 0, x: 0, y: 0, key: false, id: 0 }
+            ],
+            stats: {
+                history: [],
+                total: 5
+            },
+            raw: require('fs').readFileSync(__dirname + '/fixtures/filescheme.flat', 'utf8'),
+            last: '1/0/',
+            chunk: 10,
+            offset: 10,
+            pending: []
+        });
+        var tiles = [];
+        scheme.task = {
+            render: function(tile) {
+                tiles.push(tile.toString());
+                scheme.unique(tile);
+            },
+            finished: function() {
+                assert.deepEqual(tiles, ['0/0/0', '1/0/0', '1/1/0', '1/0/1', '1/1/1']);
+                done();
+            }
+        };
+        scheme.start()
+    });
 });
 
