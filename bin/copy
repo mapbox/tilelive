@@ -67,9 +67,11 @@ if (argv.job) {
 }
 
 task.on('progress', report);
-task.on('finished', function() { console.warn('\nFinished.'); });
+task.on('finished', function() {
+    console.log('\nFinished.');
+    process.exit(0);
+});
 task.start(function(err) { if (err) throw err; });
-
 
 function report(stats) {
     var progress = stats.processed / stats.total;
