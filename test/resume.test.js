@@ -1,4 +1,3 @@
-var Step = require('step');
 var assert = require('assert');
 var fs = require('fs');
 var CopyTask = require('../lib/copytask');
