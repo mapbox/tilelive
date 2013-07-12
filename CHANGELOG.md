@@ -1,3 +1,8 @@
+## 4.5.0
+
+* Bug fixes.
+* Removes underscore, step dependencies.
+
 ## 4.4.0
 
 * Remove deprecated tilelive.copy method in favor of CopyTask.
