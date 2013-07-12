@@ -44,11 +44,15 @@ describe('copying', function() {
         it('should verify the information', function(done) {
             tilelive.info('mbtiles://' + __dirname + '/copy.mbtiles', function(err, info) {
                 if (err) throw err;
+                // There is some variance in the MBTiles size generated --
+                // possibly related to the timing in which data is inserted.
+                assert.ok(info.filesize > 39900 && info.filesize < 41000);
+                delete info.filesize;
                 assert.deepEqual({
                     scheme: 'tms',
                     basename: 'copy.mbtiles',
                     id: 'copy',
-                    filesize: 39936,
+                    // filesize: 39936,
                     minzoom: 3,
                     maxzoom: 4,
                     bounds: [ -45, -40.97989806962013, 45, 40.97989806962013 ],
