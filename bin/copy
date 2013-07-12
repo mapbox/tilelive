@@ -71,7 +71,15 @@ task.on('finished', function() {
     console.log('\nFinished.');
     process.exit(0);
 });
-task.start(function(err) { if (err) throw err; });
+task.start(function(err) {
+    if (err) throw err;
+    task.source.getInfo(function(err, info) {
+        if (err) throw err;
+        task.sink.putInfo(info, function(err) {
+            if (err) throw err;
+        });
+    });
+});
 
 function report(stats) {
     var progress = stats.processed / stats.total;
