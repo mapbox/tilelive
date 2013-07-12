@@ -27,8 +27,7 @@
     "dependencies": {
         "optimist": "~0.3.1",
         "step": "~0.0.5",
-        "sphericalmercator": "~1.0.1",
-        "underscore": "~1.4.4"
+        "sphericalmercator": "~1.0.1"
     },
     "devDependencies": {
         "docco": "~0.3.0",
