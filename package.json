@@ -8,10 +8,10 @@
     "licenses"      : [{
         "type": "BSD"
     }],
-    "repositories": [{
+    "repository": {
         "type": "git",
         "url": "http://github.com/mapbox/tilelive.js.git"
-    }],
+    },
     "author": {
       "name": "MapBox",
       "url": "http://mapbox.com/",
