@@ -1,3 +1,8 @@
+
+## 4.5.1
+
+* Minor package.json fixes and updated dependencies
+
 ## 4.5.0
 
 * Bug fixes.
