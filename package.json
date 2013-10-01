@@ -1,6 +1,6 @@
 {
     "name"          : "tilelive",
-    "version"       : "4.5.1",
+    "version"       : "4.5.2",
     "main"          : "./lib/tilelive.js",
     "description"   : "Frontend for various tile backends, mapnik and mbtiles",
     "url"           : "http://github.com/mapbox/tilelive.js",
@@ -37,7 +37,7 @@
         "tilelive-copy": "./bin/copy"
     },
     "engines": {
-        "node": ">= 0.6.0 < 0.9.0"
+        "node": ">= 0.6.0 < 0.11.0"
     },
     "scripts": {
         "test": "make test"
