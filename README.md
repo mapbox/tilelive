@@ -2,6 +2,8 @@
 
 tilelive.js is an interface for tilestore modules for [node.js](http://nodejs.org/). It defines an [API](https://github.com/mapbox/tilelive.js/blob/master/API.md) to interact with implementations for a particular tile store.
 
+[![Build Status](https://secure.travis-ci.org/mapbox/tilelive.js.png)](http://travis-ci.org/mapbox/tilelive.js)
+
 ## Backends
 
 - [MBTiles](https://github.com/mapbox/node-mbtiles)
