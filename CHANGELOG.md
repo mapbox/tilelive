@@ -1,3 +1,11 @@
+## 4.5.2
+
+* Declare support for node v0.10.x in package.json
+
+## 4.5.1
+
+* Minor package.json fixes and updated dependencies
+
 ## 4.5.0
 
 * Bug fixes.

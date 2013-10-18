@@ -2,8 +2,6 @@
 # Run all tests
 #
 
-docco = ./node_modules/docco/bin/docco
-
 all:
 	npm install
 
