@@ -2,8 +2,6 @@ var assert = require('assert');
 var Scheme = require('../lib/scheme');
 var ScanlineScheme = require('../lib/scanlinescheme');
 
-
-
 describe('scanline enumeration scheme', function() {
     it('should enumerate all tiles in the correct order', function(done) {
         var scheme = new ScanlineScheme({

@@ -1,5 +1,5 @@
 var assert = require('assert');
-var tilelive = require('..');
+var tilelive = require('../');
 tilelive.protocols['mbtiles:'] = require('mbtiles');
 tilelive.protocols['tilejson:'] = require('tilejson');
 
