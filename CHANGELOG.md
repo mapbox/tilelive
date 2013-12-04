@@ -1,3 +1,8 @@
+## 4.5.3
+
+* Add tilelive.auto method from tilelive-copy for detection and autoloading of
+  protocol modules.
+
 ## 4.5.2
 
 * Declare support for node v0.10.x in package.json
