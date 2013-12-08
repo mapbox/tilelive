@@ -10,7 +10,7 @@ describe('auto', function() {
         tilelive.protocols = {};
         tilelive.load('mbtiles://' + __dirname + '/fixtures/plain_1.mbtiles', function(err, source) {
             assert.ok(err);
-            assert.equal('Invalid tilesource protocol', err.message);
+            assert.equal('Invalid tilesource protocol: mbtiles:', err.message);
             done();
         });
     });

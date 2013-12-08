@@ -111,7 +111,7 @@ describe('loading', function() {
     it('should refuse loading an invalid url', function(done) {
         tilelive.load('http://foo/bar', function(err) {
             assert.ok(err);
-            assert.equal(err.message, 'Invalid tilesource protocol');
+            assert.equal(err.message, 'Invalid tilesource protocol: http:');
             done();
         });
     });
