@@ -60,8 +60,8 @@ if (argv.job) {
     optimist.demand(0).demand(1).argv;
     if (argv.bbox && !Array.isArray(argv.bbox))
         argv.bbox = argv.bbox.split(',').map(parseFloat);
-    var from = auto(argv._[0]);
-    var to = auto(argv._[1]);
+    var from = tilelive.auto(argv._[0]);
+    var to = tilelive.auto(argv._[1]);
     var scheme = Scheme.create(argv.scheme, argv);
     var task = new CopyTask(from, to, scheme, argv.job);
 }
@@ -138,16 +138,3 @@ function timeRemaining(progress, started) {
     );
 }
 
-function auto(uri) {
-    uri = url.parse(uri);
-
-    // Attempt to load any modules that may match keyword pattern.
-    var keyword = uri.protocol
-        ? uri.protocol.replace(':','')
-        : path.extname(uri.pathname).replace('.','');
-    try { require(keyword).registerProtocols(tilelive); } catch(err) {};
-    try { require('tilelive-' + keyword).registerProtocols(tilelive); } catch(err) {};
-
-    uri.protocol = uri.protocol || keyword + ':';
-    return uri;
-}
