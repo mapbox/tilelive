@@ -44,7 +44,7 @@ describe('copying', function() {
                 if (err) throw err;
                 // There is some variance in the MBTiles size generated --
                 // possibly related to the timing in which data is inserted.
-                assert.ok(info.filesize > 39900 && info.filesize < 41000);
+                assert.ok(info.filesize > 39900 && info.filesize < 46000);
                 delete info.filesize;
                 assert.deepEqual({
                     scheme: 'tms',
