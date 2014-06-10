@@ -60,9 +60,9 @@ Tilelive doesn't ship with any Tilestore backends by default. To use a particula
   * `total`: Total number of elements to be copied.
   * `started`: Timestamp of when the action started in milliseconds after epoch
 
-## bin/tilelive
+## bin/copy
 
-tilelive can be used to copy data between tilestores. For a full list of options, run `bin/tilelive`.
+tilelive can be used to copy data between tilestores. For a full list of options, run `bin/copy`.
 
 ## Tests
 
