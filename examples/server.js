@@ -1,22 +1,25 @@
 // Tile server using the node web framework Express (http://expressjs.com).
-var app = require('express').createServer(),
-    mapnik = require('tilelive-mapnik'),
-    tilelive = new (require('tilelive').Server)(mapnik);
+var express = require("express"),
+    app = express(),
+    tilelive = require('tilelive');
 
-app.get('/:z/:x/:y.*', function(req, res) {
-    var options = {
-        x: req.param('x'),
-        y: req.param('y'),
-        z: req.param('z'),
-        format: req.params[0],
-        datasource: __dirname + '/stylesheet.xml'
-    };
-    tilelive.serve(options, function(err, data) {
-        if (!err) {
-            res.send.apply(res, data);
-        } else {
-            res.send('Tile rendering error: ' + err + '\n');
-        }
+require('tilelive-mapnik').registerProtocols(tilelive);
+
+var filename = __dirname + '/stylesheet.xml';
+
+tilelive.load('mapnik://' + filename, function(err, source) {
+    if (err) throw err;
+    app.get('/:z/:x/:y.*', function(req, res) {
+        source.getTile(req.param('z'), req.param('x'), req.param('y'), function(err, tile, headers) {
+            // `err` is an error object when generation failed, otherwise null.
+            // `tile` contains the compressed image file as a Buffer
+            // `headers` is a hash with HTTP headers for the image.
+            if (!err) {
+                res.send(tile);
+            } else {
+                res.send('Tile rendering error: ' + err + '\n');
+            }
+        });
     });
 });
 
