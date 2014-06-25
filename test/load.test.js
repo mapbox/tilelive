@@ -1,3 +1,4 @@
+var test = require('tape');
 var assert = require('assert');
 var tilelive = require('../');
 tilelive.protocols['mbtiles:'] = require('mbtiles');
@@ -107,58 +108,57 @@ var data = [
     }
 ];
 
-describe('loading', function() {
-    it('should refuse loading an invalid url', function(done) {
-        tilelive.load('http://foo/bar', function(err) {
-            assert.ok(err);
-            assert.equal(err.message, 'Invalid tilesource protocol: http:');
-            done();
+test('loading: should refuse loading an invalid url', function(t) {
+    tilelive.load('http://foo/bar', function(err) {
+        t.ok(err);
+        t.equal(err.message, 'Invalid tilesource protocol: http:');
+        t.end();
+    });
+});
+
+test('loading: should load an existing mbtiles file', function(t) {
+    tilelive.load('mbtiles://' + __dirname + '/fixtures/plain_2.mbtiles', function(err, source) {
+        if (err) throw err;
+        t.equal(typeof source.getTile, 'function');
+        t.equal(typeof source.getGrid, 'function');
+        t.equal(typeof source.getInfo, 'function');
+        source.close(t.end);
+    });
+});
+
+test('loading: should load metadata about an existing mbtiles file', function(t) {
+    tilelive.info('mbtiles://' + __dirname + '/fixtures/plain_2.mbtiles', function(err, info, handler) {
+        if (err) throw err;
+        t.deepEqual(info, data[3]);
+        handler.close(t.end);
+    });
+});
+
+test('loading: should load metadata from an existing tilejson file', function(t) {
+    tilelive.info('tilejson://' + __dirname + '/fixtures/mapquest.tilejson', function(err, info, handler) {
+        if (err) throw err;
+        t.deepEqual(info, data[0]);
+        handler.close(t.end);
+    });
+});
+
+test('loading: should load all tile sources in a directory', function(t) {
+    tilelive.all(__dirname + '/fixtures', function(err, info, handlers) {
+        if (err) throw err;
+
+        // Sort tilesets before deepEqual.
+        info.sort(function(a, b) {
+            return (a.basename || '0') < (b.basename || '0') ? -1 : 1;
         });
+
+        t.deepEqual(data, info);
+
+        var doit = function(err) {
+            t.ifError(err);
+            if (!handlers.length) return t.end();
+            handlers.shift().close(doit);
+        };
+        doit();
     });
 
-    it('should load an existing mbtiles file', function(done) {
-        tilelive.load('mbtiles://' + __dirname + '/fixtures/plain_2.mbtiles', function(err, source) {
-            if (err) throw err;
-            assert.equal(typeof source.getTile, 'function');
-            assert.equal(typeof source.getGrid, 'function');
-            assert.equal(typeof source.getInfo, 'function');
-            source.close(done);
-        });
-    });
-
-    it('should load metadata about an existing mbtiles file', function(done) {
-        tilelive.info('mbtiles://' + __dirname + '/fixtures/plain_2.mbtiles', function(err, info, handler) {
-            if (err) throw err;
-            assert.deepEqual(info, data[3]);
-            handler.close(done);
-        });
-    });
-
-    it('should load metadata from an existing tilejson file', function(done) {
-        tilelive.info('tilejson://' + __dirname + '/fixtures/mapquest.tilejson', function(err, info, handler) {
-            if (err) throw err;
-            assert.deepEqual(info, data[0]);
-            handler.close(done);
-        });
-    });
-
-    it('should load all tile sources in a directory', function(done) {
-        tilelive.all('test/fixtures', function(err, info, handlers) {
-            if (err) throw err;
-
-            // Sort tilesets before deepEqual.
-            info.sort(function(a, b) {
-                return (a.basename || '0') < (b.basename || '0') ? -1 : 1;
-            });
-
-            assert.deepEqual(data, info);
-
-            var doit = function(err) {
-                if (err) return done(err);
-                if (!handlers.length) return done();
-                handlers.shift().close(doit);
-            };
-            doit();
-        });
-    });
 });
