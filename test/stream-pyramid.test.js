@@ -36,7 +36,7 @@ test('pyramid: pipe', function(t) {
     put.on('error', function(err) { t.ifError(err); });
     get.pipe(put);
     put.on('finish', function() {
-        t.deepEqual({ total: 285, skipped: 0, stored: 285 }, get.stats);
+        t.deepEqual(get.stats, { ops:285, total: 285, skipped: 0, stored: 285 });
         t.end();
     });
 });
@@ -48,8 +48,8 @@ test('pyramid: vacuum', function(t) {
 test('pyramid: verify tiles', function(t) {
     dst._db.get('select count(1) as count, sum(length(tile_data)) as size from tiles;', function(err, row) {
         t.ifError(err);
-        t.equal(285, row.count);
-        t.equal(477705, row.size);
+        t.equal(row.count, 285);
+        t.equal(row.size, 477705);
         t.end();
     });
 });
@@ -77,12 +77,11 @@ test('pyramid: concurrency', function(t) {
     put.on('error', function(err) { t.ifError(err); });
     get.pipe(put);
     setTimeout(function() {
-        t.deepEqual(get.stats, { total: 85, skipped: 0, stored: 1 }, 'slow write holds up read');
-    }, 10);
+        t.deepEqual(get.stats, { ops:25, total: 85, skipped: 10, stored: 13 });
+    }, 20);
     put.on('finish', function() {
-        t.deepEqual(get.stats, { total: 85, skipped: 28, stored: 57 });
+        t.deepEqual(get.stats, { ops:69, total: 85, skipped: 28, stored: 57 });
         t.end();
     });
 });
-
 
