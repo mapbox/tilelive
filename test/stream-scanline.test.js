@@ -4,6 +4,7 @@ var tilelive = require('..');
 var fs = require('fs');
 var tmp = require('os').tmpdir();
 var path = require('path');
+var Timedsource = require('./timedsource');
 
 var filepath = path.join(tmp, 'scanline.mbtiles');
 try { fs.unlinkSync(filepath); } catch(e) {}
@@ -47,8 +48,8 @@ test('scanline: vacuum', function(t) {
 test('scanline: verify tiles', function(t) {
     dst._db.get('select count(1) as count, sum(length(tile_data)) as size from tiles;', function(err, row) {
         t.ifError(err);
-        t.equal(285, row.count);
-        t.equal(477705, row.size);
+        t.equal(row.count, 285);
+        t.equal(row.size, 477705);
         t.end();
     });
 });
@@ -66,4 +67,22 @@ test('scanline: verify metadata', function(t) {
         t.end();
     });
 });
+
+test('scanline: concurrency', function(t) {
+    var fast = new Timedsource({time:5});
+    var slow = new Timedsource({time:50});
+    var get = tilelive.createReadStream(fast, {type:'scanline'});
+    var put = tilelive.createWriteStream(slow);
+    get.on('error', function(err) { t.ifError(err); });
+    put.on('error', function(err) { t.ifError(err); });
+    get.pipe(put);
+    setTimeout(function() {
+        t.deepEqual(get.stats, { total: 85, skipped: 1, stored: 9 }, 'concurrency 10 at work');
+    }, 10);
+    put.on('finish', function() {
+        t.deepEqual(get.stats, { total: 85, skipped: 28, stored: 57 });
+        t.end();
+    });
+});
+
 

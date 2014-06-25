@@ -4,6 +4,7 @@ var tilelive = require('..');
 var fs = require('fs');
 var tmp = require('os').tmpdir();
 var path = require('path');
+var Timedsource = require('./timedsource');
 
 var filepath = path.join(tmp, 'pyramid.mbtiles');
 try { fs.unlinkSync(filepath); } catch(e) {}
@@ -66,4 +67,22 @@ test('pyramid: verify metadata', function(t) {
         t.end();
     });
 });
+
+test('pyramid: concurrency', function(t) {
+    var fast = new Timedsource({time:5});
+    var slow = new Timedsource({time:50});
+    var get = tilelive.createReadStream(fast, {type:'pyramid'});
+    var put = tilelive.createWriteStream(slow);
+    get.on('error', function(err) { t.ifError(err); });
+    put.on('error', function(err) { t.ifError(err); });
+    get.pipe(put);
+    setTimeout(function() {
+        t.deepEqual(get.stats, { total: 85, skipped: 0, stored: 1 }, 'slow write holds up read');
+    }, 10);
+    put.on('finish', function() {
+        t.deepEqual(get.stats, { total: 85, skipped: 28, stored: 57 });
+        t.end();
+    });
+});
+
 
