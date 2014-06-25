@@ -31,8 +31,7 @@
     "devDependencies": {
         "tape": "2.13.3",
         "mbtiles": "~0.2.8",
-        "tilejson": "~0.6.0",
-        "tilelive-mapnik": "~0.6.2"
+        "tilejson": "~0.6.0"
     },
     "bin": {
         "tilelive-copy": "./bin/copy"
