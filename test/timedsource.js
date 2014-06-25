@@ -41,11 +41,3 @@ Timedsource.prototype.putTile = function(z, x, y, data, callback) {
     }, this.time);
 };
 
-Timedsource.prototype.startWriting = function(callback) {
-    callback();
-};
-
-Timedsource.prototype.stopWriting = function(callback) {
-    callback();
-};
-
