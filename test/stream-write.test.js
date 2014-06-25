@@ -14,10 +14,12 @@ test('write: slowput', function(t) {
     put.on('error', function(err) { t.ifError(err); });
     get.pipe(put);
     setTimeout(function() {
-        t.deepEqual(get.stats, { ops: 10, total: 85, skipped: 0, done: 0 }, 'concurrency 10 at work');
+        t.deepEqual(get.stats, { ops: 10, total: 85, skipped: 0, done: 0 });
+        t.deepEqual(put.stats, { ops: 1, total: 0, skipped: 0, done: 1 });
     }, 10);
     put.on('finish', function() {
         t.deepEqual(get.stats, { ops: 85, total: 85, skipped: 28, done: 85 });
+        t.deepEqual(put.stats, { ops: 58, total: 0, skipped: 0, done: 58 });
         t.end();
     });
 });
