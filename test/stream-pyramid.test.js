@@ -69,7 +69,7 @@ test('pyramid: verify metadata', function(t) {
 });
 
 test('pyramid: concurrency', function(t) {
-    var fast = new Timedsource({time:5});
+    var fast = new Timedsource({time:10});
     var slow = new Timedsource({time:50});
     var get = tilelive.createReadStream(fast, {type:'pyramid'});
     var put = tilelive.createWriteStream(slow);
@@ -78,7 +78,7 @@ test('pyramid: concurrency', function(t) {
     get.pipe(put);
     setTimeout(function() {
         t.deepEqual(get.stats, { ops:25, total: 85, skipped: 10, done: 23 });
-    }, 20);
+    }, 40);
     put.on('finish', function() {
         t.deepEqual(get.stats, { ops:69, total: 85, skipped: 28, done: 85 });
         t.end();

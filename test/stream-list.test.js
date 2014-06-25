@@ -57,7 +57,7 @@ test('list: verify tiles', function(t) {
 
 test('list: concurrency', function(t) {
     var file = fs.createReadStream(path.join(__dirname,'fixtures','filescheme.flat'));
-    var fast = new Timedsource({time:5});
+    var fast = new Timedsource({time:10});
     var slow = new Timedsource({time:50});
     var get = tilelive.createReadStream(fast, {type:'list'});
     var put = tilelive.createWriteStream(slow);
@@ -66,7 +66,7 @@ test('list: concurrency', function(t) {
     file.pipe(get).pipe(put);
     setTimeout(function() {
         t.deepEqual(get.stats, { ops:31, total: 0, skipped: 4, done: 21 }, 'concurrency 10');
-    }, 20);
+    }, 40);
     put.on('finish', function() {
         t.deepEqual(get.stats, { ops:77, total: 0, skipped: 25, done: 77 });
         t.end();
