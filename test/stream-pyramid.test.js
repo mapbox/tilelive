@@ -36,7 +36,7 @@ test('pyramid: pipe', function(t) {
     put.on('error', function(err) { t.ifError(err); });
     get.pipe(put);
     put.on('finish', function() {
-        t.deepEqual(get.stats, { ops:285, total: 285, skipped: 0, stored: 285 });
+        t.deepEqual(get.stats, { ops:285, total: 285, skipped: 0, done: 285 });
         t.end();
     });
 });
@@ -77,10 +77,10 @@ test('pyramid: concurrency', function(t) {
     put.on('error', function(err) { t.ifError(err); });
     get.pipe(put);
     setTimeout(function() {
-        t.deepEqual(get.stats, { ops:25, total: 85, skipped: 10, stored: 13 });
+        t.deepEqual(get.stats, { ops:25, total: 85, skipped: 10, done: 23 });
     }, 20);
     put.on('finish', function() {
-        t.deepEqual(get.stats, { ops:69, total: 85, skipped: 28, stored: 57 });
+        t.deepEqual(get.stats, { ops:69, total: 85, skipped: 28, done: 85 });
         t.end();
     });
 });
