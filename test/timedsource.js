@@ -4,6 +4,7 @@ module.exports = Timedsource;
 
 function Timedsource(uri, callback) {
     this.time = uri.time || 5;
+    this.stopped = false;
     if (callback) callback(null, this);
     return this;
 }
@@ -39,5 +40,10 @@ Timedsource.prototype.putTile = function(z, x, y, data, callback) {
     setTimeout(function() {
         callback();
     }, this.time);
+};
+
+Timedsource.prototype.stopWriting = function(callback) {
+    this.stopped = true;
+    return callback();
 };
 

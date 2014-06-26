@@ -12,8 +12,6 @@ test('write: slowput', function(t) {
     var slow = new Timedsource({time:50});
     var get = tilelive.createReadStream(fast, {type:'scanline'});
     var put = tilelive.createWriteStream(slow);
-    get.on('error', function(err) { t.ifError(err); });
-    put.on('error', function(err) { t.ifError(err); });
     get.pipe(put);
     setTimeout(function() {
         t.deepEqual(get.stats, { ops: 20, total: 85, skipped: 1, done: 10 });
@@ -21,10 +19,22 @@ test('write: slowput', function(t) {
     }, 20);
     put.on('stop', function() {
         t.deepEqual(get.stats, { ops: 85, total: 85, skipped: 28, done: 85 });
-        // Multiwrites continue after 'finish' event.
         t.deepEqual(put.stats, { ops: 58, total: 0, skipped: 0, done: 58 });
+        t.equal(true, slow.stopped, 'dst source stopped');
         t.end();
     });
 });
 
+test('write: unpipe', function(t) {
+    var fast = new Timedsource({time:10});
+    var slow = new Timedsource({time:50});
+    var get = tilelive.createReadStream(fast, {type:'scanline'});
+    var put = tilelive.createWriteStream(slow);
+    get.pipe(put);
+    setTimeout(function() {
+        get.unpipe();
+        t.equal(true, slow.stopped, 'dst source stopped');
+        t.end();
+    }, 20);
+});
 
