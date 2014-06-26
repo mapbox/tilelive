@@ -33,8 +33,10 @@ test('write: unpipe', function(t) {
     get.pipe(put);
     setTimeout(function() {
         get.unpipe();
-        t.equal(true, slow.stopped, 'dst source stopped');
-        t.end();
+        setTimeout(function() {
+            t.equal(true, slow.stopped, 'dst source stopped');
+            t.end();
+        }, 100);
     }, 20);
 });
 
