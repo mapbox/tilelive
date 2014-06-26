@@ -79,10 +79,10 @@ test('pyramid: concurrency', function(t) {
     put.on('error', function(err) { t.ifError(err); });
     get.pipe(put);
     setTimeout(function() {
-        t.deepEqual(get.stats, { ops:25, total: 85, skipped: 10, done: 23 });
+        t.deepEqual(get.stats, { ops:23, total: 85, skipped: 42, done: 53 });
     }, 40);
     put.on('finish', function() {
-        t.deepEqual(get.stats, { ops:69, total: 85, skipped: 28, done: 85 });
+        t.deepEqual(get.stats, { ops:45, total: 85, skipped: 42, done: 85 });
         t.end();
     });
 });

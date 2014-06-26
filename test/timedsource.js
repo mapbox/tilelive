@@ -22,7 +22,7 @@ Timedsource.prototype.getInfo = function(callback) {
 
 Timedsource.prototype.getTile = function(z, x, y, callback) {
     setTimeout(function() {
-        if (x > (Math.pow(2,z)/2)) {
+        if (x >= (Math.pow(2,z)/2)) {
             callback(new Error('Tile does not exist'));
         } else {
             callback(null, tiledata, {});

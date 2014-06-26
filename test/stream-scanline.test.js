@@ -79,10 +79,10 @@ test('scanline: concurrency', function(t) {
     put.on('error', function(err) { t.ifError(err); });
     get.pipe(put);
     setTimeout(function() {
-        t.deepEqual(get.stats, { ops: 20, total: 85, skipped: 1, done: 10 }, 'concurrency 10 at work');
+        t.deepEqual(get.stats, { ops: 20, total: 85, skipped: 4, done: 10 }, 'concurrency 10 at work');
     }, 20);
     put.on('finish', function() {
-        t.deepEqual(get.stats, { ops: 85, total: 85, skipped: 28, done: 85 });
+        t.deepEqual(get.stats, { ops: 85, total: 85, skipped: 42, done: 85 });
         t.end();
     });
 });
