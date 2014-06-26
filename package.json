@@ -25,7 +25,8 @@
         "Konstantin Käfer <kkaefer>"
     ],
     "dependencies": {
-        "optimist": "~0.6.0",
+        "minimist": "~0.2.0",
+        "speedometer": "~0.1.2",
         "sphericalmercator": "~1.0.1"
     },
     "devDependencies": {

@@ -5,6 +5,8 @@ var tmp = require('os').tmpdir();
 var path = require('path');
 var Timedsource = require('./timedsource');
 
+tilelive.stream.setConcurrency(10);
+
 test('write: slowput', function(t) {
     var fast = new Timedsource({time:10});
     var slow = new Timedsource({time:50});

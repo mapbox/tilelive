@@ -6,6 +6,8 @@ var tmp = require('os').tmpdir();
 var path = require('path');
 var Timedsource = require('./timedsource');
 
+tilelive.stream.setConcurrency(10);
+
 var filepath = path.join(tmp, 'pyramid.mbtiles');
 try { fs.unlinkSync(filepath); } catch(e) {}
 
