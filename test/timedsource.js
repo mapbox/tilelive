@@ -24,6 +24,10 @@ Timedsource.prototype.getTile = function(z, x, y, callback) {
     setTimeout(function() {
         if (x >= (Math.pow(2,z)/2)) {
             callback(new Error('Tile does not exist'));
+        } else if (false && y >= (Math.pow(2,z)/2)) {
+            var solid = new Buffer(1024);
+            solid.solid = [(x%256),(x%256),(y%256),1].join(',');
+            callback(null, solid, {});
         } else {
             callback(null, tiledata, {});
         }
