@@ -84,7 +84,13 @@ function copy() {
     var put = tilelive.createWriteStream(dst);
     get.on('error', function(err) { throw err; });
     put.on('error', function(err) { throw err; });
-    get.pipe(put);
+
+    if (argv.scheme === 'list') {
+        var file = fs.createReadStream(path.resolve(argv.list));
+        file.pipe(get).pipe(put);
+    } else {
+        get.pipe(put);
+    }
 
     var prevdone = 0;
     var speed = require('speedometer')();
