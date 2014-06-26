@@ -19,13 +19,11 @@ test('write: slowput', function(t) {
         t.deepEqual(get.stats, { ops: 20, total: 85, skipped: 1, done: 10 });
         t.deepEqual(put.stats, { ops: 10, total: 0, skipped: 0, done: 0 });
     }, 20);
-    put.on('finish', function() {
+    put.on('stop', function() {
         t.deepEqual(get.stats, { ops: 85, total: 85, skipped: 28, done: 85 });
         // Multiwrites continue after 'finish' event.
-        setTimeout(function() {
-            t.deepEqual(put.stats, { ops: 58, total: 0, skipped: 0, done: 58 });
-            t.end();
-        }, 60);
+        t.deepEqual(put.stats, { ops: 58, total: 0, skipped: 0, done: 58 });
+        t.end();
     });
 });
 
