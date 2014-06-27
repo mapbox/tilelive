@@ -40,3 +40,13 @@ test('write: unpipe', function(t) {
     }, 20);
 });
 
+test('write: emptymax', function(t) {
+    var fast = new Timedsource({time:10, emptymax: true, maxzoom: 4});
+    var slow = new Timedsource({time:5});
+    var get = tilelive.createReadStream(fast, {type:'scanline'});
+    var put = tilelive.createWriteStream(slow);
+    get.pipe(put);
+    put.on('stop', function() {
+        t.end();
+    });
+});

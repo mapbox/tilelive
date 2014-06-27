@@ -4,6 +4,8 @@ module.exports = Timedsource;
 
 function Timedsource(uri, callback) {
     this.time = uri.time || 5;
+    this.maxzoom = uri.maxzoom || 3;
+    this.emptymax = uri.emptymax || false;
     this.stopped = false;
     if (callback) callback(null, this);
     return this;
@@ -14,7 +16,7 @@ Timedsource.prototype.getInfo = function(callback) {
         name: 'source (' + this.timeout + ')',
         description: 'timed I/O source',
         minzoom: 0,
-        maxzoom: 3,
+        maxzoom: this.maxzoom,
         bounds: [-180,-85,180,85],
         center: [0,0,3]
     });
