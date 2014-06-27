@@ -1,72 +1,53 @@
-var assert = require('assert');
+var test = require('tape');
 var fs = require('fs');
-var tilelive = require('../');
-tilelive.protocols['mbtiles:'] = require('mbtiles');
-tilelive.protocols['tilejson:'] = require('tilejson');
+var tmp = require('os').tmpdir();
+var path = require('path');
+var exec = require('child_process').exec;
 
-describe('copying', function() {
-    describe('workflow', function() {
-        var source, sink;
+var filepath = path.join(tmp, 'copy.mbtiles');
+try { fs.unlinkSync(filepath); } catch(e) {}
 
-        before(function() {
-            try { fs.unlinkSync(__dirname + '/copy.mbtiles'); }
-            catch(err) { if (err.code !== 'ENOENT') throw err; }
-        });
-
-        it('should open the source', function(done) {
-            tilelive.load('mbtiles://' + __dirname + '/fixtures/plain_1.mbtiles', function(err, s) {
-                source = s;
-                done(err);
-            });
-        });
-
-        it('should open the sink', function(done) {
-            tilelive.load('mbtiles://' + __dirname + '/copy.mbtiles', function(err, s) {
-                sink = s;
-                done(err);
-            });
-        });
-
-        it('should copy', function(done) {
-            var scheme = tilelive.Scheme.create('scanline', {
-                bbox: [ -10, -10, 10, 10 ],
-                minzoom: 3,
-                maxzoom: 5
-            });
-            var task = new tilelive.CopyTask(source, sink, scheme);
-            task.on('error', done);
-            task.on('finished', done);
-            task.start();
-        });
-
-        it('should verify the information', function(done) {
-            tilelive.info('mbtiles://' + __dirname + '/copy.mbtiles', function(err, info) {
-                if (err) throw err;
-                // There is some variance in the MBTiles size generated --
-                // possibly related to the timing in which data is inserted.
-                assert.ok(info.filesize > 39900 && info.filesize < 46000);
-                delete info.filesize;
-                assert.deepEqual({
-                    scheme: 'tms',
-                    basename: 'copy.mbtiles',
-                    id: 'copy',
-                    // filesize: 39936,
-                    minzoom: 3,
-                    maxzoom: 4,
-                    bounds: [ -45, -40.97989806962013, 45, 40.97989806962013 ],
-                    center: [ 0, 0, 4 ],
-                    name: '',
-                    description: '',
-                    version: '1.0.0',
-                    legend: null
-                }, info);
-                done();
-            });
-        })
-
-        after(function() {
-            try { fs.unlinkSync(__dirname + '/copy.mbtiles'); }
-            catch(err) { if (err.code !== 'ENOENT') throw err; }
-        });
+test('copy usage', function(t) {
+    exec(__dirname + '/../bin/copy', function(err, stdout, stderr) {
+        t.equal(1, err.code, 'exit 1');
+        t.ok(/Usage:/.test(stdout), 'shows usage');
+        t.end();
     });
 });
+
+test('copy copies', function(t) {
+    exec(__dirname + '/../bin/copy ' + __dirname + '/fixtures/plain_1.mbtiles ' + filepath, function(err, stdout, stderr) {
+        t.ifError(err, 'no errors');
+        t.ok(stdout.indexOf('100.0000%') !== -1, 'pct complete');
+        t.ok(stdout.indexOf('285/   285') !== -1, '285/285');
+        t.end();
+    });
+});
+
+test('copy min/max', function(t) {
+    exec(__dirname + '/../bin/copy --minzoom=1 --maxzoom=2 ' + __dirname + '/fixtures/plain_1.mbtiles ' + filepath, function(err, stdout, stderr) {
+        t.ifError(err, 'no errors');
+        t.ok(stdout.indexOf('100.0000%') !== -1, 'pct complete');
+        t.ok(stdout.indexOf('20/    20') !== -1, '20/20');
+        t.end();
+    });
+});
+
+test('copy bounds', function(t) {
+    exec(__dirname + '/../bin/copy --bounds=-180,-85,0,0 ' + __dirname + '/fixtures/plain_1.mbtiles ' + filepath, function(err, stdout, stderr) {
+        t.ifError(err, 'no errors');
+        t.ok(stdout.indexOf('100.0000%') !== -1, 'pct complete');
+        t.ok(stdout.indexOf('86/    86') !== -1, '86/86');
+        t.end();
+    });
+});
+
+test('copy list', function(t) {
+    exec(__dirname + '/../bin/copy --scheme=list --list=' + __dirname + '/fixtures/filescheme.flat ' + __dirname + '/fixtures/plain_1.mbtiles ' + filepath, function(err, stdout, stderr) {
+        t.ifError(err, 'no errors');
+        t.ok(stdout.indexOf('100.0000%') !== -1, 'pct complete');
+        t.ok(stdout.indexOf('77/    77') !== -1, '77/77');
+        t.end();
+    });
+});
+

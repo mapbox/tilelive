@@ -1,100 +1,123 @@
 #!/usr/bin/env node
+
 var fs = require('fs');
 var url = require('url');
 var util = require('util');
 var path = require('path');
-var Scheme = require('../lib/scheme');
-var CopyTask = require('../lib/copytask');
-var optimist = require('optimist');
 var tilelive = require('../');
 
-var argv = optimist
-    .options('job', {
-        'alias': 'j',
-        'describe': 'Job file (will be resumed if it exists)'
-    })
-    .options('scheme', {
-        'alias': 's',
-        'default': 'scanline',
-        'describe': 'One of [file, scanline, pyramid]'
-    })
-    .options('list', {
-        'alias': 'l',
-        'describe': 'If scheme=file, the coordinates file'
-    })
-    .options('concurrency', {
-        'alias': 'c',
-        'default': 8,
-        'describe': 'Number of parallel copy operations'
-    })
-    .options('bbox', {
-        'describe': 'WGS84 bounding box',
-        'default': [-180, -85.0511, 180, 85.0511]
-    })
-    .options('minzoom', {
-        'describe': 'Zoom level from which to start copying (inclusive)',
-        'default': 0
-    })
-    .options('maxzoom', {
-        'describe': 'Zoom level until which to copy (inclusive)',
-        'default': 8
-    })
-    .options('metatile', {
-        'describe': 'Metatile side length in number of tiles',
-        'default': 1
-    })
-    .argv;
-
-if (argv.job) {
-    try {
-        var job = JSON.parse(fs.readFileSync(path.resolve(argv.job), 'utf8'));
-    } catch(err) {
-        if (err.code !== 'EBADF' && err.code !== 'ENOENT') throw err;
+var argv = require('minimist')(process.argv.slice(2), {
+    alias: {
+        s: 'scheme',
+        l: 'list',
+        c: 'concurrency',
+        b: 'bounds',
+        bbox: 'bounds'
     }
-    console.warn('Continuing job ' + argv.job);
-    auto(job.from);
-    auto(job.to);
-    var scheme = Scheme.unserialize(job.scheme);
-    var task = new CopyTask(job.from, job.to, scheme, argv.job);
-} else {
-    optimist.demand(0).demand(1).argv;
-    if (argv.bbox && !Array.isArray(argv.bbox))
-        argv.bbox = argv.bbox.split(',').map(parseFloat);
-    var from = tilelive.auto(argv._[0]);
-    var to = tilelive.auto(argv._[1]);
-    var scheme = Scheme.create(argv.scheme, argv);
-    var task = new CopyTask(from, to, scheme, argv.job);
+});
+
+if (!argv._[0] || !argv._[1]) {
+    console.log('Usage:');
+    console.log('  tilelive-copy <src> <dst>');
+    console.log('');
+    console.log('Example:');
+    console.log('  tilelive-copy orig.mbtiles copy.mbtiles');
+    console.log('');
+    console.log('Options:');
+    console.log('  --scheme=[scanline,pyramid,list]  Default: scanline.');
+    console.log('  --list=[filepath]                 Filepath if scheme is list.');
+    console.log('  --concurrency=[number]            Copy concurrency.');
+    console.log('  --bounds=[w,s,e,n]');
+    console.log('  --minzoom=[number]');
+    console.log('  --maxzoom=[number]');
+    process.exit(1);
 }
 
-task.on('progress', report);
-task.on('finished', function() {
-    console.log('\nFinished.');
-    process.exit(0);
-});
-task.start(function(err) {
-    if (err) throw err;
-    task.source.getInfo(function(err, info) {
-        if (err) throw err;
-        task.sink.putInfo(info, function(err) {
-            if (err) throw err;
-        });
-    });
-});
+argv.scheme = argv.scheme || 'scanline';
+argv.list = argv.list || undefined;
+argv.concurrency = argv.concurrency !== undefined ? parseInt(argv.concurrency,10) : undefined;
+argv.bounds = argv.bounds !== undefined ? argv.bounds.split(',').map(function(v) { return parseFloat(v); }) : undefined;
+argv.minzoom = argv.minzoom !== undefined ? parseInt(argv.minzoom,10) : undefined;
+argv.maxzoom = argv.maxzoom !== undefined ? parseInt(argv.maxzoom,10) : undefined;
 
-function report(stats) {
-    var progress = stats.processed / stats.total;
-    var remaining = timeRemaining(progress, task.started);
-    util.print(util.format('\r\033[K[%s] %s%% %s/%s @ %s/s | ✓ %s ■ %s □ %s ✕ %s | %s left',
-        pad(formatDuration(stats.date - task.started), 4, true),
-        pad(((progress || 0) * 100).toFixed(4), 8, true),
-        pad(formatNumber(stats.processed),6,true),
+if (argv.scheme !== 'pyramid' && argv.scheme !== 'scanline' && argv.scheme !== 'list') {
+    console.warn('scheme must be one of pyramid, scanline, list')
+    process.exit(1);
+}
+
+if (argv.scheme === 'list' && !argv.list) {
+    console.warn('--list=file required for list scheme')
+    process.exit(1);
+}
+
+if (argv.concurrency) tilelive.stream.setConcurrency(argv.concurrency);
+
+var src;
+var dst;
+var srcuri = tilelive.auto(argv._[0]);
+var dsturi = tilelive.auto(argv._[1]);
+loadsrc();
+
+function loadsrc() {
+    tilelive.load(srcuri, function(err, s) {
+        if (err) throw err;
+        src = s;
+        loaddst();
+    });
+}
+
+function loaddst() {
+    tilelive.load(dsturi, function(err, d) {
+        if (err) throw err;
+        dst = d;
+        copy();
+    });
+}
+
+function copy() {
+    var get = tilelive.createReadStream(src, {
+        type:argv.scheme,
+        minzoom:argv.minzoom,
+        maxzoom:argv.maxzoom,
+        bounds:argv.bounds
+    });
+    var put = tilelive.createWriteStream(dst);
+    get.on('error', function(err) { throw err; });
+    put.on('error', function(err) { throw err; });
+
+    if (argv.scheme === 'list') {
+        var file = fs.createReadStream(path.resolve(argv.list));
+        file.pipe(get).pipe(put);
+    } else {
+        get.pipe(put);
+    }
+
+    var prevdone = 0;
+    var speed = require('speedometer')();
+    var reporter = setInterval(function() {
+        if (!prevdone) prevdone = get.stats.done;
+        report(get.stats, speed(get.stats.done - prevdone));
+        prevdone = get.stats.done;
+    }, 100);
+
+    put.on('finish', function() {
+        report(get.stats, 0);
+        clearInterval(reporter);
+        console.log('');
+    });
+}
+
+function report(stats, speed) {
+    var pct = stats.done/stats.total;
+    util.print(util.format('\r\033[K[%s] %s%% %s/%s @ %s/s | ✓ %s □ %s | %s left',
+        pad(formatDuration(process.uptime()), 4, true),
+        pad((pct*100).toFixed(4), 8, true),
+        pad(formatNumber(stats.done),6,true),
         pad(formatNumber(stats.total),6,true),
-        pad(formatNumber(stats.speed),4,true),
-        formatNumber(stats.unique),
-        formatNumber(stats.duplicate),
+        pad(formatNumber(speed),4,true),
+        formatNumber(stats.done - stats.skipped),
         formatNumber(stats.skipped),
-        formatNumber(stats.failed),
-        formatDuration(remaining)
+        formatDuration(timeRemaining(pct))
     ));
 }
 
@@ -104,7 +127,6 @@ function pad(str, len, r) {
 }
 
 function formatDuration(duration) {
-    duration = duration / 1000 | 0;
     var seconds = duration % 60;
     duration -= seconds;
     var minutes = (duration % 3600) / 60;
@@ -131,10 +153,10 @@ function formatNumber(num) {
     return num.join('.');
 }
 
-function timeRemaining(progress, started) {
+function timeRemaining(progress) {
     return Math.floor(
-        (Date.now() - started) * (1 / progress) -
-        (Date.now() - started)
+        (process.uptime()) * (1 / progress) -
+        (process.uptime())
     );
 }
 

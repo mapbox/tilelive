@@ -25,21 +25,22 @@
         "Konstantin Käfer <kkaefer>"
     ],
     "dependencies": {
-        "optimist": "~0.6.0",
+        "minimist": "~0.2.0",
+        "speedometer": "~0.1.2",
         "sphericalmercator": "~1.0.1"
     },
     "devDependencies": {
+        "tape": "2.13.3",
         "mbtiles": "~0.2.8",
-        "tilejson": "~0.6.0",
-        "tilelive-mapnik": "~0.6.2"
+        "tilejson": "~0.6.0"
     },
     "bin": {
         "tilelive-copy": "./bin/copy"
     },
     "engines": {
-        "node": ">= 0.6.0 < 0.11.0"
+        "node": ">= 0.10.0 < 0.11.0"
     },
     "scripts": {
-        "test": "mocha -R spec -t 10000"
+        "test": "tape test/*.test.js"
     }
 }
