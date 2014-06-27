@@ -77,11 +77,17 @@ test('scanline: concurrency', function(t) {
     var put = tilelive.createWriteStream(slow);
     get.on('error', function(err) { t.ifError(err); });
     put.on('error', function(err) { t.ifError(err); });
+    get.once('length', function(length) {
+        t.equal(length, 85, 'sets length to total');
+        t.equal(get.length, 85, 'sets length to total');
+    });
     get.pipe(put);
     setTimeout(function() {
+        t.equal(get.length, 81, 'updates length as skips occur');
         t.deepEqual(get.stats, { ops: 20, total: 85, skipped: 4, done: 10 }, 'concurrency 10 at work');
     }, 20);
     put.on('finish', function() {
+        t.equal(get.length, 43, 'updates length as skips occur');
         t.deepEqual(get.stats, { ops: 85, total: 85, skipped: 42, done: 85 });
         t.end();
     });
