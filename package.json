@@ -32,7 +32,7 @@
     ],
     "dependencies": {
         "minimist": "~0.2.0",
-        "speedometer": "~0.1.2",
+        "progress-stream": "~0.5.x",
         "sphericalmercator": "~1.0.1"
     },
     "devDependencies": {
