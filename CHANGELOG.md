@@ -1,3 +1,8 @@
+## 5.0.0
+
+* Refactor CopyTask into read/write streams
+* Register tilelive protocols globally
+
 ## 4.5.3
 
 * Add tilelive.auto method from tilelive-copy for detection and autoloading of

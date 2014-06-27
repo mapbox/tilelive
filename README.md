@@ -1,18 +1,23 @@
 # tilelive.js
 
-tilelive.js is an interface for tilestore modules for [node.js](http://nodejs.org/). It defines an [API](https://github.com/mapbox/tilelive.js/blob/master/API.md) to interact with implementations for a particular tile store.
+- Tilelive is a module to help interactions between tilelive source modules.
+- A tilelive source is an interface implemented by node modules that deal with reading and writing map tiles.
 
 [![Build Status](https://secure.travis-ci.org/mapbox/tilelive.js.png)](http://travis-ci.org/mapbox/tilelive.js)
 
-## Backends
+## Implementing modules
 
-- [MBTiles](https://github.com/mapbox/node-mbtiles)
-- [TileJSON](https://github.com/mapbox/node-tilejson)
-- [Mapnik](https://github.com/mapbox/tilelive-mapnik)
+- [node-mbtiles](https://github.com/mapbox/node-mbtiles)
+- [node-tilejson](https://github.com/mapbox/node-tilejson)
+- [tilelive-mapnik](https://github.com/mapbox/tilelive-mapnik)
+- [tilelive-vector](https://github.com/mapbox/tilelive-vector)
+- [tilelive-bridge](https://github.com/mapbox/tilelive-bridge)
 
 ## Usage
 
-Tilelive doesn't ship with any Tilestore backends by default. To use a particular backend, register it with tilelive using `require('[implementation]').registerProtocols(tilelive);`.
+Tilelive doesn't ship with any implementing modules by default. To register a module as one tilelive recognizes:
+
+    require('[implementation]').registerProtocols(tilelive);
 
 * `tilelive.list(source, callback)`: Lists all tilesets in a directory. `source` is a folder that is used by registered implementations to search for individual tilesets. `callback` receives an error object (or `null`) and a hash hash with keys being Tilestore IDs and values being Tilestore URIs. Example:
 
@@ -32,37 +37,25 @@ Tilelive doesn't ship with any Tilestore backends by default. To use a particula
 
 * `tilelive.all(source, callback)`: Loads metadata in a [TileJSON](http://github.com/mapbox/tilejson) compliant format for all tilesets in the `source` directory. `callback` receives an error object (or `null`) and an array with TileJSON metadata about each tileset in that directory.
 
-
 * `tilelive.verify(tilejson)`: Validates a TileJSON object and returns error objects for invalid entries.
 
-* `tilelive.copy(args, callback)`: Copies data from one tilestore into another tilestore. `args` is a configuration hash with these keys:
+## Read/write streams
 
-  * `source`: a Tilestore object that implements the Tilesource interface
-  * `sink`: a Tilestore object that implements the Tilesink interface
-  * `bbox`: an array with W/S/E/N boundaries in WGS84 format (-180...180, -90...90)
-  * `minZoom`: the minimum zoom for data to be copied (inclusive)
-  * `maxZoom`: the maximum zoom for data to be copied (inclusive)
-  * `concurrency`: (default: `100`) how many data objects should be copied simultaneously.
-  * `callback`: (optional) called when copying is complete
-  * `tiles`: copy tiles (`true` or `false`)
-  * `grids`: copy grids (`true` or `false`)
+Tilelive provides an implementation of node object streams for copying tiles from one source to another.
 
-  This function returns an EventEmitter that has these events emitted:
+    // Copy all tiles and metadata from source A to source B.
+    var get = tilelive.createReadStream(sourceA);
+    var put = tilelive.createWriteStream(sourceB);
+    get.pipe(put);
+    put.on('finish', function() {
+        console.log('done!');
+    });
 
-  * `warning`: An error occurred during copying. `err` is the first argument.
-  * `error`: An error occured while initializing the tilesource/tilesink.
-  * `finished`: Copying completed
+See `tilelive-copy` and the streams tests for example usage of copy streams.
 
-  The EventEmitter also has these properties. They are updated continuously while copying. Check them occassionally to report status to the user.
+## bin/tilelive-copy
 
-  * `copied`: Number of elements that have been copied so far
-  * `failed`: Number of elements that couldn't be copied.
-  * `total`: Total number of elements to be copied.
-  * `started`: Timestamp of when the action started in milliseconds after epoch
-
-## bin/tilelive
-
-tilelive can be used to copy data between tilestores. For a full list of options, run `bin/tilelive`.
+tilelive can be used to copy data between tilestores. For a full list of options, run `tilelive-copy`.
 
 ## Tests
 
@@ -70,6 +63,3 @@ To run the tests
 
     npm test
 
-## Usage
-
-See `examples` for examples of a tilelive powered server.
