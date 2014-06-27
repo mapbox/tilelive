@@ -35,7 +35,7 @@
         "tilejson": "~0.6.0"
     },
     "bin": {
-        "tilelive-copy": "./bin/copy"
+        "tilelive-copy": "./bin/tilelive-copy"
     },
     "engines": {
         "node": ">= 0.10.0 < 0.11.0"
