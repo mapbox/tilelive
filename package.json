@@ -1,21 +1,28 @@
 {
-    "name"          : "tilelive",
-    "version"       : "4.5.3",
-    "main"          : "./lib/tilelive.js",
-    "description"   : "Frontend for various tile backends, mapnik and mbtiles",
-    "url"           : "http://github.com/mapbox/tilelive.js",
-    "keywords"      : ["map", "server", "mapnik", "tms"],
-    "licenses"      : [{
-        "type": "BSD"
-    }],
+    "name": "tilelive",
+    "version": "4.5.3",
+    "main": "./lib/tilelive.js",
+    "description": "Frontend for various tile backends, mapnik and mbtiles",
+    "url": "http://github.com/mapbox/tilelive.js",
+    "keywords": [
+        "map",
+        "server",
+        "mapnik",
+        "tms"
+    ],
+    "licenses": [
+        {
+            "type": "BSD"
+        }
+    ],
     "repository": {
         "type": "git",
         "url": "http://github.com/mapbox/tilelive.js.git"
     },
     "author": {
-      "name": "MapBox",
-      "url": "http://mapbox.com/",
-      "email": "info@mapbox.com"
+        "name": "Mapbox",
+        "url": "https://www.mapbox.com/",
+        "email": "info@mapbox.com"
     },
     "contributors": [
         "Tom MacWright <tmcw>",
