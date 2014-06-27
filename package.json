@@ -2,13 +2,12 @@
     "name": "tilelive",
     "version": "4.5.3",
     "main": "./lib/tilelive.js",
-    "description": "Frontend for various tile backends, mapnik and mbtiles",
+    "description": "API for various map tile backends",
     "url": "http://github.com/mapbox/tilelive.js",
     "keywords": [
         "map",
-        "server",
         "mapnik",
-        "tms"
+        "tiles"
     ],
     "licenses": [
         {
