@@ -37,7 +37,7 @@ test('scanline: pipe', function(t) {
     get.on('error', function(err) { t.ifError(err); });
     put.on('error', function(err) { t.ifError(err); });
     get.pipe(put);
-    put.on('finish', function() {
+    put.on('stop', function() {
         t.deepEqual(get.stats, { ops:285, total: 285, skipped: 0, done: 285 });
         t.end();
     });
@@ -86,7 +86,7 @@ test('scanline: concurrency', function(t) {
         t.equal(get.length, 81, 'updates length as skips occur');
         t.deepEqual(get.stats, { ops: 20, total: 85, skipped: 4, done: 10 }, 'concurrency 10 at work');
     }, 20);
-    put.on('finish', function() {
+    put.on('stop', function() {
         t.equal(get.length, 43, 'updates length as skips occur');
         t.deepEqual(get.stats, { ops: 85, total: 85, skipped: 42, done: 85 });
         t.end();

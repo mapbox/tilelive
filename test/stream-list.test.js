@@ -37,7 +37,7 @@ test('list: pipe', function(t) {
     var put = tilelive.createWriteStream(dst);
     get.on('error', function(err) { t.ifError(err); });
     put.on('error', function(err) { t.ifError(err); });
-    put.on('finish', function() {
+    put.on('stop', function() {
         t.deepEqual(get.stats, { ops: 77, total: 77, skipped: 0, done: 77 });
         t.end();
     });
@@ -69,7 +69,7 @@ test('list: concurrency', function(t) {
     setTimeout(function() {
         t.deepEqual(get.stats, { ops:31, total: 77, skipped: 10, done: 21 }, 'concurrency 10');
     }, 40);
-    put.on('finish', function() {
+    put.on('stop', function() {
         t.deepEqual(get.stats, { ops:77, total: 77, skipped: 38, done: 77 });
         t.end();
     });
