@@ -16,8 +16,10 @@ test('write: slowput', function(t) {
     setTimeout(function() {
         t.deepEqual(get.stats, { ops: 20, total: 85, skipped: 4, done: 10 });
         t.deepEqual(put.stats, { ops: 7, total: 0, skipped: 0, done: 0 });
+        t.equal(get.length, 81);
     }, 20);
     put.on('stop', function() {
+        t.equal(get.length, 43);
         t.deepEqual(get.stats, { ops: 85, total: 85, skipped: 42, done: 85 });
         t.deepEqual(put.stats, { ops: 44, total: 0, skipped: 0, done: 35 });
         t.equal(true, slow.stopped, 'dst source stopped');

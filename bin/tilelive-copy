@@ -5,6 +5,7 @@ var url = require('url');
 var util = require('util');
 var path = require('path');
 var tilelive = require('../');
+var progress = require('progress-stream');
 
 var argv = require('minimist')(process.argv.slice(2), {
     alias: {
@@ -75,6 +76,10 @@ function loaddst() {
 }
 
 function copy() {
+    var prog = progress({
+        objectMode: true,
+        time: 100
+    });
     var get = tilelive.createReadStream(src, {
         type:argv.scheme,
         minzoom:argv.minzoom,
@@ -84,40 +89,32 @@ function copy() {
     var put = tilelive.createWriteStream(dst);
     get.on('error', function(err) { throw err; });
     put.on('error', function(err) { throw err; });
+    get.on('length', prog.setLength);
 
     if (argv.scheme === 'list') {
         var file = fs.createReadStream(path.resolve(argv.list));
-        file.pipe(get).pipe(put);
+        file.pipe(get).pipe(prog).pipe(put);
     } else {
-        get.pipe(put);
+        get.pipe(prog).pipe(put);
     }
 
-    var prevdone = 0;
-    var speed = require('speedometer')();
-    var reporter = setInterval(function() {
-        if (!prevdone) prevdone = get.stats.done;
-        report(get.stats, speed(get.stats.done - prevdone));
-        prevdone = get.stats.done;
-    }, 100);
+    prog.on('progress', function(p) { report(get.stats, p); });
 
     put.on('finish', function() {
-        report(get.stats, 0);
-        clearInterval(reporter);
         console.log('');
     });
 }
 
-function report(stats, speed) {
-    var pct = stats.done/stats.total;
+function report(stats, p) {
     util.print(util.format('\r\033[K[%s] %s%% %s/%s @ %s/s | ✓ %s □ %s | %s left',
         pad(formatDuration(process.uptime()), 4, true),
-        pad((pct*100).toFixed(4), 8, true),
-        pad(formatNumber(stats.done),6,true),
-        pad(formatNumber(stats.total),6,true),
-        pad(formatNumber(speed),4,true),
+        pad((p.percentage).toFixed(4), 8, true),
+        pad(formatNumber(p.transferred),6,true),
+        pad(formatNumber(p.length),6,true),
+        pad(formatNumber(p.speed),4,true),
         formatNumber(stats.done - stats.skipped),
         formatNumber(stats.skipped),
-        formatDuration(timeRemaining(pct))
+        formatDuration(p.eta)
     ));
 }
 

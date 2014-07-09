@@ -75,13 +75,19 @@ test('pyramid: concurrency', function(t) {
     var slow = new Timedsource({time:50});
     var get = tilelive.createReadStream(fast, {type:'pyramid'});
     var put = tilelive.createWriteStream(slow);
+    get.once('length', function(length) {
+        t.equal(length, 85, 'sets length to total');
+        t.equal(get.length, 85, 'sets length to total');
+    });
     get.on('error', function(err) { t.ifError(err); });
     put.on('error', function(err) { t.ifError(err); });
     get.pipe(put);
     setTimeout(function() {
+        t.equal(get.length, 43, 'updates length as skips occur');
         t.deepEqual(get.stats, { ops:23, total: 85, skipped: 42, done: 53 });
     }, 40);
     put.on('stop', function() {
+        t.equal(get.length, 43, 'updates length as skips occur');
         t.deepEqual(get.stats, { ops:45, total: 85, skipped: 42, done: 85 });
         t.end();
     });
