@@ -9,7 +9,6 @@ var Timedsource = require('./timedsource');
 tilelive.stream.setConcurrency(10);
 
 var filepath = path.join(tmp, 'scanline.mbtiles');
-try { fs.unlinkSync(filepath); } catch(e) {}
 
 var src;
 var dst;
@@ -23,6 +22,7 @@ test('scanline: src', function(t) {
 });
 
 test('scanline: dst', function(t) {
+    try { fs.unlinkSync(filepath); } catch(e) {}
     new MBTiles(filepath, function(err, d) {
         t.ifError(err);
         dst = d;
@@ -92,5 +92,3 @@ test('scanline: concurrency', function(t) {
         t.end();
     });
 });
-
-
