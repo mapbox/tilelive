@@ -27,7 +27,6 @@ test('serialize: list', function(t) {
         })
         .on('finish', function() {
             var data = out.split('\n');
-            data.pop(); // extra \n at the end
             t.equal(data.length, 77, 'correct number of tiles');
 
             function deserialize() {
@@ -52,7 +51,6 @@ test('serialize: scanline', function(t) {
         })
         .on('finish', function() {
             var data = out.split('\n');
-            data.pop(); // extra \n at the end
             t.equal(data.length, 286, 'correct number of tiles');
 
             function deserialize() {
@@ -72,12 +70,12 @@ test('serialize: pyramid', function(t) {
 
     var out = "";
     get.pipe(tilelive.serialize())
+        .on('error', function(err) { t.ifError(err); })
         .on('data', function(data) {
             out += data;
         })
         .on('finish', function() {
             var data = out.split('\n');
-            data.pop(); // extra \n at the end
             t.equal(data.length, 286, 'correct number of tiles');
 
             function deserialize() {
