@@ -111,7 +111,7 @@ test('deserialize: verify put', function(t) {
     tilelive.createReadStream(dst, {type: 'scanline'})
         .on('error', function() { t.ifError(err); })
         .on('data', function(data) {
-            if (data instanceof Tile || obj instanceof Info) return;
+            if (data instanceof Tile || data instanceof Info) return;
             errors.push(new Error('Not a valid type of object'));
         })
         .on('end', function() {
