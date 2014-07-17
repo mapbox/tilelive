@@ -3,6 +3,7 @@ var MBTiles = require('mbtiles');
 var tilelive = require('..');
 var Tile = require('../lib/stream-util').Tile;
 var Info = require('../lib/stream-util').Info;
+var DeserializationError = require('../lib/stream-util').DeserializationError;
 var fs = require('fs');
 var path = require('path');
 var tmp = require('os').tmpdir();
@@ -118,4 +119,15 @@ test('deserialize: verify put', function(t) {
             t.equal(errors.length, 0, 'put objects are valid Tile or Info objects');
             t.end();
         }).read();
+});
+
+test('deserialize: garbage', function(t) {
+    t.plan(1);
+    fs.createReadStream(path.join(__dirname,'fixtures','filescheme.flat'))
+        .pipe(tilelive.deserialize())
+        .on('data', function(d) { t.notOk(d, 'no data should be received'); })
+        .on('end', function() { t.notOk(true, 'error should\'ve occurred'); })
+        .on('error', function(err) {
+            t.ok(err instanceof DeserializationError, 'deserialization error should be thrown');
+        });
 });

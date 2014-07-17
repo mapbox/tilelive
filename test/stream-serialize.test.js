@@ -88,3 +88,12 @@ test('serialize: pyramid', function(t) {
             t.end();
         });
 });
+
+test('serialize: garbage', function(t) {
+    t.plan(1);
+    fs.createReadStream(path.join(__dirname,'fixtures','filescheme.flat'))
+        .pipe(tilelive.serialize())
+        .on('error', function(err) { t.ifError(err, 'no error should be thrown'); })
+        .on('data', function(d) { t.notOk(d, 'no data should be received'); })
+        .on('end', function() { t.ok(true, 'no data was serialized'); });
+});
