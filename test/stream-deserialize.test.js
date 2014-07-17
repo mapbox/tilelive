@@ -7,8 +7,11 @@ var DeserializationError = require('../lib/stream-util').DeserializationError;
 var fs = require('fs');
 var path = require('path');
 var tmp = require('os').tmpdir();
+var assert = require('assert');
 
 var filepath = path.join(tmp, 'list.mbtiles');
+var tmpSerial = path.join(tmp, 'tilelive.serialized');
+var tmpDst = path.join(tmp, 'tilelive.dstMbtiles');
 
 var src, dst;
 
@@ -36,6 +39,7 @@ test('deserialize: list', function(t) {
     get.on('error', function(err) { t.ifError(err); });
 
     var out = [];
+
     file.pipe(get).pipe(tilelive.serialize()).pipe(tilelive.deserialize())
         .on('data', function(d) {
             out.push(d);
@@ -48,6 +52,7 @@ test('deserialize: list', function(t) {
                 });
             }
             t.doesNotThrow(checkType, 'deserialized objects are valid Tile or Info objects');
+            t.equal(out.length, 77, 'correct number of tiles deserialized');
             t.end();
         });
 });
@@ -57,9 +62,14 @@ test('deserialize: scanline', function(t) {
     get.on('error', function(err) { t.ifError(err); });
 
     var out = [];
+    t.plan(4);
     get.pipe(tilelive.serialize()).pipe(tilelive.deserialize())
         .on('data', function(d) {
             out.push(d);
+        })
+        .on('info', function(info) {
+            t.ok(info instanceof Info, 'emitted Info event');
+            t.ok(Object.keys(info).length > 0, 'emitted info object is deserialized');
         })
         .on('finish', function() {
             function checkType() {
@@ -69,7 +79,7 @@ test('deserialize: scanline', function(t) {
                 });
             }
             t.doesNotThrow(checkType, 'deserialized objects are valid Tile or Info objects');
-            t.end();
+            t.equal(out.length, 286, 'correct number of tiles deserialized');
         });
 });
 
@@ -78,9 +88,14 @@ test('deserialize: pyramid', function(t) {
     get.on('error', function(err) { t.ifError(err); });
 
     var out = [];
+    t.plan(4);
     get.pipe(tilelive.serialize()).pipe(tilelive.deserialize())
         .on('data', function(d) {
             out.push(d);
+        })
+        .on('info', function(info) {
+            t.ok(info instanceof Info, 'emitted Info event');
+            t.ok(Object.keys(info).length > 0, 'emitted info object is deserialized');
         })
         .on('finish', function() {
             function checkType() {
@@ -90,7 +105,7 @@ test('deserialize: pyramid', function(t) {
                 });
             }
             t.doesNotThrow(checkType, 'deserialized objects are valid Tile or Info objects');
-            t.end();
+            t.equal(out.length, 286, 'correct number of tiles deserialized');
         });
 });
 
@@ -118,7 +133,7 @@ test('deserialize: verify put', function(t) {
         .on('end', function() {
             t.equal(errors.length, 0, 'put objects are valid Tile or Info objects');
             t.end();
-        }).read();
+        });
 });
 
 test('deserialize: garbage', function(t) {
@@ -130,4 +145,42 @@ test('deserialize: garbage', function(t) {
         .on('error', function(err) {
             t.ok(err instanceof DeserializationError, 'deserialization error should be thrown');
         });
+});
+
+test('de/serialize: round-trip', function(t) {
+    try { fs.unlinkSync(tmpSerial); } catch(e) {}
+    try { fs.unlinkSync(tmpDst); } catch(e) {}
+
+    var original = tilelive.createReadStream(src, {type: 'scanline'})
+        .on('error', function(err) { t.ifError(err); });
+    var serialize = tilelive.serialize()
+        .on('error', function(err) { t.ifError(err); });
+    var deserialize = tilelive.deserialize()
+        .on('error', function(err) { t.ifError(err); });
+
+    new MBTiles(tmpDst, function(err, outMbtiles) {
+        t.ifError(err);
+        original.pipe(serialize).pipe(fs.createWriteStream(tmpSerial))
+            .on('finish', function() {
+                var final = tilelive.createWriteStream(outMbtiles)
+                    .on('error', function(err) { t.ifError(err); });
+
+                fs.createReadStream(tmpSerial)
+                    .pipe(deserialize)
+                    .pipe(final)
+                    .on('stop', makeAssertions);
+            });
+    });
+
+    function makeAssertions() {
+        var originalStats = fs.statSync(filepath);
+        var serializedStats = fs.statSync(tmpSerial);
+        var finalStats = fs.statSync(tmpDst);
+
+        var sizeDiff = Math.abs(originalStats.size - finalStats.size) / originalStats.size;
+
+        t.ok(sizeDiff < 0.01, 'round-tripped mbtiles are approx. the same size');
+        t.end();
+    }
+
 });
