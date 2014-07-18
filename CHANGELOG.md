@@ -1,3 +1,7 @@
+## Next
+
+* Streams treat missing tile data as skips.
+
 ## 5.0.0
 
 * Refactor CopyTask into read/write streams
