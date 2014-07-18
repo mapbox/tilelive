@@ -15,7 +15,7 @@ test('Tile: blank', function(t) {
     t.equal(tile.z, undefined, 'empty z attribute');
     t.equal(tile.x, undefined, 'empty x attribute');
     t.equal(tile.y, undefined, 'empty y attribute');
-    t.equal(tile.buffer, undefined, 'empty buffer attribute');
+    t.equal(tile.buffer.length, 0, 'empty buffer attribute');
     t.end();
 });
 
@@ -28,7 +28,7 @@ test('Tile: garbage', function(t) {
     t.equal(tile.z, undefined, 'empty z attribute');
     t.equal(tile.x, undefined, 'empty x attribute');
     t.equal(tile.y, undefined, 'empty y attribute');
-    t.equal(tile.buffer, undefined, 'empty buffer attribute');
+    t.equal(tile.buffer.length, 0, 'empty buffer attribute');
     t.end();
 });
 
@@ -40,70 +40,69 @@ test('Tile: types', function(t) {
     t.equal(tile.buffer.toString(), 'hello', 'buffer accepted');
 
     tile = new util.Tile(1,2,3,"bozo");
-    t.equal(tile.buffer, undefined, 'non-buffer not accepted');
+    t.equal(tile.buffer.length, 0, 'non-buffer rejected');
     t.end();
 });
 
 test('Tile: serialize', function(t) {
-    var tile, expected;
+    var tile;
+    t.plan(9);
 
     tile = new util.Tile(1, '2', 'a', new Buffer('hello'));
-    expected = '{"z":1,"x":2,"y":null,"buffer":"aGVsbG8="}';
-    t.equal(tile.serialize(), expected, 'bad coords written as null');
+    try { tile.serialize(); }
+    catch(err) {
+        var valid = err instanceof util.SerializationError;
+        t.ok(valid, 'bad coordinate throws expected error');
+    }
 
     tile = new util.Tile(1, '2', 3, 'hello');
-    expected = '{"z":1,"x":2,"y":3,"buffer":null}';
-    t.equal(tile.serialize(), expected, 'bad buffer written as null');
-
-    tile = new util.Tile(1, '2', 3, new Buffer('hello'));
-    expected = '{"z":1,"x":2,"y":3,"buffer":"aGVsbG8="}';
-    t.equal(tile.serialize(), expected, 'serialize tile as expected');
+    t.equal(tile.serialize().length, 7, 'bad buffer not included in serialized buffer');
 
     tile = new util.Tile();
-    expected = '{"z":null,"x":null,"y":null,"buffer":null}';
-    t.equal(tile.serialize(), expected, 'serialize blank tile as expected');
+    try { tile.serialize(); }
+    catch(err) {
+        var valid = err instanceof util.SerializationError;
+        t.ok(valid, 'empty tile throws expected error');
+    }
 
     tile = new util.Tile('just', 'a', 'bunch', 'of', 1, 'garbage');
-    expected = '{"z":null,"x":null,"y":null,"buffer":null}';
-    t.equal(tile.serialize(), expected, 'serialize garbage tile as expected');
+    try { tile.serialize(); }
+    catch(err) {
+        var valid = err instanceof util.SerializationError;
+        t.ok(valid, 'garbage tile throws expected error');
+    }
 
-    t.end();
+    tile = new util.Tile(1, '2', 3, new Buffer('hello'));
+    var actual = tile.serialize();
+    t.equal(actual.readUInt8(0), util.Tile.prototype.serializedTypeId, 'serialized typeId');
+    t.equal(actual.readUInt16LE(1), 1, 'serialized z coord');
+    t.equal(actual.readUInt16LE(3), 2, 'serialized x coord');
+    t.equal(actual.readUInt16LE(5), 3, 'serialized y coord');
+    t.equal(actual.slice(7).toString(), 'hello', 'serialized buffer');
 });
 
 test('Tile: deserialize', function(t) {
-    t.plan(4);
-    
+    t.plan(5);
+
     var data, tile, actual, expected;
 
     tile = new util.Tile();
-    data = '{"z":1,"x":2,"y":3,"buffer":"aGVsbG8="}';
+    data = '{"this": is not allowed, []}';
+    try { tile.deserialize(data); }
+    catch(err) {
+        var valid = err instanceof util.DeserializationError;
+        t.ok(valid, 'non-buffer data throws expected exception');
+    }
+
     expected = new util.Tile(1, 2, 3, new Buffer('hello'));
-    actual = tile.deserialize(data);
-    t.deepEqual(actual, expected, 'good data deserialized as expected');
+    data = expected.serialize();
 
-    tile = new util.Tile();
-    data = '{"this": is not parsable, []}';
-    try { tile.deserialize(data); }
-    catch(err) {
-        var valid = err instanceof util.DeserializationError;
-        t.ok(valid, 'un-parsable data throws expected exception');
-    }
-
-    tile = new util.Tile();
-    data = '{"parsable": "but", "invalid": true}';
-    try { tile.deserialize(data); }
-    catch(err) {
-        var valid = err instanceof util.DeserializationError;
-        t.ok(valid, 'invalid data throws expected exception');
-    }
-
-    tile = new util.Tile();
-    data = '{"z":1,"x":2,"y":3,"buffer":null}';
-    try { tile.deserialize(data); }
-    catch(err) {
-        var valid = err instanceof util.DeserializationError;
-        t.ok(valid, 'missing buffer throws expected exception');
-    }
+    actual = new util.Tile();
+    actual.deserialize(data);
+    t.equal(actual.z, expected.z, 'z coord round-trip serialize --> deserialize');
+    t.equal(actual.x, expected.x, 'x coord round-trip serialize --> deserialize');
+    t.equal(actual.y, expected.y, 'y coord round-trip serialize --> deserialize');
+    t.equal(actual.buffer.toString(), expected.buffer.toString(), 'buffer round-trip serialize --> deserialize');
 });
 
 test('Info: blank', function(t) {
@@ -117,23 +116,25 @@ test('Info: blank', function(t) {
 
 test('Info: serialize', function(t) {
     var inf = new util.Info({ hello: "world"});
-    t.equal(inf.serialize(), '{"hello":"world"}', 'serializes object as expected');
+    var actual = inf.serialize().slice(1).toString();
+    t.equal(actual, '{"hello":"world"}', 'serializes object as expected');
 
     inf = new util.Info();
-    t.equal(inf.serialize(), '{}', 'serializes blank as expected');
+    actual = inf.serialize().slice(1).toString();
+    t.equal(actual, '{}', 'serializes blank as expected');
     t.end();
 });
 
 test('Info: deserialize', function(t) {
     t.plan(2);
 
-    var inf = new util.Info();
-    var data = '{"hello":"world"}';
-    var expected = { hello: "world" };
-    var actual = inf.deserialize('{"hello":"world"}');
-    t.deepEqual(actual, expected, 'deserializes valid object');
+    var expected = new util.Info({ hello: "world" });
+    var data = expected.serialize();
+    var actual = new util.Info();
+    actual.deserialize(data);
+    t.equal(actual.hello, expected.hello, 'deserializes valid object');
 
-    inf = new util.Info();
+    var inf = new util.Info();
     data = '{"this": is not parsable, []}';
     try { inf.deserialize(data); }
     catch(err) {
