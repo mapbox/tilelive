@@ -1,35 +1,8 @@
 var test = require('tape');
+var verify = require('..').verify;
 var validate = require('..').validate;
 
 test('validate', function(t) {
-    // name
-    t.equal(
-        validate({name:5}).toString(),
-        'Error: name must be a string of 255 characters or less',
-        'invalid name (number)');
-    t.equal(
-        validate({name:null}).toString(),
-        'Error: name must be a string of 255 characters or less',
-        'invalid name (null)');
-    t.equal(
-        validate({name:Array(257).join('a')}).toString(),
-        'Error: name must be a string of 255 characters or less',
-        'invalid name (256 chars)');
-    t.equal(
-        validate({name:'Hello world'}),
-        undefined,
-        'valid name');
-
-    // version
-    t.equal(
-        validate({version:5}).toString(),
-        'Error: version must be a string of 255 characters or less',
-        'invalid version (number)');
-    t.equal(
-        validate({version:'1.0'}),
-        undefined,
-        'valid version');
-
     // scheme
     t.equal(
         validate({scheme:5}).toString(),
@@ -91,6 +64,287 @@ test('validate', function(t) {
         validate({maxzoom:0}),
         undefined,
         'valid maxzoom');
+
+    // name, version, format
+    ['name','version','format'].forEach(function(key) {
+        var data;
+        data = {};
+        data[key] = 5;
+        t.equal(
+            validate(data).toString(),
+            'Error: ' + key + ' must be a string of 255 characters or less',
+            'invalid ' + key + ' (number)');
+        data[key] = Array(257).join('a');
+        t.equal(
+            validate(data).toString(),
+            'Error: ' + key + ' must be a string of 255 characters or less',
+            'invalid ' + key + ' (256 chars)');
+        data[key] = 'Hello world';
+        t.equal(
+            validate(data),
+            undefined,
+            'valid ' + key);
+    });
+
+    // legend, template, attribution, description, source
+    ['legend','template','attribution','description','source'].forEach(function(key) {
+        var data = {};
+        data[key] = 5;
+        t.equal(
+            validate(data).toString(),
+            'Error: ' + key + ' must be a string of 2000 characters or less',
+            'invalid ' + key + ' (number)');
+        data[key] = Array(2002).join('a');
+        t.equal(
+            validate(data).toString(),
+            'Error: ' + key + ' must be a string of 2000 characters or less',
+            'invalid ' + key + ' (2001 chars)');
+        data[key] = 'Hello world';
+        t.equal(
+            validate(data),
+            undefined,
+            'valid ' + key);
+    });
+
+    // tiles, grids
+    ['tiles','grids'].forEach(function(key) {
+        var data = {};
+        data[key] = 5;
+        t.equal(
+            validate(data).toString(),
+            'Error: ' + key + ' must be an array of templated urls',
+            'invalid ' + key + ' (string)');
+        data[key] = [];
+        t.equal(
+            validate(data).toString(),
+            'Error: ' + key + ' must be an array of templated urls',
+            'invalid ' + key + ' (empty array)');
+        data[key] = [5];
+        t.equal(
+            validate(data).toString(),
+            'Error: ' + key + ' must be an array of templated urls',
+            'invalid ' + key + ' (bad array value)');
+        data[key] = ['http://example.com/{z}/{x}/{y}.png'];
+        t.equal(
+            validate(data),
+            undefined,
+            'valid ' + key);
+    });
+
+    // center
+    t.equal(
+        validate({center:'Hello world'}).toString(),
+        'Error: center must be an array of the form [lon, lat, z]',
+        'invalid center (string)');
+    t.equal(
+        validate({center:[]}).toString(),
+        'Error: center must be an array of the form [lon, lat, z]',
+        'invalid center (empty array)');
+    t.equal(
+        validate({center:['a',0,0]}).toString(),
+        'Error: center lon value must be between -180 and 180',
+        'invalid center (lon string)');
+    t.equal(
+        validate({center:[-190,0,0]}).toString(),
+        'Error: center lon value must be between -180 and 180',
+        'invalid center (lon < -180)');
+    t.equal(
+        validate({center:[0,'a',0]}).toString(),
+        'Error: center lat value must be between -90 and 90',
+        'invalid center (lat string)');
+    t.equal(
+        validate({center:[0,-100,0]}).toString(),
+        'Error: center lat value must be between -90 and 90',
+        'invalid center (lat < -90)');
+    t.equal(
+        validate({center:[0,0,'a']}).toString(),
+        'Error: center z value must be an integer between 0 and 22',
+        'invalid center (z string)');
+    t.equal(
+        validate({center:[0,0,-1]}).toString(),
+        'Error: center z value must be an integer between 0 and 22',
+        'invalid center (z negative)');
+    t.equal(
+        validate({center:[0,0,5.5]}).toString(),
+        'Error: center z value must be an integer between 0 and 22',
+        'invalid center (z float)');
+    t.equal(
+        validate({center:[0,0,5]}),
+        undefined,
+        'valid center');
+
+    // center
+    t.equal(
+        validate({bounds:'Hello world'}).toString(),
+        'Error: bounds must be an array of the form [west, south, east, north]',
+        'invalid bounds (string)');
+    t.equal(
+        validate({bounds:[]}).toString(),
+        'Error: bounds must be an array of the form [west, south, east, north]',
+        'invalid bounds (empty array)');
+    t.equal(
+        validate({bounds:['a',0,0,0]}).toString(),
+        'Error: bounds west value must be between -180 and 180',
+        'invalid bounds (west string)');
+    t.equal(
+        validate({bounds:[-190,0,0,0]}).toString(),
+        'Error: bounds west value must be between -180 and 180',
+        'invalid bounds (west < -180)');
+    t.equal(
+        validate({bounds:[0,'a',0,0]}).toString(),
+        'Error: bounds south value must be between -90 and 90',
+        'invalid bounds (south string)');
+    t.equal(
+        validate({bounds:[0,-100,0,0]}).toString(),
+        'Error: bounds south value must be between -90 and 90',
+        'invalid bounds (south < -90)');
+    t.equal(
+        validate({bounds:[0,0,'a',0]}).toString(),
+        'Error: bounds east value must be between -180 and 180',
+        'invalid bounds (east string)');
+    t.equal(
+        validate({bounds:[0,0,-190,0]}).toString(),
+        'Error: bounds east value must be between -180 and 180',
+        'invalid bounds (east < -180)');
+    t.equal(
+        validate({bounds:[0,0,0,'a']}).toString(),
+        'Error: bounds north value must be between -90 and 90',
+        'invalid bounds (north string)');
+    t.equal(
+        validate({bounds:[0,0,0,-100]}).toString(),
+        'Error: bounds north value must be between -90 and 90',
+        'invalid bounds (north < -90)');
+    t.equal(
+        validate({bounds:[10,0,-10,0]}).toString(),
+        'Error: bounds west value must be less than or equal to east',
+        'invalid bounds (east < west)');
+    t.equal(
+        validate({bounds:[0,10,0,-10]}).toString(),
+        'Error: bounds south value must be less than or equal to north',
+        'invalid bounds (north < south)');
+    t.equal(
+        validate({bounds:[-10,-10,10,10]}),
+        undefined,
+        'valid bounds');
+
+    // vector_layers
+    t.equal(
+        validate({vector_layers:'Hello world'}).toString(),
+        'Error: vector_layers must be an array of layer objects',
+        'invalid vector_layers (string)');
+    t.equal(
+        validate({vector_layers:[]}).toString(),
+        'Error: vector_layers must be an array of layer objects',
+        'invalid vector_layers (empty array)');
+    t.equal(
+        validate({vector_layers:['layer']}).toString(),
+        'Error: vector_layers[0] must be a layer object',
+        'invalid vector_layers[0] (string)');
+    t.equal(
+        validate({vector_layers:[{id:5}]}).toString(),
+        'Error: vector_layers[0] id must be a string of 255 characters or less',
+        'invalid vector_layers[0] id (number)');
+    t.equal(
+        validate({vector_layers:[{id:(new Array(257)).join('a')}]}).toString(),
+        'Error: vector_layers[0] id must be a string of 255 characters or less',
+        'invalid vector_layers[0] id (256 chars)');
+    t.equal(
+        validate({vector_layers:[{id:'water'}]}),
+        undefined,
+        'valid vector_layers');
+
+    // minzoom + maxzoom
+    t.equal(
+        validate({minzoom:5, maxzoom:4}).toString(),
+        'Error: minzoom must be less than or equal to maxzoom',
+        'invalid minzoom + maxzoom (minzoom > maxzoom)');
+    t.equal(
+        validate({minzoom:5, maxzoom:5}),
+        undefined,
+        'valid minzoom + maxzoom');
+
+    // center + bounds
+    t.equal(
+        validate({center:[-10,0,0], bounds:[-5,-5,5,5]}).toString(),
+        'Error: center lon value must be between bounds -5 and 5',
+        'invalid center + bounds (lon outside bounds range)');
+    t.equal(
+        validate({center:[0,-10,0], bounds:[-5,-5,5,5]}).toString(),
+        'Error: center lat value must be between bounds -5 and 5',
+        'invalid center + bounds (lat outside bounds range)');
+    t.equal(
+        validate({center:[0,0,0], bounds:[-5,-5,5,5]}),
+        undefined,
+        'valid center + bounds');
+
+    // center + minzoom + maxzoom
+    t.equal(
+        validate({center:[0,0,0], minzoom:5}).toString(),
+        'Error: center zoom value must be greater than or equal to minzoom 5',
+        'invalid center + minzoom (zoom < minzoom)');
+    t.equal(
+        validate({center:[0,0,6], maxzoom:5}).toString(),
+        'Error: center zoom value must be less than or equal to maxzoom 5',
+        'invalid center + minzoom (zoom > maxzoom)');
+    t.equal(
+        validate({center:[0,0,5], minzoom:0, maxzoom:10}),
+        undefined,
+        'valid center + minzoom/maxzoom');
+
+    // verify proxies validate
+    t.equal(
+        verify({center:[0,0,0], minzoom:5}).toString(),
+        'Error: center zoom value must be greater than or equal to minzoom 5',
+        'verify proxies validate');
+    t.equal(
+        verify({
+            minzoom:0,
+            maxzoom:0,
+            bounds:[0,0,0,0]
+        }).toString(),
+        'Error: center is required',
+        'verify requires center');
+    t.equal(
+        verify({
+            center:[0,0,0],
+            maxzoom:0,
+            bounds:[0,0,0,0]
+        }).toString(),
+        'Error: minzoom is required',
+        'verify requires minzoom');
+    t.equal(
+        verify({
+            center:[0,0,0],
+            minzoom:0,
+            bounds:[0,0,0,0]
+        }).toString(),
+        'Error: maxzoom is required',
+        'verify requires maxzoom');
+    t.equal(
+        verify({
+            center:[0,0,0],
+            minzoom:0,
+            maxzoom:0
+        }).toString(),
+        'Error: bounds is required',
+        'verify requires bounds');
+    t.equal(
+        verify({
+            center:[0,0,0],
+            minzoom:0,
+            maxzoom:0,
+            bounds:[0,0,0,0]
+        }),
+        undefined,
+        'verify valid');
+    t.equal(
+        verify({
+            center:[0,0,0],
+            minzoom:0,
+            maxzoom:0
+        }, ['center','minzoom','maxzoom']),
+        undefined,
+        'verify custom list');
 
     t.end();
 });
