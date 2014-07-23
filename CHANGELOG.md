@@ -1,3 +1,8 @@
+## 5.1.0
+
+* Adds tilelive.validate method for a non-restrictive way to validate tilejson and other common info keys.
+* Refactors tilelive.verify to leverage tilelive.validate and optionally take a list of keys to require.
+
 ## 5.0.0
 
 * Refactor CopyTask into read/write streams
