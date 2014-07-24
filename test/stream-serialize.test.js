@@ -3,7 +3,7 @@ var MBTiles = require('mbtiles');
 var tilelive = require('..');
 var fs = require('fs');
 var path = require('path');
-var serializedType = require('../lib/stream-util').serializedType;
+var deserialize = require('../lib/stream-util').deserialize;
 
 var src;
 
@@ -29,13 +29,12 @@ test('serialize: list', function(t) {
             var data = out.split('\n');
             t.equal(data.length, 77, 'correct number of tiles');
 
-            function deserialize() {
+            function roundtrip() {
                 data.forEach(function(tile) {
-                    var obj = serializedType(tile);
-                    obj.deserialize(tile);
+                    var obj = deserialize(tile);
                 });
             }
-            t.doesNotThrow(deserialize, 'serialized data can be deserialized');
+            t.doesNotThrow(roundtrip, 'serialized data can be deserialized');
             t.end();
         });
 });
@@ -53,13 +52,12 @@ test('serialize: scanline', function(t) {
             var data = out.split('\n');
             t.equal(data.length, 286, 'correct number of tiles');
 
-            function deserialize() {
+            function roundtrip() {
                 data.forEach(function(tile) {
-                    var obj = serializedType(tile);
-                    obj.deserialize(tile);
+                    var obj = deserialize(tile);
                 });
             }
-            t.doesNotThrow(deserialize, 'serialized data can be deserialized');
+            t.doesNotThrow(roundtrip, 'serialized data can be deserialized');
             t.end();
         });
 });
@@ -78,13 +76,12 @@ test('serialize: pyramid', function(t) {
             var data = out.split('\n');
             t.equal(data.length, 286, 'correct number of tiles');
 
-            function deserialize() {
+            function roundtrip() {
                 data.forEach(function(tile) {
-                    var obj = serializedType(tile);
-                    obj.deserialize(tile);
+                    var obj = deserialize(tile);
                 });
             }
-            t.doesNotThrow(deserialize, 'serialized data can be deserialized');
+            t.doesNotThrow(roundtrip, 'serialized data can be deserialized');
             t.end();
         });
 });
