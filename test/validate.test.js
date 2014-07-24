@@ -86,8 +86,8 @@ test('validate', function(t) {
             'valid ' + key);
     });
 
-    // legend, template, attribution, description, source
-    ['legend','template','attribution','description','source'].forEach(function(key) {
+    // attribution, description, source
+    ['attribution','description','source'].forEach(function(key) {
         var data = {};
         data[key] = 5;
         t.equal(
@@ -99,6 +99,25 @@ test('validate', function(t) {
             validate(data).toString(),
             'Error: ' + key + ' must be a string of 2000 characters or less',
             'invalid ' + key + ' (2001 chars)');
+        data[key] = 'Hello world';
+        t.equal(
+            validate(data),
+            undefined,
+            'valid ' + key);
+    });
+    // legend, template
+    ['legend','template'].forEach(function(key) {
+        var data = {};
+        data[key] = 5;
+        t.equal(
+            validate(data).toString(),
+            'Error: ' + key + ' must be a string of 8000 characters or less',
+            'invalid ' + key + ' (number)');
+        data[key] = Array(8002).join('a');
+        t.equal(
+            validate(data).toString(),
+            'Error: ' + key + ' must be a string of 8000 characters or less',
+            'invalid ' + key + ' (8001 chars)');
         data[key] = 'Hello world';
         t.equal(
             validate(data),
