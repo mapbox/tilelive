@@ -4,6 +4,7 @@ var tilelive = require('..');
 var fs = require('fs');
 var path = require('path');
 var deserialize = require('../lib/stream-util').deserialize;
+var serialHeader = require('../lib/stream-util').serialHeader;
 
 var src;
 
@@ -26,7 +27,7 @@ test('serialize: list', function(t) {
             out += data;
         })
         .on('finish', function() {
-            var data = out.split('\n');
+            var data = out.split('\n').slice(1);
             t.equal(data.length, 77, 'correct number of tiles');
 
             function roundtrip() {
@@ -49,7 +50,7 @@ test('serialize: scanline', function(t) {
             out += data;
         })
         .on('finish', function() {
-            var data = out.split('\n');
+            var data = out.split('\n').slice(1);
             t.equal(data.length, 286, 'correct number of tiles');
 
             function roundtrip() {
@@ -73,7 +74,7 @@ test('serialize: pyramid', function(t) {
             out += data;
         })
         .on('finish', function() {
-            var data = out.split('\n');
+            var data = out.split('\n').slice(1);
             t.equal(data.length, 286, 'correct number of tiles');
 
             function roundtrip() {
@@ -87,10 +88,10 @@ test('serialize: pyramid', function(t) {
 });
 
 test('serialize: garbage', function(t) {
-    t.plan(1);
+    t.plan(2);
     fs.createReadStream(path.join(__dirname,'fixtures','filescheme.flat'))
         .pipe(tilelive.serialize())
         .on('error', function(err) { t.ifError(err, 'no error should be thrown'); })
-        .on('data', function(d) { t.notOk(d, 'no data should be received'); })
+        .on('data', function(d) { t.ok(d.toString() === serialHeader + '\n', 'no data should be received'); })
         .on('end', function() { t.ok(true, 'no data was serialized'); });
 });
