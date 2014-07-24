@@ -8,6 +8,7 @@ var fs = require('fs');
 var path = require('path');
 var tmp = require('os').tmpdir();
 var assert = require('assert');
+var unzip = require('zlib').createGunzip();
 
 var filepath = path.join(tmp, 'list.mbtiles');
 var tmpSerial = path.join(tmp, 'tilelive.serialized');
@@ -183,4 +184,15 @@ test('de/serialize: round-trip', function(t) {
         t.end();
     }
 
+});
+
+test('deserialize: incomplete', function(t) {
+    t.plan(1);
+    fs.createReadStream(path.join(__dirname, 'fixtures', 'cereal-incomplete.gz'))
+        .pipe(unzip)
+        .pipe(tilelive.deserialize())
+        .on('error', function(err) {
+            t.ok(err instanceof DeserializationError, 'incomplete file throws expected exception');
+        })
+        .on('end', t.end);
 });
