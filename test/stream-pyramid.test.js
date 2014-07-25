@@ -9,7 +9,6 @@ var Timedsource = require('./timedsource');
 tilelive.stream.setConcurrency(10);
 
 var filepath = path.join(tmp, 'pyramid.mbtiles');
-try { fs.unlinkSync(filepath); } catch(e) {}
 
 var src;
 var dst;
@@ -23,6 +22,7 @@ test('pyramid: src', function(t) {
 });
 
 test('pyramid: dst', function(t) {
+    try { fs.unlinkSync(filepath); } catch(e) {}
     new MBTiles(filepath, function(err, d) {
         t.ifError(err);
         dst = d;
@@ -92,4 +92,3 @@ test('pyramid: concurrency', function(t) {
         t.end();
     });
 });
-
