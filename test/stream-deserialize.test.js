@@ -63,10 +63,14 @@ test('deserialize: scanline', function(t) {
     get.on('error', function(err) { t.ifError(err); });
 
     var out = [];
-    t.plan(4);
+    t.plan(6);
     get.pipe(tilelive.serialize()).pipe(tilelive.deserialize())
         .on('data', function(d) {
             out.push(d);
+        })
+        .once('tile', function(tile) {
+            t.ok(tile instanceof Tile, 'emitted Tile event');
+            t.ok(Object.keys(tile).length > 0, 'emitted tile object is deserialized');
         })
         .on('info', function(info) {
             t.ok(info instanceof Info, 'emitted Info event');
@@ -89,10 +93,14 @@ test('deserialize: pyramid', function(t) {
     get.on('error', function(err) { t.ifError(err); });
 
     var out = [];
-    t.plan(4);
+    t.plan(6);
     get.pipe(tilelive.serialize()).pipe(tilelive.deserialize())
         .on('data', function(d) {
             out.push(d);
+        })
+        .once('tile', function(tile) {
+            t.ok(tile instanceof Tile, 'emitted Tile event');
+            t.ok(Object.keys(tile).length > 0, 'emitted tile object is deserialized');
         })
         .on('info', function(info) {
             t.ok(info instanceof Info, 'emitted Info event');
