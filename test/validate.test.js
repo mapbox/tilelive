@@ -284,6 +284,10 @@ test('validate', function(t) {
 
     // center + bounds
     t.equal(
+        validate({center:null, bounds:[-5,-5,5,5]}),
+        undefined,
+        'ignores null center from check');
+    t.equal(
         validate({center:[-10,0,0], bounds:[-5,-5,5,5]}).toString(),
         'Error: center lon value must be between bounds -5 and 5',
         'invalid center + bounds (lon outside bounds range)');
@@ -297,6 +301,14 @@ test('validate', function(t) {
         'valid center + bounds');
 
     // center + minzoom + maxzoom
+    t.equal(
+        validate({center:null, minzoom:5}),
+        undefined,
+        'ignores null center from check');
+    t.equal(
+        validate({center:null, maxzoom:5}),
+        undefined,
+        'ignores null center from check');
     t.equal(
         validate({center:[0,0,0], minzoom:5}).toString(),
         'Error: center zoom value must be greater than or equal to minzoom 5',
