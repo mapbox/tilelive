@@ -25,7 +25,7 @@ Nearemptysource.prototype.getInfo = function(callback) {
 Nearemptysource.prototype.getTile = function(z, x, y, callback) {
     var maxzoom = this.maxzoom;
     setTimeout(function() {
-        if (z === maxzoom) {
+        if (z >= maxzoom - 1 && x < (Math.pow(2,z)/2)) {
             callback(null, tiledata, {});
         } else {
             callback(new Error('Tile does not exist'));

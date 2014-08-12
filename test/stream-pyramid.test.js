@@ -107,8 +107,9 @@ test('pyramid: smartskip', function(t) {
     put.on('error', function(err) { t.ifError(err); });
     get.pipe(put);
     put.on('stop', function() {
-        t.equal(get.length, 64, 'updates length as skips occur');
-        t.deepEqual(get.stats, { ops:85, total: 85, skipped: 21, done: 85 });
+        // Final length should be Math.pow(4,2)/2 + Math.pow(4,3)/2
+        t.equal(get.length, 40, 'updates length as skips occur');
+        t.deepEqual(get.stats, { ops:69, total: 85, skipped: 45, done: 85 });
         t.end();
     });
 });
