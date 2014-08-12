@@ -4,6 +4,7 @@ var tilelive = require('..');
 var fs = require('fs');
 var tmp = require('os').tmpdir();
 var path = require('path');
+var Nearemptysource = require('./nearemptysource');
 var Timedsource = require('./timedsource');
 
 tilelive.stream.setConcurrency(10);
@@ -89,6 +90,25 @@ test('pyramid: concurrency', function(t) {
     put.on('stop', function() {
         t.equal(get.length, 43, 'updates length as skips occur');
         t.deepEqual(get.stats, { ops:45, total: 85, skipped: 42, done: 85 });
+        t.end();
+    });
+});
+
+test('pyramid: smartskip', function(t) {
+    var src = new Nearemptysource({time:1});
+    var dst = new Timedsource({time:1});
+    var get = tilelive.createReadStream(src, {type:'pyramid'});
+    var put = tilelive.createWriteStream(dst);
+    get.once('length', function(length) {
+        t.equal(length, 85, 'sets length to total');
+        t.equal(get.length, 85, 'sets length to total');
+    });
+    get.on('error', function(err) { t.ifError(err); });
+    put.on('error', function(err) { t.ifError(err); });
+    get.pipe(put);
+    put.on('stop', function() {
+        t.equal(get.length, 64, 'updates length as skips occur');
+        t.deepEqual(get.stats, { ops:85, total: 85, skipped: 21, done: 85 });
         t.end();
     });
 });
