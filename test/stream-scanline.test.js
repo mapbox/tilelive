@@ -92,3 +92,46 @@ test('scanline: concurrency', function(t) {
         t.end();
     });
 });
+
+test('scanline: split into jobs', function(t) {
+    var results = [];
+
+    runJob(1, 1, function() {                   // one job
+        runJob(4, 1, function() {               // a few jobs
+            runJob(285, 1, function() {         // as many jobs as there are tiles
+                runJob(400, 1, t.end.bind(t));  // more jobs than there are tiles
+            });
+        });
+    });
+
+    function runJob(total, num, done) {
+        var scanline = tilelive.createReadStream(src, {job: { total: total, num: num }});
+        scanline.on('error', function(err) {
+            t.ifError(err, 'Error reading fixture');
+        });
+        scanline.on('data', function(tile) {
+            if (tile.hasOwnProperty('x')) // filters out info objects
+                results.push(tile);
+        });
+        scanline.on('end', function() {
+            if (num === total) {
+                t.equal(results.length, 285, 'correct number of tiles across ' + total + ' jobs');
+
+                var tiles = results.reduce(function(memo, tile) {
+                    var id = [tile.z, tile.x, tile.y].join('/');
+                    if (memo[id]) memo[id]++;
+                    else memo[id] = 1;
+                    return memo;
+                }, {});
+                for (var k in tiles) {
+                    if (tiles[k] > 1) t.fail('tile repeated ' + tiles[k] + ' times with ' + total + ' jobs: ' + k);
+                }
+                results = [];
+                done();
+            } else {
+                num++;
+                runJob(total, num, done);
+            }
+        });
+    }
+});
