@@ -5,6 +5,7 @@ var fs = require('fs');
 var tmp = require('os').tmpdir();
 var path = require('path');
 var Timedsource = require('./timedsource');
+var ss = require('simple-statistics');
 
 tilelive.stream.setConcurrency(10);
 
@@ -76,27 +77,32 @@ test('list: concurrency', function(t) {
 });
 
 test('list: split into jobs', function(t) {
-    runJob(1, 1, function() {                   // one job
-        runJob(4, 1, function() {               // a few jobs
-            runJob(285, 1, function() {         // as many jobs as there are tiles
-                runJob(400, 1, t.end.bind(t));  // more jobs than there are tiles
-            });
-        });
-    });
-
     var results = [];
+    var tilesPerJob = [];
+
+    runJob(1, 1, function() {       // one job
+    runJob(4, 1, function() {       // a few jobs
+    runJob(15, 1, function() {      // a moderate number of jobs
+    runJob(285, 1, function() {     // as many jobs as there are tiles
+    runJob(400, 1, t.end.bind(t));  // more jobs than there are tiles
+    });});});});
+
     function runJob(total, num, done) {
+        var tileCount = 0;
         var list = tilelive.createReadStream(src, {type:'list', job: { total: total, num: num }});
         list.on('error', function(err) {
             t.ifError(err, 'Error reading fixture');
         });
         list.on('data', function(tile) {
-            results.push(tile);
+            if (tile.hasOwnProperty('x')) { // filters out info objects
+                results.push(tile);
+                tileCount++;
+            }
         });
         list.on('end', function() {
+            tilesPerJob.push(tileCount);
             if (num === total) {
                 t.equal(results.length, 285, 'correct number of tiles across ' + total + ' jobs');
-
                 var tiles = results.reduce(function(memo, tile) {
                     var id = [tile.z, tile.x, tile.y].join('/');
                     if (memo[id]) memo[id]++;
@@ -106,7 +112,9 @@ test('list: split into jobs', function(t) {
                 for (var k in tiles) {
                     if (tiles[k] > 1) t.fail('tile repeated ' + tiles[k] + ' times with ' + total + ' jobs: ' + k);
                 }
+                t.ok(ss.standard_deviation(tilesPerJob) < 1.5, 'reasonably good split of tiles across ' + total+ ' jobs');
                 results = [];
+                tilesPerJob = [];
                 done();
             } else {
                 num++;

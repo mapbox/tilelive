@@ -5,6 +5,7 @@ var fs = require('fs');
 var tmp = require('os').tmpdir();
 var path = require('path');
 var Timedsource = require('./timedsource');
+var ss = require('simple-statistics');
 
 tilelive.stream.setConcurrency(10);
 
@@ -95,28 +96,31 @@ test('scanline: concurrency', function(t) {
 
 test('scanline: split into jobs', function(t) {
     var results = [];
+    var tilesPerJob = [];
 
-    runJob(1, 1, function() {                   // one job
-        runJob(4, 1, function() {               // a few jobs
-            runJob(285, 1, function() {         // as many jobs as there are tiles
-                runJob(400, 1, t.end.bind(t));  // more jobs than there are tiles
-            });
-        });
-    });
+    runJob(1, 1, function() {       // one job
+    runJob(4, 1, function() {       // a few jobs
+    runJob(15, 1, function() {      // a moderate number of jobs
+    runJob(285, 1, function() {     // as many jobs as there are tiles
+    runJob(400, 1, t.end.bind(t));  // more jobs than there are tiles
+    });});});});
 
     function runJob(total, num, done) {
-        var scanline = tilelive.createReadStream(src, {job: { total: total, num: num }});
+        var tileCount = 0;
+        var scanline = tilelive.createReadStream(src, {type: 'scanline', job: { total: total, num: num }});
         scanline.on('error', function(err) {
             t.ifError(err, 'Error reading fixture');
         });
         scanline.on('data', function(tile) {
-            if (tile.hasOwnProperty('x')) // filters out info objects
+            if (tile.hasOwnProperty('x')) { // filters out info objects
                 results.push(tile);
+                tileCount++;
+            }
         });
         scanline.on('end', function() {
+            tilesPerJob.push(tileCount);
             if (num === total) {
                 t.equal(results.length, 285, 'correct number of tiles across ' + total + ' jobs');
-
                 var tiles = results.reduce(function(memo, tile) {
                     var id = [tile.z, tile.x, tile.y].join('/');
                     if (memo[id]) memo[id]++;
@@ -126,7 +130,9 @@ test('scanline: split into jobs', function(t) {
                 for (var k in tiles) {
                     if (tiles[k] > 1) t.fail('tile repeated ' + tiles[k] + ' times with ' + total + ' jobs: ' + k);
                 }
+                t.ok(ss.standard_deviation(tilesPerJob) < 1.5, 'reasonably good split of tiles across ' + total+ ' jobs');
                 results = [];
+                tilesPerJob = [];
                 done();
             } else {
                 num++;
