@@ -1,3 +1,7 @@
+## 5.2.0
+
+* Adds serialize/deserialize streams for tilelive copy.
+
 ## 5.1.0
 
 * Adds tilelive.validate method for a non-restrictive way to validate tilejson and other common info keys.
