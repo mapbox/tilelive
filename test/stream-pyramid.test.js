@@ -97,13 +97,15 @@ test('pyramid: concurrency', function(t) {
 test('pyramid: split into jobs', function(t) {
     var results = [];
     var tilesPerJob = [];
+    var tilelist = path.join(__dirname, 'fixtures', 'plain_1.tilelist');
+    var expectedTiles = fs.readFileSync(tilelist, 'utf8').split('\n').slice(0, -1);
 
     runJob(1, 1, function() {       // one job
     runJob(4, 1, function() {       // a few jobs
-    runJob(15, 1, function() {      // a moderate number of jobs
-    runJob(285, 1, function() {     // as many jobs as there are tiles
-    runJob(400, 1, t.end.bind(t));  // more jobs than there are tiles
-    });});});});
+    // runJob(15, 1, function() {      // a moderate number of jobs
+    // runJob(285, 1, function() {     // as many jobs as there are tiles
+    // runJob(400, 1, t.end.bind(t));  // more jobs than there are tiles
+});});//});});
 
     function runJob(total, num, done) {
         var tileCount = 0;
@@ -113,7 +115,7 @@ test('pyramid: split into jobs', function(t) {
         });
         pyramid.on('data', function(tile) {
             if (tile.hasOwnProperty('x')) { // filters out info objects
-                results.push(tile);
+                results.push([tile.z, tile.x, tile.y].join('/'));
                 tileCount++;
             }
         });
@@ -122,15 +124,23 @@ test('pyramid: split into jobs', function(t) {
             if (num === total) {
                 t.equal(results.length, 285, 'correct number of tiles across ' + total + ' jobs');
                 var tiles = results.reduce(function(memo, tile) {
-                    var id = [tile.z, tile.x, tile.y].join('/');
-                    if (memo[id]) memo[id]++;
-                    else memo[id] = 1;
+                    if (memo[tile]) memo[tile]++;
+                    else memo[tile] = 1;
                     return memo;
                 }, {});
                 for (var k in tiles) {
                     if (tiles[k] > 1) t.fail('tile repeated ' + tiles[k] + ' times with ' + total + ' jobs: ' + k);
                 }
-                t.ok(ss.standard_deviation(tilesPerJob) < 1.5, 'reasonably good split of tiles across ' + total+ ' jobs');
+                var gotAllTiles = expectedTiles.reduce(function(memo, tile) {
+                    if (results.indexOf(tile) < 0) {
+                        console.log(tile);
+                        memo = false;
+                    }
+                    return memo;
+                }, true);
+                t.ok(gotAllTiles, 'rendered all expected tiles');
+
+                // t.ok(ss.standard_deviation(tilesPerJob) < 1.5, 'reasonably good split of tiles across ' + total+ ' jobs');
                 results = [];
                 tilesPerJob = [];
                 done();
