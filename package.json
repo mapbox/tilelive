@@ -39,7 +39,6 @@
     "coveralls": "~2.11.1",
     "istanbul": "~0.3.0",
     "mbtiles": "~0.4.3",
-    "simple-statistics": "^0.9.0",
     "tape": "2.13.3",
     "tilejson": "~0.8.0",
     "tilelive-http": "^0.3.0"

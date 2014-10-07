@@ -9,7 +9,6 @@ var path = require('path');
 var tmp = require('os').tmpdir();
 var assert = require('assert');
 var unzip = require('zlib').createGunzip();
-var ss = require('simple-statistics');
 
 var filepath = path.join(tmp, 'list.mbtiles');
 var tmpSerial = path.join(tmp, 'tilelive.serialized');
@@ -207,6 +206,11 @@ test('deserialize: incomplete', function(t) {
 });
 
 test('deserialize: split into jobs', function(t) {
+    var results = [];
+    var tilesPerJob = [];
+    var tilelist = path.join(__dirname, 'fixtures', 'plain_1.tilelist');
+    var expectedTiles = fs.readFileSync(tilelist, 'utf8').split('\n').slice(0, -1);
+
     runJob(1, 1, function() {       // one job
     runJob(4, 1, function() {       // a few jobs
     runJob(15, 1, function() {      // a moderate number of jobs
@@ -214,8 +218,6 @@ test('deserialize: split into jobs', function(t) {
     runJob(400, 1, t.end.bind(t));  // more jobs than there are tiles
     });});});});
 
-    var results = [];
-    var tilesPerJob = [];
     function runJob(total, num, done) {
         var tileCount = 0;
         fs.createReadStream(path.join(__dirname, 'fixtures', 'plain_1.serialtiles'))
@@ -224,23 +226,31 @@ test('deserialize: split into jobs', function(t) {
                 t.ifError(err, 'Error during deserialization');
             })
             .on('tile', function(tile) {
-                results.push(tile);
-                tileCount++;
+                if (tile.hasOwnProperty('x')) { // filters out info objects
+                    results.push([tile.z, tile.x, tile.y].join('/'));
+                    tileCount++;
+                }
             })
             .on('finish', function() {
                 tilesPerJob.push(tileCount);
                 if (num === total) {
                     t.equal(results.length, 285, 'correct number of tiles across ' + total + ' jobs');
                     var tiles = results.reduce(function(memo, tile) {
-                        var id = [tile.z, tile.x, tile.y].join('/');
-                        if (memo[id]) memo[id]++;
-                        else memo[id] = 1;
+                        if (memo[tile]) memo[tile]++;
+                        else memo[tile] = 1;
                         return memo;
                     }, {});
+
                     for (var k in tiles) {
                         if (tiles[k] > 1) t.fail('tile repeated ' + tiles[k] + ' times with ' + total + ' jobs: ' + k);
                     }
-                    t.ok(ss.standard_deviation(tilesPerJob) < 1.5, 'reasonably good split of tiles across ' + total+ ' jobs');
+
+                    var gotAllTiles = expectedTiles.reduce(function(memo, tile) {
+                        if (results.indexOf(tile) < 0) memo = false;
+                        return memo;
+                    }, true);
+                    t.ok(gotAllTiles, 'rendered all expected tiles');
+
                     results = [];
                     tilesPerJob = [];
                     done();
