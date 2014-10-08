@@ -71,7 +71,7 @@ test('Tile: serialize', function(t) {
 });
 
 test('Tile: deserialize', function(t) {
-    t.plan(3);
+    t.plan(5);
 
     var data, tile, actual, expected;
 
@@ -80,6 +80,9 @@ test('Tile: deserialize', function(t) {
     expected = new util.Tile(1, 2, 3, new Buffer('hello'));
     actual = util.deserialize(data);
     t.deepEqual(actual, expected, 'good data deserialized as expected');
+
+    t.equal(util.deserialize(data, 'buffer'), '"aGVsbG8="', 'deserialize a property as expected');
+    t.equal(util.deserialize(data, 'x'), '2', 'deserialize a property as expected');
 
     tile = new util.Tile();
     data = '{"this": is not parsable, []}';

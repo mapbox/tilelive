@@ -36,12 +36,12 @@
     "sphericalmercator": "~1.0.1"
   },
   "devDependencies": {
-    "tape": "2.13.3",
-    "mbtiles": "~0.4.3",
-    "tilejson": "~0.8.0",
-    "tilelive-http": "^0.3.0",
+    "coveralls": "~2.11.1",
     "istanbul": "~0.3.0",
-    "coveralls": "~2.11.1"
+    "mbtiles": "~0.4.3",
+    "tape": "2.13.3",
+    "tilejson": "~0.8.0",
+    "tilelive-http": "^0.3.0"
   },
   "bin": {
     "tilelive-copy": "./bin/tilelive-copy"
