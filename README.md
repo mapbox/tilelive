@@ -55,6 +55,16 @@ Tilelive provides an implementation of node object streams for copying tiles fro
 
 See `tilelive-copy` and the streams tests for example usage of copy streams.
 
+## Parallel read streams
+
+Tilelive can split a read operation into an arbitrary number of jobs. Pass a `job` parameter to options when using `tilelive.createReadStream` or `tilelive.deserialize`:
+
+```javascript
+var readable = tilelive.createReadStream(src, { type: 'scanline', job: { total: 4, num: 1 } });
+```
+
+This instructs tilelive to only read tiles that would fall into job `1` of `4`. A complete read would mean four calls each with a different `num`.
+
 ## bin/tilelive-copy
 
 tilelive can be used to copy data between tilestores. For a full list of options, run `tilelive-copy`.
@@ -64,4 +74,3 @@ tilelive can be used to copy data between tilestores. For a full list of options
 To run the tests
 
     npm test
-

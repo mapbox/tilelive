@@ -1,3 +1,7 @@
+## 5.3.0
+
+* Allows read streams to be split into parallel jobs.
+
 ## 5.2.0
 
 * Adds serialize/deserialize streams for tilelive copy.
@@ -103,4 +107,3 @@ Minor release: adds `Pool` argument to `Tile.getMap()`, to let users dispose of 
 
 * Tiles no longer accept `tile` as a scheme. TMS or XYZ are required; TMS is default.
 * options.mapfile is now options.datasource, and can accept a Carto MML object.
-
