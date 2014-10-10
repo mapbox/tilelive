@@ -44,6 +44,33 @@ test('list: pipe', function(t) {
     file.pipe(get).pipe(put);
 });
 
+test('list: no new-line at end of stream', function(t) {
+    var file = fs.createReadStream(path.join(__dirname,'fixtures','filescheme.flat.no-newline'));
+    var get = tilelive.createReadStream(src, {type:'list'});
+    get.on('error', function(err) { t.ifError(err); });
+    get.on('end', function() {
+        t.deepEqual(get.stats, { ops: 77, total: 77, skipped: 0, done: 77 });
+        t.end();
+    });
+    get.on('data', function(d) { });
+    file.pipe(get);
+});
+
+test('list: tilelist writes split mid-tile', function(t) {
+    var get = tilelive.createReadStream(src, {type:'list'});
+    get.on('error', function(err) { t.ifError(err); });
+    get.on('end', function() {
+        t.deepEqual(get.stats, { ops: 9, total: 9, skipped: 0, done: 9 });
+        t.end();
+    });
+    get.on('data', function(d) { });
+    get.write('3/1/2\n3/2/2\n3/3/2\n3/4/2\n3');
+    setTimeout(function() {
+        get.write('/5/2\n3/6/2\n3/7/2\n3/0/3\n3/1/3');
+        get.end();
+    }, 500);
+});
+
 test('list: vacuum', function(t) {
     dst._db.exec('vacuum;', t.end);
 });
