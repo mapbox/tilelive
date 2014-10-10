@@ -136,3 +136,36 @@ test('Info: deserialize', function(t) {
         t.ok(valid, 'unparsable data throws expected exception');
     }
 });
+
+test('getTileRetry: retries on err', function(t) {
+    var fakeSrc = {
+        getTile: function(z, x, y, callback) {
+            callback(new Error('I always fail'));
+        }
+    };
+
+    function cb(err, buffer) {
+        t.ok(err, 'expected error');
+        t.equal(cb._retry, 10, 'retried ten times');
+        t.end();
+    }
+    cb._retry = 9;
+
+    util.getTileRetry(fakeSrc, 3, 6, 2, cb);
+});
+
+test('getTileRetry: does not retry on not found err', function(t) {
+    var fakeSrc = {
+        getTile: function(z, x, y, callback) {
+            callback(new Error('Tile does not exist'));
+        }
+    };
+
+    function cb(err, buffer) {
+        t.ok(err, 'expected error');
+        t.equal(cb._retry, 0, 'retried zero times');
+        t.end();
+    }
+
+    util.getTileRetry(fakeSrc, 3, 6, 2, cb);
+});
