@@ -1,3 +1,7 @@
+## 5.3.1
+
+* Job numbering starts with `0`
+
 ## 5.3.0
 
 * Allows read streams to be split into parallel jobs.
