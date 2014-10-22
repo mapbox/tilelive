@@ -108,11 +108,11 @@ test('list: split into jobs', function(t) {
     var tilelist = path.join(__dirname, 'fixtures', 'plain_1.tilelist');
     var expectedTiles = fs.readFileSync(tilelist, 'utf8').split('\n').slice(0, -1);
 
-    runJob(1, 1, function() {       // one job
-    runJob(4, 1, function() {       // a few jobs
-    runJob(15, 1, function() {      // a moderate number of jobs
-    runJob(285, 1, function() {     // as many jobs as there are tiles
-    runJob(400, 1, t.end.bind(t));  // more jobs than there are tiles
+    runJob(1, 0, function() {       // one job
+    runJob(4, 0, function() {       // a few jobs
+    runJob(15, 0, function() {      // a moderate number of jobs
+    runJob(285, 0, function() {     // as many jobs as there are tiles
+    runJob(400, 0, t.end.bind(t));  // more jobs than there are tiles
     });});});});
 
     function runJob(total, num, done) {
@@ -129,7 +129,7 @@ test('list: split into jobs', function(t) {
         });
         list.on('end', function() {
             tilesPerJob.push(tileCount);
-            if (num === total) {
+            if (num === total - 1) {
                 t.equal(results.length, 285, 'correct number of tiles across ' + total + ' jobs');
                 var tiles = results.reduce(function(memo, tile) {
                     if (memo[tile]) memo[tile]++;
