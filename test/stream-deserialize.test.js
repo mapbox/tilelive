@@ -220,6 +220,7 @@ test('deserialize: split into jobs', function(t) {
 
     function runJob(total, num, done) {
         var tileCount = 0;
+        var gotInfo = false;
         fs.createReadStream(path.join(__dirname, 'fixtures', 'plain_1.serialtiles'))
             .pipe(tilelive.deserialize({ job: { total: total, num: num } }))
             .on('error', function(err) {
@@ -231,9 +232,13 @@ test('deserialize: split into jobs', function(t) {
                     tileCount++;
                 }
             })
+            .on('info', function(info) {
+                gotInfo = true;
+            })
             .on('finish', function() {
                 tilesPerJob.push(tileCount);
                 if (num === total - 1) {
+                    t.ok(gotInfo, 'got info object');
                     t.equal(results.length, 285, 'correct number of tiles across ' + total + ' jobs');
                     var tiles = results.reduce(function(memo, tile) {
                         if (memo[tile]) memo[tile]++;
