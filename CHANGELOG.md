@@ -1,3 +1,7 @@
+## 5.3.2
+
+* Bugfix: deserialize streams return the info object as part of every job
+
 ## 5.3.1
 
 * Job numbering starts with `0`
