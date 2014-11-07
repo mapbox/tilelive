@@ -1,3 +1,7 @@
+## 5.3.3
+
+* Bugfix: list stream continues to read if internal buffer starts with a newline
+
 ## 5.3.2
 
 * Bugfix: deserialize streams return the info object as part of every job
