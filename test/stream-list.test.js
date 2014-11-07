@@ -56,6 +56,16 @@ test('list: no new-line at end of stream', function(t) {
     file.pipe(get);
 });
 
+test('list: new-line at the start of a file', function(t) {
+    var file = fs.createReadStream(path.join(__dirname, 'fixtures', 'newline-start.tiles'));
+    var get = tilelive.createReadStream(new Timedsource({time:10}), { type: 'list' });
+    get.on('finish', function() {
+        t.equal(get.length, 20, 'expected number of tiles read');
+        t.end();
+    });
+    file.pipe(get);
+});
+
 test('list: tilelist writes split mid-tile', function(t) {
     var get = tilelive.createReadStream(src, {type:'list'});
     get.on('error', function(err) { t.ifError(err); });
