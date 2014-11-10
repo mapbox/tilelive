@@ -98,12 +98,13 @@ function copy() {
         type:argv.scheme,
         minzoom:argv.minzoom,
         maxzoom:argv.maxzoom,
-        bounds:argv.bounds 
+        bounds:argv.bounds,
+        list:argv.list 
     };
-    
+
     tilelive.copy(srcuri, dsturi, options, function(err) {
         if (err) throw err;
-        console.log('')l
+        console.log('');
     });
 }
 
