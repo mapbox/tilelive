@@ -94,32 +94,16 @@ function out() {
 }
 
 function copy() {
-    var prog = progress({
-        objectMode: true,
-        time: 100
-    });
-    var get = tilelive.createReadStream(src, {
+    var options = {
         type:argv.scheme,
         minzoom:argv.minzoom,
         maxzoom:argv.maxzoom,
-        bounds:argv.bounds
-    });
-    var put = tilelive.createWriteStream(dst);
-    get.on('error', function(err) { throw err; });
-    put.on('error', function(err) { throw err; });
-    get.on('length', prog.setLength);
-
-    if (argv.scheme === 'list') {
-        var file = fs.createReadStream(path.resolve(argv.list));
-        file.pipe(get).pipe(prog).pipe(put);
-    } else {
-        get.pipe(prog).pipe(put);
-    }
-
-    prog.on('progress', function(p) { report(get.stats, p); });
-
-    put.on('finish', function() {
-        console.log('');
+        bounds:argv.bounds 
+    };
+    
+    tilelive.copy(srcuri, dsturi, options, function(err) {
+        if (err) throw err;
+        console.log('')l
     });
 }
 
