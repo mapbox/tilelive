@@ -95,7 +95,7 @@ function out() {
 
 function copy() {
     var options = {
-        type:argv.scheme,
+        scheme:argv.scheme,
         minzoom:argv.minzoom,
         maxzoom:argv.maxzoom,
         bounds:argv.bounds,
@@ -108,18 +108,18 @@ function copy() {
     });
 }
 
-function report(stats, p) {
-    util.print(util.format('\r\033[K[%s] %s%% %s/%s @ %s/s | ✓ %s □ %s | %s left',
-        pad(formatDuration(process.uptime()), 4, true),
-        pad((p.percentage).toFixed(4), 8, true),
-        pad(formatNumber(p.transferred),6,true),
-        pad(formatNumber(p.length),6,true),
-        pad(formatNumber(p.speed),4,true),
-        formatNumber(stats.done - stats.skipped),
-        formatNumber(stats.skipped),
-        formatDuration(p.eta)
-    ));
-}
+// function report(stats, p) {
+//     util.print(util.format('\r\033[K[%s] %s%% %s/%s @ %s/s | ✓ %s □ %s | %s left',
+//         pad(formatDuration(process.uptime()), 4, true),
+//         pad((p.percentage).toFixed(4), 8, true),
+//         pad(formatNumber(p.transferred),6,true),
+//         pad(formatNumber(p.length),6,true),
+//         pad(formatNumber(p.speed),4,true),
+//         formatNumber(stats.done - stats.skipped),
+//         formatNumber(stats.skipped),
+//         formatDuration(p.eta)
+//     ));
+// }
 
 function pad(str, len, r) {
     while (str.length < len) str = r ? ' ' + str : str + ' ';
