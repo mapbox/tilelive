@@ -59,8 +59,11 @@ if (argv.scheme === 'list' && !argv.list) {
 
 if (argv.concurrency) tilelive.stream.setConcurrency(argv.concurrency);
 
-var srcuri = tilelive.auto(argv._[0]);
-var dsturi = argv._[1] ? tilelive.auto(argv._[1]) : false;
+var srcuri = argv._[0];
+var dsturi = argv._[1] ? argv._[1] : false;
+// register modules
+tilelive.auto(srcuri);
+
 copy();
 
 function copy() {
@@ -78,7 +81,7 @@ function copy() {
     }
     // Create readstream for lists
     if(options.scheme === 'list') {
-        options.listStream = tilelive.createReadstream(srcuri, options);
+        options.listStream = tilelive.createReadstream(argv.list, options);
     }
 
     tilelive.copy(srcuri, dsturi, options, function(err) {
