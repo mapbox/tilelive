@@ -68,14 +68,17 @@ function copy() {
         scheme:argv.scheme,
         minzoom:argv.minzoom,
         maxzoom:argv.maxzoom,
-        bounds:argv.bounds,
-        list:argv.list
+        bounds:argv.bounds
     };  
     
     if (!argv.withoutprogress) options.progress = report;
     if (argv.part && argv.parts) options.job = {
         total:argv.parts,
         num:argv.part
+    }
+    // Create readstream for lists
+    if(options.scheme === 'list') {
+        options.listStream = tilelive.createReadstream(srcuri, options);
     }
 
     tilelive.copy(srcuri, dsturi, options, function(err) {
