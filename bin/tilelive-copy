@@ -28,10 +28,12 @@ if (!argv._[0]) {
     console.log('  --scheme=[scanline,pyramid,list]  Default: scanline.');
     console.log('  --list=[filepath]                 Filepath if scheme is list.');
     console.log('  --concurrency=[number]            Copy concurrency.');
+    console.log('  --withoutprogress=[boolean]       Default: false.');
     console.log('  --bounds=[w,s,e,n]');
     console.log('  --minzoom=[number]');
     console.log('  --maxzoom=[number]');
-    console.log('  --withoutprogress=[boolean]');
+    console.log('  --parts=[number]');
+    console.log('  --part=[number]');
     process.exit(1);
 }
 
@@ -42,6 +44,8 @@ argv.bounds = argv.bounds !== undefined ? argv.bounds.split(',').map(function(v)
 argv.minzoom = argv.minzoom !== undefined ? parseInt(argv.minzoom,10) : undefined;
 argv.maxzoom = argv.maxzoom !== undefined ? parseInt(argv.maxzoom,10) : undefined;
 argv.withoutprogress = argv.withoutprogress || undefined;
+argv.parts = argv.parts || undefined;
+argv.part = argv.part || undefined;
 
 if (argv.scheme !== 'pyramid' && argv.scheme !== 'scanline' && argv.scheme !== 'list') {
     console.warn('scheme must be one of pyramid, scanline, list')
@@ -107,6 +111,10 @@ function copy() {
     };
     
     if (!argv.withoutprogress) options.progress = report;
+    if (argv.part && argv.parts) options.job = {
+        total:argv.parts,
+        num:argv.part
+    }
 
     tilelive.copy(srcuri, dsturi, options, function(err) {
         if (err) throw err;
