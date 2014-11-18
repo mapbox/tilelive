@@ -80,9 +80,10 @@ function copy() {
         num:argv.part
     }
     // Create readstream for lists
-    if(options.scheme === 'list') {
-        options.listStream = tilelive.createReadstream(argv.list, options);
+    if (options.scheme === 'list') {
+        options.listStream = tilelive.createReadStream(argv.list, options);
     }
+    if (!dsturi) options.outStream = process.stdout;
 
     tilelive.copy(srcuri, dsturi, options, function(err) {
         if (err) throw err;
