@@ -59,45 +59,9 @@ if (argv.scheme === 'list' && !argv.list) {
 
 if (argv.concurrency) tilelive.stream.setConcurrency(argv.concurrency);
 
-var src;
-var dst;
 var srcuri = tilelive.auto(argv._[0]);
 var dsturi = argv._[1] ? tilelive.auto(argv._[1]) : false;
-loadsrc();
-
-function loadsrc() {
-    tilelive.load(srcuri, function(err, s) {
-        if (err) throw err;
-        src = s;
-        loaddst();
-    });
-}
-
-function loaddst() {
-    if (!dsturi) return out();
-
-    tilelive.load(dsturi, function(err, d) {
-        if (err) throw err;
-        dst = d;
-        copy();
-    });
-}
-
-function out() {
-    var get = tilelive.createReadStream(src, {
-        type:argv.scheme,
-        minzoom:argv.minzoom,
-        maxzoom:argv.maxzoom,
-        bounds:argv.bounds
-    });
-    get.on('error', function(err) { throw err; });
-    if (argv.scheme === 'list') {
-        var file = fs.createReadStream(path.resolve(argv.list));
-        file.pipe(get).pipe(tilelive.serialize()).pipe(process.stdout);
-    } else {
-        get.pipe(tilelive.serialize()).pipe(process.stdout);
-    }
-}
+copy();
 
 function copy() {
     var options = {
@@ -105,10 +69,8 @@ function copy() {
         minzoom:argv.minzoom,
         maxzoom:argv.maxzoom,
         bounds:argv.bounds,
-        list:argv.list,
-        src: src,
-        dst: dst
-    };
+        list:argv.list
+    };  
     
     if (!argv.withoutprogress) options.progress = report;
     if (argv.part && argv.parts) options.job = {
