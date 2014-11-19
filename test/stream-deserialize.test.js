@@ -187,7 +187,9 @@ test('de/serialize: round-trip', function(t) {
         var finalStats = fs.statSync(tmpDst);
 
         var sizeDiff = Math.abs(originalStats.size - finalStats.size) / originalStats.size;
-
+        console.log("sizeDiff: " + sizeDiff);
+        console.log("originalStats: " + originalStats);
+        console.log("finalStats: " + finalStats);
         t.ok(sizeDiff < 0.01, 'round-tripped mbtiles are approx. the same size');
         t.end();
     }
