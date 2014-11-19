@@ -68,7 +68,7 @@ copy();
 
 function copy() {
     var options = {
-        scheme:argv.scheme,
+        type:argv.scheme,
         minzoom:argv.minzoom,
         maxzoom:argv.maxzoom,
         bounds:argv.bounds
@@ -80,8 +80,8 @@ function copy() {
         num:argv.part
     }
     // Create readstream for lists
-    if (options.scheme === 'list') {
-        options.listStream = tilelive.createReadStream(argv.list, options);
+    if (options.type === 'list') {
+        options.listStream = fs.createReadStream(argv.list);
     }
     if (!dsturi) options.outStream = process.stdout;
 
