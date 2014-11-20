@@ -25,7 +25,9 @@ test('deserialize: src', function(t) {
 });
 
 test('deserialize: dst', function(t) {
-    try { fs.unlinkSync(filepath); } catch(e) {}
+    try { fs.unlinkSync(filepath); } catch(e) {
+        console.log(e);
+    }
     new MBTiles(filepath, function(err, d) {
         t.ifError(err);
         dst = d;
