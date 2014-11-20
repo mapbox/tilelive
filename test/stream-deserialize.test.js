@@ -157,8 +157,12 @@ test('deserialize: garbage', function(t) {
 });
 
 test('de/serialize: round-trip', function(t) {
-    try { fs.unlinkSync(tmpSerial); } catch(e) {}
-    try { fs.unlinkSync(tmpDst); } catch(e) {}
+    try { fs.unlinkSync(tmpSerial); } catch(e) {
+        console.log(e);
+    }
+    try { fs.unlinkSync(tmpDst); } catch(e) {
+        console.log(e);
+    }
 
     var original = tilelive.createReadStream(src, {type: 'scanline'})
         .on('error', function(err) { t.ifError(err); });
