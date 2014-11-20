@@ -158,10 +158,10 @@ test('deserialize: garbage', function(t) {
 });
 
 test('de/serialize: round-trip', function(t) {
-    //try { fs.unlinkSync(tmpSerial); } catch(e) {}
-    //try { fs.unlinkSync(tmpDst); } catch(e) {}
-    var tmpSerial = path.join(tmp, 'tilelive.serialized', crypto.randomBytes(12).toString('hex'));
-    var tmpDst = path.join(tmp, 'tilelive.dstMbtiles', crypto.randomBytes(12).toString('hex'));
+    try { fs.unlinkSync(tmpSerial); } catch(e) {console.log("ERRORRRRRR!!! ALARM!!!!!!!");}
+    try { fs.unlinkSync(tmpDst); } catch(e) {console.log("ERRORRRRRR!!! ALARM!!!!!!!")}
+    //var tmpSerial = path.join(tmp, 'tilelive.serialized-' + crypto.randomBytes(12).toString('hex'));
+    //var tmpDst = path.join(tmp, 'tilelive.dstMbtiles-' + crypto.randomBytes(12).toString('hex'));
     console.log("Serialized file exists? " + fs.existsSync(tmpSerial));
     console.log("Dst file exists? " + fs.existsSync(tmpDst));
     var original = tilelive.createReadStream(src, {type: 'scanline'})
