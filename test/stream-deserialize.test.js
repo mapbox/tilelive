@@ -158,18 +158,8 @@ test('deserialize: garbage', function(t) {
 });
 
 test('de/serialize: round-trip', function(t) {
-    try { fs.unlinkSync(tmpSerial); } catch(e) {
-        console.log("ERRORRRRRR!!! ALARM!!!!!!!");
-        console.log(e);
-    }
-    try { fs.unlinkSync(tmpDst); } catch(e) {
-        console.log("ERRORRRRRR!!! ALARM!!!!!!!");
-        console.log(e);
-    }
     //var tmpSerial = path.join(tmp, 'tilelive.serialized-' + crypto.randomBytes(12).toString('hex'));
     //var tmpDst = path.join(tmp, 'tilelive.dstMbtiles-' + crypto.randomBytes(12).toString('hex'));
-    console.log("Serialized file exists? " + fs.existsSync(tmpSerial));
-    console.log("Dst file exists? " + fs.existsSync(tmpDst));
     var original = tilelive.createReadStream(src, {type: 'scanline'})
         .on('error', function(err) { t.ifError(err); });
     var serialize = tilelive.serialize()
@@ -191,6 +181,8 @@ test('de/serialize: round-trip', function(t) {
             });
     });
 
+    console.log("Serialized file exists? " + fs.existsSync(tmpSerial));
+    console.log("Dst file exists? " + fs.existsSync(tmpDst));
     function makeAssertions() {
         var originalStats = fs.statSync(filepath);
         var serializedStats = fs.statSync(tmpSerial);
@@ -201,6 +193,14 @@ test('de/serialize: round-trip', function(t) {
         console.log("originalStats: " + originalStats);
         console.log("finalStats: " + finalStats);
         t.ok(sizeDiff < 0.01, 'round-tripped mbtiles are approx. the same size');
+        try { fs.unlinkSync(tmpSerial); } catch(e) {
+            console.log("ERRORRRRRR!!! ALARM!!!!!!!");
+            console.log(e);
+        }
+        try { fs.unlinkSync(tmpDst); } catch(e) {
+            console.log("ERRORRRRRR!!! ALARM!!!!!!!");
+            console.log(e);
+        }
         t.end();
     }
 
