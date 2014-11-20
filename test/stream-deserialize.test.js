@@ -9,6 +9,7 @@ var path = require('path');
 var tmp = require('os').tmpdir();
 var assert = require('assert');
 var unzip = require('zlib').createGunzip();
+var crypto = require('crypto');
 
 var filepath = path.join(tmp, 'list.mbtiles');
 var tmpSerial = path.join(tmp, 'tilelive.serialized');
@@ -157,16 +158,19 @@ test('deserialize: garbage', function(t) {
 });
 
 test('de/serialize: round-trip', function(t) {
-    try { fs.unlinkSync(tmpSerial); } catch(e) {}
-    try { fs.unlinkSync(tmpDst); } catch(e) {}
-
+    //try { fs.unlinkSync(tmpSerial); } catch(e) {}
+    //try { fs.unlinkSync(tmpDst); } catch(e) {}
+    var tmpSerial = path.join(tmp, 'tilelive.serialized', crypto.randomBytes(12).toString('hex'));
+    var tmpDst = path.join(tmp, 'tilelive.dstMbtiles', crypto.randomBytes(12).toString('hex'));
+    console.log("Serialized file exists? " + fs.existsSync(tmpSerial));
+    console.log("Dst file exists? " + fs.existsSync(tmpDst));
     var original = tilelive.createReadStream(src, {type: 'scanline'})
         .on('error', function(err) { t.ifError(err); });
     var serialize = tilelive.serialize()
         .on('error', function(err) { t.ifError(err); });
     var deserialize = tilelive.deserialize()
         .on('error', function(err) { t.ifError(err); });
-
+    
     new MBTiles(tmpDst, function(err, outMbtiles) {
         t.ifError(err);
         original.pipe(serialize).pipe(fs.createWriteStream(tmpSerial))
