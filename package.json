@@ -52,7 +52,7 @@
     "node": ">= 0.10.0 < 0.11.0"
   },
   "scripts": {
-    "test": "tape test/stream-deserialize.test.js",
+    "test": "tape test/*.test.js",
     "cov": "istanbul cover tape test/*.test.js && coveralls < ./coverage/lcov.info"
   }
 }
