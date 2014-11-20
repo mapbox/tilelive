@@ -158,8 +158,14 @@ test('deserialize: garbage', function(t) {
 });
 
 test('de/serialize: round-trip', function(t) {
-    try { fs.unlinkSync(tmpSerial); } catch(e) {console.log("ERRORRRRRR!!! ALARM!!!!!!!");}
-    try { fs.unlinkSync(tmpDst); } catch(e) {console.log("ERRORRRRRR!!! ALARM!!!!!!!")}
+    try { fs.unlinkSync(tmpSerial); } catch(e) {
+        console.log("ERRORRRRRR!!! ALARM!!!!!!!");
+        console.log(e);
+    }
+    try { fs.unlinkSync(tmpDst); } catch(e) {
+        console.log("ERRORRRRRR!!! ALARM!!!!!!!");
+        console.log(e);
+    }
     //var tmpSerial = path.join(tmp, 'tilelive.serialized-' + crypto.randomBytes(12).toString('hex'));
     //var tmpDst = path.join(tmp, 'tilelive.dstMbtiles-' + crypto.randomBytes(12).toString('hex'));
     console.log("Serialized file exists? " + fs.existsSync(tmpSerial));
