@@ -28,7 +28,7 @@ if (!argv._[0]) {
     console.log('  --scheme=[scanline,pyramid,list]  Default: scanline.');
     console.log('  --list=[filepath]                 Filepath if scheme is list.');
     console.log('  --concurrency=[number]            Copy concurrency.');
-    console.log('  --withoutprogress=[boolean]       Default: false.');
+    console.log('  --withoutprogress                 Shows progress by default');
     console.log('  --bounds=[w,s,e,n]');
     console.log('  --minzoom=[number]');
     console.log('  --maxzoom=[number]');
@@ -43,7 +43,7 @@ argv.concurrency = argv.concurrency !== undefined ? parseInt(argv.concurrency,10
 argv.bounds = argv.bounds !== undefined ? argv.bounds.split(',').map(function(v) { return parseFloat(v); }) : undefined;
 argv.minzoom = argv.minzoom !== undefined ? parseInt(argv.minzoom,10) : undefined;
 argv.maxzoom = argv.maxzoom !== undefined ? parseInt(argv.maxzoom,10) : undefined;
-argv.withoutprogress = argv.withoutprogress || undefined;
+argv.withoutprogress = argv.withoutprogress ? true : false;
 argv.parts = argv.parts || undefined;
 argv.part = argv.part || undefined;
 
