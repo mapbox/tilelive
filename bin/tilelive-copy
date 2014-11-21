@@ -57,8 +57,6 @@ if (argv.scheme === 'list' && !argv.list) {
     process.exit(1);
 }
 
-if (argv.concurrency) tilelive.stream.setConcurrency(argv.concurrency);
-
 var srcuri = argv._[0];
 var dsturi = argv._[1] ? argv._[1] : false;
 // register modules
@@ -73,8 +71,9 @@ function copy() {
         maxzoom:argv.maxzoom,
         bounds:argv.bounds
     };  
-    
+
     if (!argv.withoutprogress) options.progress = report;
+    if (argv.concurrency) options.concurrency = argv.concurrency;
     if (argv.part && argv.parts) options.job = {
         total:argv.parts,
         num:argv.part
