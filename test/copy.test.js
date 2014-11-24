@@ -7,6 +7,8 @@ var exec = require('child_process').exec;
 var filepath = path.join(tmp, 'copy.mbtiles');
 try { fs.unlinkSync(filepath); } catch(e) {}
 
+var s3url = 's3://tilestream-tilesets-development/carol-staging/mapbox-tile-copy/{z}/{x}/{y}.png';
+
 test('copy usage', function(t) {
     exec(__dirname + '/../bin/tilelive-copy', function(err, stdout, stderr) {
         t.equal(1, err.code, 'exit 1');
@@ -20,6 +22,14 @@ test('copy copies', function(t) {
         t.ifError(err, 'no errors');
         t.ok(stdout.indexOf('100.0000%') !== -1, 'pct complete');
         t.ok(stdout.indexOf('286/') !== -1, '286');
+        t.end();
+    });
+});
+
+test('copy copies to s3', function(t) {
+    exec(__dirname + '/../bin/tilelive-copy ' + __dirname + '/fixtures/plain_1.mbtiles ' + s3url, function(err, stdout, stderr) {
+        t.ifError(err, 'no errors');
+        t.ok(stdout.indexOf('100.0000%') !== -1, 'pct complete');
         t.end();
     });
 });

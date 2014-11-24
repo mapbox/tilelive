@@ -1,8 +1,11 @@
 var test = require('tape');
 var assert = require('assert');
 var tilelive = require('../');
-tilelive.protocols['mbtiles:'] = require('mbtiles');
-tilelive.protocols['tilejson:'] = require('tilejson');
+var MBTiles = require('mbtiles');
+var TileJSON = require('tilejson');
+
+MBTiles.registerProtocols(tilelive);
+TileJSON.registerProtocols(tilelive);
 
 test('should list all available tile sources', function(t) {
     tilelive.list(__dirname + '/fixtures', function(err, sources) {

@@ -61,6 +61,7 @@ var srcuri = argv._[0];
 var dsturi = argv._[1] ? argv._[1] : false;
 // register modules
 tilelive.auto(srcuri);
+if (dsturi) tilelive.auto(dsturi);
 
 copy();
 
