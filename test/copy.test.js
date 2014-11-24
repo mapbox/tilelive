@@ -26,13 +26,13 @@ test('copy copies', function(t) {
     });
 });
 
-test('copy copies to s3', function(t) {
-    exec(__dirname + '/../bin/tilelive-copy ' + __dirname + '/fixtures/plain_1.mbtiles ' + s3url, function(err, stdout, stderr) {
-        t.ifError(err, 'no errors');
-        t.ok(stdout.indexOf('100.0000%') !== -1, 'pct complete');
-        t.end();
-    });
-});
+// test('copy copies to s3', function(t) {
+//     exec(__dirname + '/../bin/tilelive-copy ' + __dirname + '/fixtures/plain_1.mbtiles ' + s3url, function(err, stdout, stderr) {
+//         t.ifError(err, 'no errors');
+//         t.ok(stdout.indexOf('100.0000%') !== -1, 'pct complete');
+//         t.end();
+//     });
+// });
 
 test('copy min/max', function(t) {
     exec(__dirname + '/../bin/tilelive-copy --minzoom=1 --maxzoom=2 ' + __dirname + '/fixtures/plain_1.mbtiles ' + filepath, function(err, stdout, stderr) {
