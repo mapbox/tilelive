@@ -9,9 +9,9 @@ var concat = require('concat-stream');
 var MBTiles = require('mbtiles');
 //register protocols
 MBTiles.registerProtocols(tilelive);
+var crypto = require('crypto');
 
-var filepath = path.join(tmp, 'copy.mbtiles');
-try { fs.unlinkSync(filepath); } catch(e) {}
+var filepath = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.copy.mbtiles');
 
 var s3url = 's3://tilestream-tilesets-development/carol-staging/mapbox-tile-copy/{z}/{x}/{y}.png';
 
