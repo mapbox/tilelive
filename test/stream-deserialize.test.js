@@ -9,10 +9,11 @@ var path = require('path');
 var tmp = require('os').tmpdir();
 var assert = require('assert');
 var unzip = require('zlib').createGunzip();
+var crypto = require('crypto');
 
-var filepath = path.join(tmp, 'list.mbtiles');
-var tmpSerial = path.join(tmp, 'tilelive.serialized');
-var tmpDst = path.join(tmp, 'tilelive.dstMbtiles');
+var filepath = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.list.mbtiles');
+var tmpSerial = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelive.serialized');
+var tmpDst = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelive.dstMbtiles');
 
 var src, dst;
 
@@ -25,9 +26,6 @@ test('deserialize: src', function(t) {
 });
 
 test('deserialize: dst', function(t) {
-    try { fs.unlinkSync(filepath); } catch(e) {
-        console.log(e);
-    }
     new MBTiles(filepath, function(err, d) {
         t.ifError(err);
         dst = d;
@@ -159,13 +157,6 @@ test('deserialize: garbage', function(t) {
 });
 
 test('de/serialize: round-trip', function(t) {
-    try { fs.unlinkSync(tmpSerial); } catch(e) {
-        console.log(e);
-    }
-    try { fs.unlinkSync(tmpDst); } catch(e) {
-        console.log(e);
-    }
-
     var original = tilelive.createReadStream(src, {type: 'scanline'})
         .on('error', function(err) { t.ifError(err); });
     var serialize = tilelive.serialize()
