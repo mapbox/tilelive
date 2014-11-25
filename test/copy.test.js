@@ -11,8 +11,6 @@ var MBTiles = require('mbtiles');
 MBTiles.registerProtocols(tilelive);
 var crypto = require('crypto');
 
-var filepath = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.copy.mbtiles');
-
 var s3url = 's3://tilestream-tilesets-development/carol-staging/mapbox-tile-copy/{z}/{x}/{y}.png';
 
 test('copy usage', function(t) {
@@ -24,6 +22,7 @@ test('copy usage', function(t) {
 });
 
 test('copy copies', function(t) {
+    var filepath = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.copy.mbtiles');
     exec(__dirname + '/../bin/tilelive-copy ' + __dirname + '/fixtures/plain_1.mbtiles ' + filepath, function(err, stdout, stderr) {
         t.ifError(err, 'no errors');
         t.ok(stdout.indexOf('100.0000%') !== -1, 'pct complete');
@@ -41,6 +40,7 @@ test('copy copies', function(t) {
 // });
 
 test('copy min/max', function(t) {
+    var filepath = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.copy_minmax.mbtiles');
     exec(__dirname + '/../bin/tilelive-copy --minzoom=1 --maxzoom=2 ' + __dirname + '/fixtures/plain_1.mbtiles ' + filepath, function(err, stdout, stderr) {
         t.ifError(err, 'no errors');
         t.ok(stdout.indexOf('100.0000%') !== -1, 'pct complete');
@@ -50,6 +50,7 @@ test('copy min/max', function(t) {
 });
 
 test('copy bounds', function(t) {
+    var filepath = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.copy_bounds.mbtiles');
     exec(__dirname + '/../bin/tilelive-copy --bounds=-180,-85,0,0 ' + __dirname + '/fixtures/plain_1.mbtiles ' + filepath, function(err, stdout, stderr) {
         t.ifError(err, 'no errors');
         t.ok(stdout.indexOf('100.0000%') !== -1, 'pct complete');
@@ -59,6 +60,7 @@ test('copy bounds', function(t) {
 });
 
 test('copy list', function(t) {
+    var filepath = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.copy_list.mbtiles');
     exec(__dirname + '/../bin/tilelive-copy --scheme=list --list=' + __dirname + '/fixtures/filescheme.flat ' + __dirname + '/fixtures/plain_1.mbtiles ' + filepath, function(err, stdout, stderr) {
         t.ifError(err, 'no errors');
         t.ok(stdout.indexOf('100.0000%') !== -1, 'pct complete');
@@ -78,7 +80,7 @@ test('copy streams', function(t) {
 
 test('tilelive.copy', function(t) {
     var src = __dirname + '/fixtures/plain_1.mbtiles';
-    var dst = filepath;
+    var dst = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelivecopy.mbtiles');
     var options = {
         progress: report
     };
@@ -92,7 +94,7 @@ test('tilelive.copy', function(t) {
 
 test('tilelive.copy: concurrency', function(t) {
     var src = __dirname + '/fixtures/plain_1.mbtiles';
-    var dst = filepath;
+    var dst = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelivecopy_concurrency.mbtiles');
     var options = {
         progress: report,
         concurrency: 16
@@ -107,7 +109,7 @@ test('tilelive.copy: concurrency', function(t) {
 
 test('tilelive copy: list', function(t) {
     var src = __dirname + '/fixtures/plain_1.mbtiles';
-    var dst = filepath;
+    var dst = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelivecopy_list.mbtiles');
     var list = __dirname + '/fixtures/plain_1.tilelist';
     var options = {};
     options.type = 'list';
@@ -122,7 +124,7 @@ test('tilelive copy: list', function(t) {
 
 test('tilelive copy: missing liststream', function(t) {
     var src = __dirname + '/fixtures/plain_1.mbtiles';
-    var dst = filepath;
+    var dst = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelivecopy_liststream.mbtiles');
     var list = __dirname + '/fixtures/plain_1.tilelist';
     var options = {};
     options.type = 'list';
