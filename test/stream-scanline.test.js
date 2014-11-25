@@ -83,8 +83,8 @@ test('scanline: concurrency', function(t) {
     });
     get.pipe(put);
     setTimeout(function() {
-        t.equal(get.length, 81, 'updates length as skips occur');
-        t.deepEqual(get.stats, { ops: 20, total: 85, skipped: 4, done: 10 }, 'concurrency 10 at work');
+        t.equal(get.length, 78, 'updates length as skips occur');
+        t.deepEqual(get.stats, { ops: 32, total: 85, skipped: 7, done: 16 }, 'concurrency 10 at work');
     }, 20);
     put.on('stop', function() {
         t.equal(get.length, 43, 'updates length as skips occur');

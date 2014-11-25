@@ -43,7 +43,8 @@
     "tape": "2.13.3",
     "tilejson": "~0.8.0",
     "tilelive-http": "^0.3.0",
-    "tilelive-s3": "^1.0.0"
+    "tilelive-s3": "^1.0.0",
+    "concat-stream": "1.4.x"
   },
   "bin": {
     "tilelive-copy": "./bin/tilelive-copy"

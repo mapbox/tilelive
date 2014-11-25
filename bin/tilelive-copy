@@ -73,7 +73,7 @@ function copy() {
         bounds:argv.bounds
     };  
 
-    if (!argv.withoutprogress) options.progress = report;
+    if (!argv.withoutprogress && dsturi) options.progress = report;
     if (argv.concurrency) options.concurrency = argv.concurrency;
     if (argv.part && argv.parts) options.job = {
         total:argv.parts,

@@ -104,7 +104,7 @@ test('list: concurrency', function(t) {
     put.on('error', function(err) { t.ifError(err); });
     file.pipe(get).pipe(put);
     setTimeout(function() {
-        t.deepEqual(get.stats, { ops:31, total: 77, skipped: 10, done: 21 }, 'concurrency 10');
+        t.deepEqual(get.stats, { ops:49, total: 77, skipped: 14, done: 33 }, 'concurrency 10');
     }, 40);
     put.on('stop', function() {
         t.deepEqual(get.stats, { ops:77, total: 77, skipped: 38, done: 77 });

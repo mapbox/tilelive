@@ -14,9 +14,9 @@ test('write: slowput', function(t) {
     var put = tilelive.createWriteStream(slow);
     get.pipe(put);
     setTimeout(function() {
-        t.deepEqual(get.stats, { ops: 20, total: 85, skipped: 4, done: 10 });
-        t.deepEqual(put.stats, { ops: 7, total: 0, skipped: 0, done: 0 });
-        t.equal(get.length, 81);
+        t.deepEqual(get.stats, { ops: 32, total: 85, skipped: 7, done: 16 });
+        t.deepEqual(put.stats, { ops: 10, total: 0, skipped: 0, done: 0 });
+        t.equal(get.length, 78);
     }, 20);
     put.on('stop', function() {
         t.equal(get.length, 43);
