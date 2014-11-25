@@ -138,7 +138,7 @@ test('tilelive.copy: outstream', function(t) {
     var src = __dirname + '/fixtures/plain_1.mbtiles';
     var dst = false;
     var result;
-    var outstream = concat({encoding: 'string'}, function(data) { result = data });
+    var outstream = concat({encoding: 'string'}, function(data) { result = data; });
     var options = {
         outStream: outstream
     };
@@ -170,7 +170,7 @@ test('tilelive.copy: list with outstream', function(t) {
     var src = __dirname + '/fixtures/plain_1.mbtiles';
     var dst = false;
     var result;
-    var outstream = concat({encoding: 'string'}, function(data) { result = data });
+    var outstream = concat({encoding: 'string'}, function(data) { result = data; });
     var list = __dirname + '/fixtures/plain_1.tilelist';
     var options = {};
     options.type = 'list';

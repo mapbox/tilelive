@@ -48,12 +48,12 @@ argv.parts = argv.parts || undefined;
 argv.part = argv.part || undefined;
 
 if (argv.scheme !== 'pyramid' && argv.scheme !== 'scanline' && argv.scheme !== 'list') {
-    console.warn('scheme must be one of pyramid, scanline, list')
+    console.warn('scheme must be one of pyramid, scanline, list');
     process.exit(1);
 }
 
 if (argv.scheme === 'list' && !argv.list) {
-    console.warn('--list=file required for list scheme')
+    console.warn('--list=file required for list scheme');
     process.exit(1);
 }
 
@@ -71,14 +71,14 @@ function copy() {
         minzoom:argv.minzoom,
         maxzoom:argv.maxzoom,
         bounds:argv.bounds
-    };  
+    };
 
     if (!argv.withoutprogress && dsturi) options.progress = report;
     if (argv.concurrency) options.concurrency = argv.concurrency;
     if (argv.part && argv.parts) options.job = {
         total:argv.parts,
         num:argv.part
-    }
+    };
     // Create readstream for lists
     if (options.type === 'list') {
         options.listStream = fs.createReadStream(argv.list);
@@ -142,4 +142,3 @@ function timeRemaining(progress) {
         (process.uptime())
     );
 }
-
