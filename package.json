@@ -33,7 +33,8 @@
   "dependencies": {
     "minimist": "~0.2.0",
     "progress-stream": "~0.5.x",
-    "sphericalmercator": "~1.0.1"
+    "sphericalmercator": "~1.0.1",
+    "queue-async": "~1.0.7"
   },
   "devDependencies": {
     "coveralls": "~2.11.1",
@@ -41,7 +42,8 @@
     "mbtiles": "~0.4.3",
     "tape": "2.13.3",
     "tilejson": "~0.8.0",
-    "tilelive-http": "^0.3.0"
+    "tilelive-http": "^0.3.0",
+    "concat-stream": "1.4.x"
   },
   "bin": {
     "tilelive-copy": "./bin/tilelive-copy"
