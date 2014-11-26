@@ -11,11 +11,10 @@ var assert = require('assert');
 var unzip = require('zlib').createGunzip();
 var crypto = require('crypto');
 
-var filepath = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.list.mbtiles');
-var tmpSerial = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelive.serialized');
-var tmpDst = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelive.dstMbtiles');
-
 var src, dst;
+
+// This is only used for deserialize: dst and deserialize: round trip tests
+var filepath = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.list_deserialize.mbtiles');
 
 test('deserialize: src', function(t) {
     new MBTiles(__dirname + '/fixtures/plain_1.mbtiles', function(err, s) {
@@ -157,6 +156,8 @@ test('deserialize: garbage', function(t) {
 });
 
 test('de/serialize: round-trip', function(t) {
+    var tmpDst = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelive_roundtrip.dstMbtiles');
+    var tmpSerial = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelive.serialized');
     var original = tilelive.createReadStream(src, {type: 'scanline'})
         .on('error', function(err) { t.ifError(err); });
     var serialize = tilelive.serialize()

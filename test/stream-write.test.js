@@ -1,7 +1,6 @@
 var test = require('tape');
 var tilelive = require('..');
 var fs = require('fs');
-var tmp = require('os').tmpdir();
 var path = require('path');
 var Timedsource = require('./timedsource');
 
