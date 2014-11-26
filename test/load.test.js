@@ -142,6 +142,15 @@ test('loading: should load metadata from an existing tilejson file', function(t)
     });
 });
 
+test('loading: should load mbtiles file from a path containing a space', function(t) {
+    tilelive.info('mbtiles://' + __dirname + '/fixtures/path with space/plain_1.mbtiles', function(err, info, handler) {
+        if (err) throw err;
+        t.deepEqual(info, data[2]);
+        handler.close(t.end);
+    });
+});
+
+
 test('loading: should load all tile sources in a directory', function(t) {
     tilelive.all(__dirname + '/fixtures', function(err, info, handlers) {
         if (err) throw err;
