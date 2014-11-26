@@ -1,3 +1,8 @@
+## 5.4.0
+
+* Expose copy function as an API
+* Fix handling of paths with spaces
+
 ## 5.3.3
 
 * Bugfix: list stream continues to read if internal buffer starts with a newline
