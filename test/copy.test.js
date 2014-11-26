@@ -97,7 +97,7 @@ test('tilelive.copy: concurrency', function(t) {
     var dst = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelivecopy_concurrency.mbtiles');
     var options = {
         progress: report,
-        concurrency: 16
+        concurrency: 10
     };
 
     tilelive.copy(src, dst, options, function(err){
