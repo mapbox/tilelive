@@ -1,3 +1,7 @@
+## 5.4.1
+
+* Fix liststream by switching to Transform-based stream
+
 ## 5.4.0
 
 * Expose copy function as an API
