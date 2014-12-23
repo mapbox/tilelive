@@ -44,8 +44,8 @@ argv.bounds = argv.bounds !== undefined ? argv.bounds.split(',').map(function(v)
 argv.minzoom = argv.minzoom !== undefined ? parseInt(argv.minzoom,10) : undefined;
 argv.maxzoom = argv.maxzoom !== undefined ? parseInt(argv.maxzoom,10) : undefined;
 argv.withoutprogress = argv.withoutprogress ? true : false;
-argv.parts = argv.parts || undefined;
-argv.part = argv.part || undefined;
+argv.parts = isNumeric(argv.parts) ? argv.parts : undefined;
+argv.part = isNumeric(argv.part) ? argv.part : undefined;
 
 if (argv.scheme !== 'pyramid' && argv.scheme !== 'scanline' && argv.scheme !== 'list') {
     console.warn('scheme must be one of pyramid, scanline, list');
@@ -75,7 +75,7 @@ function copy() {
 
     if (!argv.withoutprogress && dsturi) options.progress = report;
     if (argv.concurrency) options.concurrency = argv.concurrency;
-    if (argv.part && argv.parts) options.job = {
+    if (isNumeric(argv.part) && isNumeric(argv.parts)) options.job = {
         total:argv.parts,
         num:argv.part
     };
@@ -141,4 +141,8 @@ function timeRemaining(progress) {
         (process.uptime()) * (1 / progress) -
         (process.uptime())
     );
+}
+
+function isNumeric(num) {
+    return !isNaN(parseFloat(num));
 }

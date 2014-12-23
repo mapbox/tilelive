@@ -78,6 +78,14 @@ test('copy streams', function(t) {
     });
 });
 
+test('copy part zero', function(t) {
+    exec(__dirname + '/../bin/tilelive-copy ' + __dirname + '/fixtures/plain_1.mbtiles --part 0 --parts 10', function(err, stdout, stderr) {
+        t.ifError(err, 'no errors');
+        t.ok(stdout.split('\n').length < 287, 'does not render all tiles');
+        t.end();
+    });
+});
+
 test('tilelive.copy', function(t) {
     var src = __dirname + '/fixtures/plain_1.mbtiles';
     var dst = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelivecopy.mbtiles');
