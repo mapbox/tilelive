@@ -7,10 +7,11 @@ var setConcurrency = require('../lib/stream-util').setConcurrency;
 var max = 9;
 var readSpeed = 100;
 var readsPerWrite = 5;
+var speedVariation = 10;
 var numReads = 0;
 var numWrites = 0;
 var numDrains = 0;
-var writeHighWater = 1; //2 * setConcurrency();
+var writeHighWater = 2 * setConcurrency();
 var startTime = Infinity;
 
 console.log(
@@ -29,7 +30,11 @@ function report() {
   );
 }
 
-var readsource = new Timedsource({ time: readSpeed, maxzoom: max });
+var readsource = new Timedsource({
+  time: readSpeed,
+  variation: speedVariation,
+  maxzoom: max
+});
 var read = tilelive.createReadStream(readsource, { type: 'scanline' });
 var readProgress = progress({
   objectMode: true,
@@ -44,7 +49,11 @@ readProgress.once('progress', function() {
   startTime = Date.now();
 });
 
-var writesource = new Timedsource({ time: readSpeed * readsPerWrite, maxzoom: max });
+var writesource = new Timedsource({
+  time: readSpeed * readsPerWrite,
+  variation: speedVariation,
+  maxzoom: max
+});
 var write = tilelive.createWriteStream(writesource, { highWaterMark: writeHighWater });
 write.on('_write', function() {
   numWrites++;

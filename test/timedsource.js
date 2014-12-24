@@ -3,17 +3,26 @@ var tiledata = new Buffer(1024);
 module.exports = Timedsource;
 
 function Timedsource(uri, callback) {
-    this.time = uri.time || 5;
+    var time = uri.time || 5;
+    var variation = uri.variation || 0;
+
+    this.time = function() {
+        var t = Math.round(time * (Math.random() * variation || 1));
+        // console.log(t);
+        return t;
+    };
+
     this.maxzoom = uri.maxzoom || 3;
     this.emptymax = uri.emptymax || false;
     this.stopped = false;
+
     if (callback) callback(null, this);
     return this;
 }
 
 Timedsource.prototype.getInfo = function(callback) {
     return callback(null, {
-        name: 'source (' + this.timeout + ')',
+        name: 'source (' + this.time + ')',
         description: 'timed I/O source',
         minzoom: 0,
         maxzoom: this.maxzoom,
@@ -33,23 +42,22 @@ Timedsource.prototype.getTile = function(z, x, y, callback) {
         } else {
             callback(null, tiledata, {});
         }
-    }, this.time);
+    }, this.time());
 };
 
 Timedsource.prototype.putInfo = function(data, callback) {
     setTimeout(function() {
         callback();
-    }, this.time);
+    }, this.time());
 };
 
 Timedsource.prototype.putTile = function(z, x, y, data, callback) {
     setTimeout(function() {
         callback();
-    }, this.time);
+    }, this.time());
 };
 
 Timedsource.prototype.stopWriting = function(callback) {
     this.stopped = true;
     return callback();
 };
-
