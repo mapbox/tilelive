@@ -6,12 +6,12 @@ var setConcurrency = require('../lib/stream-util').setConcurrency;
 
 var max = 9;
 var readSpeed = 100;
-var readsPerWrite = 5;
-var speedVariation = 10;
+var readsPerWrite = 10000000;
+var speedVariation = 3;
 var numReads = 0;
 var numWrites = 0;
 var numDrains = 0;
-var writeHighWater = 2 * setConcurrency();
+var writeHighWater = 20;
 var startTime = Infinity;
 
 console.log(
