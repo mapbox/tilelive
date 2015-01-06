@@ -8,7 +8,6 @@ function Timedsource(uri, callback) {
 
     this.time = function() {
         var t = Math.round(time * (Math.random() * variation || 1));
-        // console.log(t);
         return t;
     };
 
@@ -22,7 +21,7 @@ function Timedsource(uri, callback) {
 
 Timedsource.prototype.getInfo = function(callback) {
     return callback(null, {
-        name: 'source (' + this.time + ')',
+        name: 'source (' + this.time() + ')',
         description: 'timed I/O source',
         minzoom: 0,
         maxzoom: this.maxzoom,
