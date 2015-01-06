@@ -51,3 +51,26 @@ test('write: emptymax', function(t) {
         t.end();
     });
 });
+
+test('write: highWaterMark', function(t) {
+    var fast = new Timedsource({time: 1, maxzoom: 5});
+    var slow = new Timedsource({time: 1000});
+    var get = tilelive.createReadStream(fast, {type: 'scanline'});
+    var put = tilelive.createWriteStream(slow);
+
+    get.pipe(put);
+
+    setTimeout(function() {
+        t.equal(put._writableState.buffer.length, 19, 'expected default highWaterMark');
+        get.unpipe(put);
+
+        put = tilelive.createWriteStream(slow, {highWaterMark: 5});
+        get.pipe(put);
+        setTimeout(function() {
+            t.equal(put._writableState.buffer.length, 4, 'set highWaterMark');
+            get.unpipe(put);
+            t.end();
+        }, 500);
+
+    }, 500);
+});
