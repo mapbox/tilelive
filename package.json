@@ -32,7 +32,7 @@
   ],
   "dependencies": {
     "minimist": "~0.2.0",
-    "parallel-stream": "^0.1.0",
+    "parallel-stream": "0.1.0",
     "progress-stream": "~0.5.x",
     "queue-async": "~1.0.7",
     "sphericalmercator": "~1.0.1"
@@ -40,7 +40,7 @@
   "devDependencies": {
     "coveralls": "~2.11.1",
     "istanbul": "~0.3.0",
-    "mbtiles": "~0.4.3",
+    "mbtiles": "~0.7.7",
     "tape": "2.13.3",
     "tilejson": "~0.8.0",
     "tilelive-http": "^0.3.0",

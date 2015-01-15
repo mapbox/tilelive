@@ -33,6 +33,23 @@ var data = [
         center: null
     },
     {
+        basename: 'null-tile.mbtiles',
+        bounds: [ -179.9999999749438, -69.99999999526695, 179.9999999749438, 84.99999999782301 ],
+        center: [ 0, 7.500000001278025, 1 ],
+        description: 'demo description',
+        filesize: 561152,
+        formatter: null,
+        id: 'null-tile',
+        legend: null,
+        level1: { level2: 'property' },
+        maxzoom: 1,
+        minzoom: 1,
+        name: 'plain_1',
+        scheme: 'tms',
+        type: 'baselayer',
+        version: '1.0.3'
+    },
+    {
         scheme: 'tms',
         basename: 'plain_1.mbtiles',
         id: 'plain_1',
@@ -129,7 +146,7 @@ test('loading: should load an existing mbtiles file', function(t) {
 test('loading: should load metadata about an existing mbtiles file', function(t) {
     tilelive.info('mbtiles://' + __dirname + '/fixtures/plain_2.mbtiles', function(err, info, handler) {
         if (err) throw err;
-        t.deepEqual(info, data[3]);
+        t.deepEqual(info, data[4]);
         handler.close(t.end);
     });
 });
@@ -145,7 +162,7 @@ test('loading: should load metadata from an existing tilejson file', function(t)
 test('loading: should load mbtiles file from a path containing a space', function(t) {
     tilelive.info('mbtiles://' + __dirname + '/fixtures/path with space/plain_1.mbtiles', function(err, info, handler) {
         if (err) throw err;
-        t.deepEqual(info, data[2]);
+        t.deepEqual(info, data[3]);
         handler.close(t.end);
     });
 });
