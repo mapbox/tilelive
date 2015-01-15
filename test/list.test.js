@@ -16,7 +16,8 @@ test('should list all available tile sources', function(t) {
             'plain_2': 'mbtiles://' + __dirname + '/fixtures/plain_2.mbtiles',
             'plain_4': 'mbtiles://' + __dirname + '/fixtures/plain_4.mbtiles',
             'resume': 'mbtiles://' + __dirname + '/fixtures/resume.mbtiles',
-            'mapquest': 'tilejson://' + __dirname + '/fixtures/mapquest.tilejson'
+            'mapquest': 'tilejson://' + __dirname + '/fixtures/mapquest.tilejson',
+            'null-tile': 'mbtiles://' + __dirname + '/fixtures/null-tile.mbtiles'
         }, sources);
         t.end();
     });

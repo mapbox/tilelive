@@ -196,6 +196,24 @@ test('tilelive.copy: list with outstream', function(t) {
     });
 });
 
+test('tilelive.copy: list error', function(t) {
+    var uri = 'mbtiles://' + path.resolve(__dirname, 'fixtures', 'null-tile.mbtiles');
+    tilelive.load(uri, function(err, src) {
+        var result;
+        var outstream = concat({encoding: 'string'}, function(data) { result = data; });
+        options = {
+            type: 'list',
+            listStream: src.createZXYStream(),
+            outStream: outstream
+        };
+
+        t.plan(1);
+        tilelive.copy(src, null, options, function(err) {
+            t.pass('callback fired once');
+        });
+    });
+});
+
 // Used for progress report
 function report(stats, p) {
     util.print(util.format('\r\033[K[%s] %s%% %s/%s @ %s/s | ✓ %s □ %s | %s left',
