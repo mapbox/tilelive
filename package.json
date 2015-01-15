@@ -32,7 +32,7 @@
   ],
   "dependencies": {
     "minimist": "~0.2.0",
-    "parallel-stream": "0.1.0",
+    "parallel-stream": "0.1.1",
     "progress-stream": "~0.5.x",
     "queue-async": "~1.0.7",
     "sphericalmercator": "~1.0.1"
