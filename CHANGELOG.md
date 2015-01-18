@@ -1,3 +1,7 @@
+## 5.5.4
+
+* Sets an appropriate default highWaterMark on write streams
+
 ## 5.4.1
 
 * Fix liststream by switching to Transform-based stream
