@@ -1,3 +1,8 @@
+## 5.6.0
+
+* Loosens `bounds` validation to be more forgiving of datasets that exceed mercator extents.
+* Adds a `retry` option to read/write copy streams for the number of additional times to attempt a getTile/putTile operation if the first attempt fails.
+
 ## 5.5.4
 
 * Sets an appropriate default highWaterMark on write streams
