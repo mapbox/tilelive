@@ -5,6 +5,45 @@ var fs = require('fs');
 var path = require('path');
 var util = require('../lib/stream-util');
 var assert = require('assert');
+var Timedsource = require('./timedsource');
+
+test('putTileRetry fail=2, retry=3', function(assert) {
+    var source = new Timedsource({fail:2});
+    util.putTileRetry(source, 0, 0, 0, new Buffer(0), 3, function(err) {
+        assert.equal(source.fails['0/0/0'], 2, 'failed x2');
+        assert.ifError(err, 'no error');
+        assert.end();
+    });
+});
+
+test('putTileRetry fail=2, retry=2', function(assert) {
+    var source = new Timedsource({fail:2});
+    util.putTileRetry(source, 0, 0, 0, new Buffer(0), 2, function(err) {
+        assert.equal(source.fails['0/0/0'], 2, 'failed x2');
+        assert.equal(err.toString(), 'Error: Fatal', 'passes error');
+        assert.end();
+    });
+});
+
+test('getTileRetry fail=2, retry=3', function(assert) {
+    var source = new Timedsource({fail:2});
+    util.getTileRetry(source, 0, 0, 0, 3, function(err, data, headers) {
+        assert.equal(source.fails['0/0/0'], 2, 'failed x2');
+        assert.ifError(err, 'no error');
+        assert.equal(data instanceof Buffer, true, 'passes buffer');
+        assert.deepEqual(headers, {}, 'passes headers');
+        assert.end();
+    });
+});
+
+test('getTileRetry fail=2, retry=2', function(assert) {
+    var source = new Timedsource({fail:2});
+    util.getTileRetry(source, 0, 0, 0, 2, function(err, data, headers) {
+        assert.equal(source.fails['0/0/0'], 2, 'failed x2');
+        assert.equal(err.toString(), 'Error: Fatal', 'passes error');
+        assert.end();
+    });
+});
 
 test('Tile: blank', function(t) {
     var tile;
@@ -136,3 +175,4 @@ test('Info: deserialize', function(t) {
         t.ok(valid, 'unparsable data throws expected exception');
     }
 });
+
