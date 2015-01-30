@@ -7,18 +7,23 @@ var util = require('../lib/stream-util');
 var assert = require('assert');
 var Timedsource = require('./timedsource');
 
-test('putTileRetry fail=2, retry=3', function(assert) {
+test('retryBackoff (setup)', function(assert) {
+    util.retryBackoff = 10;
+    assert.end();
+});
+
+test('putTileRetry fail=2, tries=2', function(assert) {
     var source = new Timedsource({fail:2});
-    util.putTileRetry(source, 0, 0, 0, new Buffer(0), 3, function(err) {
+    util.putTileRetry(source, 0, 0, 0, new Buffer(0), 2, function(err) {
         assert.equal(source.fails['0/0/0'], 2, 'failed x2');
         assert.ifError(err, 'no error');
         assert.end();
     });
 });
 
-test('putTileRetry fail=2, retry=2', function(assert) {
+test('putTileRetry fail=2, retry=1', function(assert) {
     var source = new Timedsource({fail:2});
-    util.putTileRetry(source, 0, 0, 0, new Buffer(0), 2, function(err) {
+    util.putTileRetry(source, 0, 0, 0, new Buffer(0), 1, function(err) {
         assert.equal(source.fails['0/0/0'], 2, 'failed x2');
         assert.equal(err.toString(), 'Error: Fatal', 'passes error');
         assert.end();
@@ -43,9 +48,9 @@ test('putTileRetry fail=0, retry=0', function(assert) {
     });
 });
 
-test('getTileRetry fail=2, retry=3', function(assert) {
+test('getTileRetry fail=2, retry=2', function(assert) {
     var source = new Timedsource({fail:2});
-    util.getTileRetry(source, 0, 0, 0, 3, function(err, data, headers) {
+    util.getTileRetry(source, 0, 0, 0, 2, function(err, data, headers) {
         assert.equal(source.fails['0/0/0'], 2, 'failed x2');
         assert.ifError(err, 'no error');
         assert.equal(data instanceof Buffer, true, 'passes buffer');
@@ -54,9 +59,9 @@ test('getTileRetry fail=2, retry=3', function(assert) {
     });
 });
 
-test('getTileRetry fail=2, retry=2', function(assert) {
+test('getTileRetry fail=2, retry=1', function(assert) {
     var source = new Timedsource({fail:2});
-    util.getTileRetry(source, 0, 0, 0, 2, function(err, data, headers) {
+    util.getTileRetry(source, 0, 0, 0, 1, function(err, data, headers) {
         assert.equal(source.fails['0/0/0'], 2, 'failed x2');
         assert.equal(err.toString(), 'Error: Fatal', 'passes error');
         assert.end();
@@ -82,6 +87,11 @@ test('getTileRetry fail=0, retry=0', function(assert) {
         assert.deepEqual(headers, {}, 'passes headers');
         assert.end();
     });
+});
+
+test('retryBackoff (reset)', function(assert) {
+    util.retryBackoff = 1000;
+    assert.end();
 });
 
 test('Tile: blank', function(t) {

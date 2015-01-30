@@ -167,3 +167,33 @@ test('list: split into jobs', function(t) {
             .pipe(list);
     }
 });
+
+test('list: err + no retry', function(assert) {
+    var file = fs.createReadStream(path.join(__dirname,'fixtures','filescheme.flat'));
+    var get = tilelive.createReadStream(new Timedsource({fail:1}), {type:'list'});
+    var put = tilelive.createWriteStream(new Timedsource({}));
+    var errored = false;
+    get.on('error', function(err) {
+        if (errored) return;
+        assert.equal(err.toString(), 'Error: Fatal', 'errors');
+        errored = true;
+        assert.end();
+    });
+    file.pipe(get).pipe(put);
+});
+
+test('list: err + retry', function(assert) {
+    require('../lib/stream-util').retryBackoff = 1;
+    var file = fs.createReadStream(path.join(__dirname,'fixtures','filescheme.flat'));
+    var get = tilelive.createReadStream(new Timedsource({fail:1}), {type:'list', retry:1});
+    var put = tilelive.createWriteStream(new Timedsource({}));
+    file.pipe(get).pipe(put);
+    get.on('error', function(err) { t.ifError(err); });
+    put.on('error', function(err) { t.ifError(err); });
+    put.on('stop', function() {
+        require('../lib/stream-util').retryBackoff = 1000;
+        assert.deepEqual(get.stats, { ops:77, total: 77, skipped: 38, done: 77 });
+        assert.end();
+    });
+});
+

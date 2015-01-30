@@ -74,3 +74,31 @@ test('write: highWaterMark', function(t) {
 
     }, 500);
 });
+
+test('write: err + no retry', function(assert) {
+    var get = tilelive.createReadStream(new Timedsource({}), {type:'scanline'});
+    var put = tilelive.createWriteStream(new Timedsource({fail:1}));
+    var errored = false;
+    put.on('error', function(err) {
+        if (errored) return;
+        assert.equal(err.toString(), 'Error: Fatal', 'errors');
+        errored = true;
+        assert.end();
+    });
+    get.pipe(put);
+});
+
+test('write: err + retry', function(assert) {
+    require('../lib/stream-util').retryBackoff = 1;
+    var get = tilelive.createReadStream(new Timedsource({}), {type:'scanline'});
+    var put = tilelive.createWriteStream(new Timedsource({fail:1}), {retry:1});
+    get.on('error', assert.ifError);
+    put.on('error', assert.ifError);
+    get.pipe(put);
+    put.on('stop', function() {
+        require('../lib/stream-util').retryBackoff = 1000;
+        assert.deepEqual(put.stats, { ops: 44, total: 0, skipped: 0, done: 44 });
+        assert.end();
+    });
+});
+
