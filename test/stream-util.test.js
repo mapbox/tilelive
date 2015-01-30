@@ -225,3 +225,30 @@ test('Info: deserialize', function(t) {
     }
 });
 
+test('Limit bounds', function(t) {
+
+    // these inputs should simply be equal to themselves, since they don't contain
+    // anything out of bounds
+    var valid = {
+        'null island': [0, 0, 0, 0],
+        'full bounds': [-180, -90, 180, 90],
+        'small box': [-10, -10, 10, 10]
+    };
+    for (var name in valid) {
+        t.deepEqual(util.limitBounds(valid[name]), valid[name], 'valid: ' + name);
+    }
+
+    // map of name: [input, output]
+    var out = {
+        'huge': [[-Infinity, -Infinity, Infinity, Infinity], [-180, -90, 180, 90]],
+        'one dimension': [[-200, -90, 180, 90], [-180, -90, 180, 90]],
+        'two dimensions': [[-200, -100, 180, 90], [-180, -90, 180, 90]],
+        'others valid': [[-200, 0, 180, 10], [-180, 0, 180, 10]]
+    };
+    for (name in out) {
+        t.deepEqual(util.limitBounds(out[name][0]), out[name][1], 'out of bounds: ' + name);
+    }
+
+    t.end();
+
+});
