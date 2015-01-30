@@ -10,6 +10,7 @@ var MBTiles = require('mbtiles');
 //register protocols
 MBTiles.registerProtocols(tilelive);
 var crypto = require('crypto');
+var Timedsource = require('./timedsource');
 
 var s3url = 's3://tilestream-tilesets-development/carol-staging/mapbox-tile-copy/{z}/{x}/{y}.png';
 
@@ -211,6 +212,54 @@ test('tilelive.copy: list error', function(t) {
         tilelive.copy(src, null, options, function(err) {
             t.pass('callback fired once');
         });
+    });
+});
+
+test('tilelive.copy + write err (no retry)', function(t) {
+    var src = new Timedsource({});
+    var dst = new Timedsource({fail:1});
+    var options = {};
+    tilelive.copy(src, dst, options, function(err){
+        t.equal(err.toString(), 'Error: Fatal');
+        t.end();
+    });
+});
+
+// Tests that options.retry is passed through to write stream.
+test('tilelive.copy + write err (retry)', function(t) {
+    require('../lib/stream-util').retryBackoff = 1;
+    var src = new Timedsource({});
+    var dst = new Timedsource({fail:1});
+    var options = { retry: 1 };
+    tilelive.copy(src, dst, options, function(err){
+        require('../lib/stream-util').retryBackoff = 1000;
+        t.ifError(err);
+        t.equal(dst.fails['0/0/0'], 1, 'failed x1');
+        t.end();
+    });
+});
+
+test('tilelive.copy + read err (no retry)', function(t) {
+    var src = new Timedsource({fail:1});
+    var dst = new Timedsource({});
+    var options = {};
+    tilelive.copy(src, dst, options, function(err){
+        t.equal(err.toString(), 'Error: Fatal');
+        t.end();
+    });
+});
+
+// Tests that options.retry is passed through to read stream.
+test('tilelive.copy + write err (retry)', function(t) {
+    require('../lib/stream-util').retryBackoff = 1;
+    var src = new Timedsource({fail:1});
+    var dst = new Timedsource({});
+    var options = { retry: 1 };
+    tilelive.copy(src, dst, options, function(err){
+        require('../lib/stream-util').retryBackoff = 1000;
+        t.ifError(err);
+        t.equal(src.fails['0/0/0'], 1, 'failed x1');
+        t.end();
     });
 });
 

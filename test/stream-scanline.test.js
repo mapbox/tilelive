@@ -146,3 +146,31 @@ test('scanline: split into jobs', function(t) {
         });
     }
 });
+
+test('scanline: err + no retry', function(assert) {
+    var get = tilelive.createReadStream(new Timedsource({fail:1}), {type:'scanline'});
+    var put = tilelive.createWriteStream(new Timedsource({}));
+    var errored = false;
+    get.on('error', function(err) {
+        if (errored) return;
+        assert.equal(err.toString(), 'Error: Fatal', 'errors');
+        errored = true;
+        assert.end();
+    });
+    get.pipe(put);
+});
+
+test('scanline: err + retry', function(assert) {
+    require('../lib/stream-util').retryBackoff = 1;
+    var get = tilelive.createReadStream(new Timedsource({fail:1}), {type:'scanline', retry:1});
+    var put = tilelive.createWriteStream(new Timedsource({}));
+    get.on('error', function(err) { assert.ifError(err); });
+    put.on('error', function(err) { assert.ifError(err); });
+    put.on('stop', function() {
+        require('../lib/stream-util').retryBackoff = 1000;
+        assert.deepEqual(get.stats, { ops: 85, total: 85, skipped: 42, done: 85 });
+        assert.end();
+    });
+    get.pipe(put);
+});
+

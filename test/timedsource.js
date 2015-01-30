@@ -15,6 +15,9 @@ function Timedsource(uri, callback) {
     this.emptymax = uri.emptymax || false;
     this.stopped = false;
 
+    this.fail = uri.fail || 0;
+    this.fails = {};
+
     if (callback) callback(null, this);
     return this;
 }
@@ -31,8 +34,18 @@ Timedsource.prototype.getInfo = function(callback) {
 };
 
 Timedsource.prototype.getTile = function(z, x, y, callback) {
+    if (this.fail) {
+        var fail = this.fail;
+        var fails = this.fails;
+        var key = z + '/' + x + '/' + y;
+        fails[key] = fails[key] || 0;
+    }
+
     setTimeout(function() {
-        if (x >= (Math.pow(2,z)/2)) {
+        if (fail && fails[key] < fail) {
+            fails[key]++;
+            callback(new Error('Fatal'));
+        } else if (x >= (Math.pow(2,z)/2)) {
             callback(new Error('Tile does not exist'));
         } else if (false && y >= (Math.pow(2,z)/2)) {
             var solid = new Buffer(1024);
@@ -51,8 +64,20 @@ Timedsource.prototype.putInfo = function(data, callback) {
 };
 
 Timedsource.prototype.putTile = function(z, x, y, data, callback) {
+    if (this.fail) {
+        var fail = this.fail;
+        var fails = this.fails;
+        var key = z + '/' + x + '/' + y;
+        fails[key] = fails[key] || 0;
+    }
+
     setTimeout(function() {
-        callback();
+        if (fail && fails[key] < fail) {
+            fails[key]++;
+            callback(new Error('Fatal'));
+        } else {
+            callback();
+        }
     }, this.time());
 };
 

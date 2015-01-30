@@ -34,6 +34,7 @@ if (!argv._[0]) {
     console.log('  --maxzoom=[number]');
     console.log('  --parts=[number]');
     console.log('  --part=[number]');
+    console.log('  --retry=[number]');
     process.exit(1);
 }
 
@@ -46,6 +47,7 @@ argv.maxzoom = argv.maxzoom !== undefined ? parseInt(argv.maxzoom,10) : undefine
 argv.withoutprogress = argv.withoutprogress ? true : false;
 argv.parts = isNumeric(argv.parts) ? argv.parts : undefined;
 argv.part = isNumeric(argv.part) ? argv.part : undefined;
+argv.retry = isNumeric(argv.retry) ? parseInt(argv.retry,10) : undefined;
 
 if (argv.scheme !== 'pyramid' && argv.scheme !== 'scanline' && argv.scheme !== 'list') {
     console.warn('scheme must be one of pyramid, scanline, list');
@@ -70,7 +72,8 @@ function copy() {
         type:argv.scheme,
         minzoom:argv.minzoom,
         maxzoom:argv.maxzoom,
-        bounds:argv.bounds
+        bounds:argv.bounds,
+        retry:argv.retry
     };
 
     if (!argv.withoutprogress && dsturi) options.progress = report;
