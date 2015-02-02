@@ -15,6 +15,8 @@ function Timedsource(uri, callback) {
     this.emptymax = uri.emptymax || false;
     this.stopped = false;
 
+    this.gets = 0;
+    this.puts = 0;
     this.fail = uri.fail || 0;
     this.fails = {};
 
@@ -34,6 +36,8 @@ Timedsource.prototype.getInfo = function(callback) {
 };
 
 Timedsource.prototype.getTile = function(z, x, y, callback) {
+    this.gets++;
+
     if (this.fail) {
         var fail = this.fail;
         var fails = this.fails;
@@ -64,6 +68,8 @@ Timedsource.prototype.putInfo = function(data, callback) {
 };
 
 Timedsource.prototype.putTile = function(z, x, y, data, callback) {
+    this.puts++;
+
     if (this.fail) {
         var fail = this.fail;
         var fails = this.fails;
