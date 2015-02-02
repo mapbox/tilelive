@@ -1,3 +1,7 @@
+## 5.6.1
+
+* No retry on 'Does not exist' getTile errors.
+
 ## 5.6.0
 
 * Loosens `bounds` validation to be more forgiving of datasets that exceed mercator extents.
