@@ -89,6 +89,15 @@ test('getTileRetry fail=0, retry=0', function(assert) {
     });
 });
 
+test('getTileRetry Does Not Exist, retry=3', function(assert) {
+    var source = new Timedsource({fail:0});
+    util.getTileRetry(source, 1, 1, 0, 3, function(err, data, headers) {
+        assert.equal(source.gets, 1, '1 attempt');
+        assert.equal(err.toString(), 'Error: Tile does not exist');
+        assert.end();
+    });
+});
+
 test('retryBackoff (reset)', function(assert) {
     util.retryBackoff = 1000;
     assert.end();
