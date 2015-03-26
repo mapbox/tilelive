@@ -192,6 +192,6 @@ test('pyramid: invalid extent', function(assert) {
     var put = tilelive.createWriteStream(new Timedsource({}));
     get.on('error', function(err) {         
         assert.equal(err.message, 'Invalid extent value');
-        assert.end();});
+    });
     get.pipe(put);
 });
