@@ -172,3 +172,26 @@ test('pyramid: err + retry', function(assert) {
     get.pipe(put);
 });
 
+test('pyramid: invalid extent', function(assert) {
+    assert.plan(1);
+    var fakesrc = {
+        getInfo: function(callback) {
+            return callback(null, {
+                name: 'invalid_extent_source',
+                description: 'hey gurl',
+                minzoom: 0,
+                maxzoom: 6,
+                bounds: [null, 128379137, NaN, undefined],
+                center: [0,0,6]
+            });
+        }
+    };
+
+    require('../lib/stream-util').retryBackoff = 1;
+    var get = tilelive.createReadStream(fakesrc, {type:'pyramid'});
+    var put = tilelive.createWriteStream(new Timedsource({}));
+    get.on('error', function(err) {         
+        assert.equal(err.message, 'bounds must be an array of the form [west, south, east, north]');
+    });
+    get.pipe(put);
+});
