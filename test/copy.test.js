@@ -74,7 +74,7 @@ test('copy streams', function(t) {
     exec(__dirname + '/../bin/tilelive-copy ' + __dirname + '/fixtures/plain_1.mbtiles', {maxBuffer:5e6}, function(err, stdout, stderr) {
         t.ifError(err, 'no errors');
         t.ok(stdout.indexOf('JSONBREAKFASTTIME\n') === 0);
-        t.equal(stdout.length, 647000);
+        t.equal(stdout.length, 647001);
         t.end();
     });
 });

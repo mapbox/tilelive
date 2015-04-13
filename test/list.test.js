@@ -11,6 +11,7 @@ test('should list all available tile sources', function(t) {
     tilelive.list(__dirname + '/fixtures', function(err, sources) {
         t.ifError(err);
         t.deepEqual({
+            'empty': 'mbtiles://' + __dirname + '/fixtures/empty.mbtiles',
             'faulty': 'mbtiles://' + __dirname + '/fixtures/faulty.mbtiles',
             'plain_1': 'mbtiles://' + __dirname + '/fixtures/plain_1.mbtiles',
             'plain_2': 'mbtiles://' + __dirname + '/fixtures/plain_2.mbtiles',
