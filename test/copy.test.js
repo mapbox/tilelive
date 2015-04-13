@@ -162,6 +162,21 @@ test('tilelive.copy: outstream', function(t) {
     });
 });
 
+test('tilelive.copy: stdout', function(t) {
+    var src = __dirname + '/fixtures/empty.mbtiles';
+    var dst = false;
+    var result;
+    var options = {
+        outStream: process.stdout
+    };
+
+    tilelive.copy(src, dst, options, function(err){
+        if (err) throw err;
+        t.ifError(err);
+        t.end();
+    });
+});
+
 test('tilelive.copy: missing outstream', function(t) {
     var src = __dirname + '/fixtures/plain_1.mbtiles';
     var dst = false;
