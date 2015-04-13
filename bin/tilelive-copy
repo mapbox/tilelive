@@ -91,6 +91,10 @@ function copy() {
     tilelive.copy(srcuri, dsturi, options, function(err) {
         if (err) throw err;
         console.log('');
+        // @TODO ideally tilelive.copy() exposes a way to get references
+        // to src/dst back so they can be closed properly. Simply exiting
+        // at this point is a reasonable approach within the bin context.
+        process.exit(0);
     });
 }
 
