@@ -197,6 +197,18 @@ test('list: err + retry', function(assert) {
     });
 });
 
+test('list: invalid doubleend', function(assert) {
+    var file = fs.createReadStream(path.join(__dirname,'fixtures','list-doubleend'));
+    var get = tilelive.createReadStream(new Timedsource({}), {type:'list'});
+    var put = tilelive.createWriteStream(new Timedsource({}));
+    var errored = false;
+    file.pipe(get).pipe(put);
+    put.on('stop', function(err) {
+        assert.deepEqual(get.stats.total, 6);
+        assert.end();
+    });
+});
+
 test('list: invalid coord', function(assert) {
     var file = fs.createReadStream(path.join(__dirname,'fixtures','list-invalid'));
     var get = tilelive.createReadStream(new Timedsource({}), {type:'list'});
