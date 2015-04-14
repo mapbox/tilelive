@@ -197,3 +197,15 @@ test('list: err + retry', function(assert) {
     });
 });
 
+test('list: 10000', function(assert) {
+    var file = fs.createReadStream(path.join(__dirname,'fixtures','10000.list'));
+    var get = tilelive.createReadStream(new Timedsource({}), {type:'list'});
+    var put = tilelive.createWriteStream(new Timedsource({}));
+    var errored = false;
+    file.pipe(get).pipe(put);
+    put.on('stop', function(err) {
+        assert.deepEqual(get.stats.total, 10000);
+        assert.end();
+    });
+});
+
