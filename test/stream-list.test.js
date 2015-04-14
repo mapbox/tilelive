@@ -221,6 +221,17 @@ test('list: invalid coord', function(assert) {
     file.pipe(get).pipe(put);
 });
 
+test('list: extreme chunk-splitting', function(assert) {
+    var list = fs.readFileSync(path.join(__dirname,'fixtures','list-100'), 'utf8');
+    var get = tilelive.createReadStream(new Timedsource({}), {type:'list'});
+    for (var i = 0; i < list.length; i++) get.write(list[i]);
+    get.on('finish', function() {
+        assert.deepEqual(get.stats.total, 100);
+        assert.end();
+    });
+    get.end();
+});
+
 test('list: 10000', function(assert) {
     var file = fs.createReadStream(path.join(__dirname,'fixtures','list-10000'));
     var get = tilelive.createReadStream(new Timedsource({}), {type:'list'});
@@ -232,4 +243,3 @@ test('list: 10000', function(assert) {
         assert.end();
     });
 });
-
