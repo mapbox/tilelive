@@ -197,8 +197,20 @@ test('list: err + retry', function(assert) {
     });
 });
 
+test('list: invalid coord', function(assert) {
+    var file = fs.createReadStream(path.join(__dirname,'fixtures','list-invalid'));
+    var get = tilelive.createReadStream(new Timedsource({}), {type:'list'});
+    var put = tilelive.createWriteStream(new Timedsource({}));
+    var errored = false;
+    get.on('error', function(err) {
+        assert.equal(err.toString(), 'Error: Invalid tile coordinate 2/0/asdf');
+        assert.end();
+    });
+    file.pipe(get).pipe(put);
+});
+
 test('list: 10000', function(assert) {
-    var file = fs.createReadStream(path.join(__dirname,'fixtures','10000.list'));
+    var file = fs.createReadStream(path.join(__dirname,'fixtures','list-10000'));
     var get = tilelive.createReadStream(new Timedsource({}), {type:'list'});
     var put = tilelive.createWriteStream(new Timedsource({}));
     var errored = false;
