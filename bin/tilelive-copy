@@ -6,6 +6,7 @@ var util = require('util');
 var path = require('path');
 var tilelive = require('../');
 var progress = require('progress-stream');
+var queue = require("queue-async");
 
 var argv = require('minimist')(process.argv.slice(2), {
     alias: {
@@ -88,10 +89,36 @@ function copy() {
     }
     if (!dsturi) options.outStream = process.stdout;
 
-    tilelive.copy(srcuri, dsturi, options, function(err) {
+    tilelive.copy(srcuri, dsturi, options, function(err, src, dst) {
         if (err) throw err;
-        console.log('');
+        closingTime(src, dst, function(err) {
+            if (err) throw err;
+            console.log('');
+        });
     });
+
+    function closingTime(src, dst, callback) {
+        var q = queue();
+
+        if (typeof src.close === "function") q.defer(function(next) {
+            src.close(function(err) {
+                if (err) return callback(err);  
+                next();
+            });  
+        });
+
+        if (typeof dst.close === "function") q.defer(function(next) {
+            dst.close(function(err) {
+                if (err) return callback(err);  
+                next();
+            });  
+        });
+
+        q.await(function(err) {
+            if (err) return callback(err);
+            callback();
+        });
+    }
 }
 
 function report(stats, p) {
