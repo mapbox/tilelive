@@ -145,6 +145,35 @@ test('tilelive copy: missing liststream', function(t) {
     });
 });
 
+test('tilelive.copy: close src/dst', function(t) {
+    var src = new Timedsource({});
+    src.flag = false;
+    src.close = function(callback) { 
+        this.flag = true; 
+        callback(); 
+    };
+
+    var dst = new Timedsource({});
+    dst.flag = false;
+    dst.close = function(callback) { 
+        this.flag = true; 
+        callback(); 
+    };
+
+    var options = {
+        progress: report,
+        close: true
+    };
+
+    tilelive.copy(src, dst, options, function(err){
+        if (err) throw err;
+        t.ifError(err);
+        t.equal(src.flag, true);
+        t.equal(dst.flag, true);
+        t.end();
+    });
+});
+
 test('tilelive.copy: outstream', function(t) {
     var src = __dirname + '/fixtures/plain_1.mbtiles';
     var dst = false;
