@@ -90,7 +90,7 @@ function copy() {
     }
     if (!dsturi) options.outStream = process.stdout;
 
-    tilelive.copy(srcuri, dsturi, options, function(err, src, dst) {
+    tilelive.copy(srcuri, dsturi, options, function(err) {
         if (err) throw err;
         console.log('');
     });
