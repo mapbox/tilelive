@@ -19,6 +19,22 @@ var data = [
         legend: null
     },
     {
+        basename: 'empty.mbtiles',
+        bounds: [ -180, -85.05112877980659, 180, 85.05112877980659 ],
+        center: [ 0, 0, 1 ],
+        description: '',
+        filesize: 7168,
+        id: 'empty',
+        legend: '<div id=\'legend-debt\'>\n  Total US foreign held debt:<br>\n  <strong style="font-size: 18px; font-weight: bold; line-height: 1">$4.45 trillion</strong><br>\n<span style="font-size: 10px">\nSource: <a href=\'http://www.washingtonpost.com/wp-srv/special/business/foreign-held-us-debt/\' target=\'_blank\'>The Washington Post, 2011</a>\n</span>\n</div>',
+        maxzoom: 1,
+        minzoom: 1,
+        name: 'US Debt Held By Foreign Nations',
+        scheme: 'tms',
+        spec: '1.2',
+        template: '{{#__teaser__}}{{Country}}{{/__teaser__}}',
+        version: '1.0.0'
+    },
+    {
         scheme: 'tms',
         basename: 'faulty.mbtiles',
         id: 'faulty',
@@ -146,7 +162,7 @@ test('loading: should load an existing mbtiles file', function(t) {
 test('loading: should load metadata about an existing mbtiles file', function(t) {
     tilelive.info('mbtiles://' + __dirname + '/fixtures/plain_2.mbtiles', function(err, info, handler) {
         if (err) throw err;
-        t.deepEqual(info, data[4]);
+        t.deepEqual(info, data[5]);
         handler.close(t.end);
     });
 });
@@ -162,7 +178,7 @@ test('loading: should load metadata from an existing tilejson file', function(t)
 test('loading: should load mbtiles file from a path containing a space', function(t) {
     tilelive.info('mbtiles://' + __dirname + '/fixtures/path with space/plain_1.mbtiles', function(err, info, handler) {
         if (err) throw err;
-        t.deepEqual(info, data[3]);
+        t.deepEqual(info, data[4]);
         handler.close(t.end);
     });
 });

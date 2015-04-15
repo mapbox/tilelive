@@ -74,7 +74,7 @@ test('copy streams', function(t) {
     exec(__dirname + '/../bin/tilelive-copy ' + __dirname + '/fixtures/plain_1.mbtiles', {maxBuffer:5e6}, function(err, stdout, stderr) {
         t.ifError(err, 'no errors');
         t.ok(stdout.indexOf('JSONBREAKFASTTIME\n') === 0);
-        t.equal(stdout.length, 647000);
+        t.equal(stdout.length, 647001);
         t.end();
     });
 });
@@ -145,6 +145,35 @@ test('tilelive copy: missing liststream', function(t) {
     });
 });
 
+test('tilelive.copy: close src/dst', function(t) {
+    var src = new Timedsource({});
+    src.flag = false;
+    src.close = function(callback) { 
+        this.flag = true; 
+        callback(); 
+    };
+
+    var dst = new Timedsource({});
+    dst.flag = false;
+    dst.close = function(callback) { 
+        this.flag = true; 
+        callback(); 
+    };
+
+    var options = {
+        progress: report,
+        close: true
+    };
+
+    tilelive.copy(src, dst, options, function(err){
+        if (err) throw err;
+        t.ifError(err);
+        t.equal(src.flag, true);
+        t.equal(dst.flag, true);
+        t.end();
+    });
+});
+
 test('tilelive.copy: outstream', function(t) {
     var src = __dirname + '/fixtures/plain_1.mbtiles';
     var dst = false;
@@ -157,6 +186,21 @@ test('tilelive.copy: outstream', function(t) {
     tilelive.copy(src, dst, options, function(err){
         if (err) throw err;
         t.ok(result.indexOf('JSONBREAKFASTTIME\n') === 0);
+        t.ifError(err);
+        t.end();
+    });
+});
+
+test('tilelive.copy: stdout', function(t) {
+    var src = __dirname + '/fixtures/empty.mbtiles';
+    var dst = false;
+    var result;
+    var options = {
+        outStream: process.stdout
+    };
+
+    tilelive.copy(src, dst, options, function(err){
+        if (err) throw err;
         t.ifError(err);
         t.end();
     });
