@@ -1,3 +1,12 @@
+## 5.6.3
+
+* Fixes a bug where list streams could miss tile coordinates under certain conditions
+* List streams now throw errors when encountering invalid tile coordinates
+
+## 5.6.2
+
+* Read streams confirm that the tilesource's extent is valid
+
 ## 5.6.1
 
 * No retry on 'Does not exist' getTile errors.
