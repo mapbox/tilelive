@@ -29,7 +29,6 @@ if (!argv._[0]) {
     console.log('  --list=[filepath]                 Filepath if scheme is list.');
     console.log('  --concurrency=[number]            Copy concurrency.');
     console.log('  --withoutprogress                 Shows progress by default.');
-    console.log('  --dontclose                       Leaves src and dst objects open.');
     console.log('  --bounds=[w,s,e,n]');
     console.log('  --minzoom=[number]');
     console.log('  --maxzoom=[number]');
@@ -74,10 +73,10 @@ function copy() {
         minzoom:argv.minzoom,
         maxzoom:argv.maxzoom,
         bounds:argv.bounds,
-        retry:argv.retry
+        retry:argv.retry,
+        close:true
     };
     
-    if (argv.dontclose) options.dontclose = true;
     if (!argv.withoutprogress && dsturi) options.progress = report;
     if (argv.concurrency) options.concurrency = argv.concurrency;
     if (isNumeric(argv.part) && isNumeric(argv.parts)) options.job = {
