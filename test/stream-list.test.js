@@ -197,3 +197,49 @@ test('list: err + retry', function(assert) {
     });
 });
 
+test('list: invalid doubleend', function(assert) {
+    var file = fs.createReadStream(path.join(__dirname,'fixtures','list-doubleend'));
+    var get = tilelive.createReadStream(new Timedsource({}), {type:'list'});
+    var put = tilelive.createWriteStream(new Timedsource({}));
+    var errored = false;
+    file.pipe(get).pipe(put);
+    put.on('stop', function(err) {
+        assert.deepEqual(get.stats.total, 6);
+        assert.end();
+    });
+});
+
+test('list: invalid coord', function(assert) {
+    var file = fs.createReadStream(path.join(__dirname,'fixtures','list-invalid'));
+    var get = tilelive.createReadStream(new Timedsource({}), {type:'list'});
+    var put = tilelive.createWriteStream(new Timedsource({}));
+    var errored = false;
+    get.on('error', function(err) {
+        assert.equal(err.toString(), 'Error: Invalid tile coordinate 2/0/asdf');
+        assert.end();
+    });
+    file.pipe(get).pipe(put);
+});
+
+test('list: extreme chunk-splitting', function(assert) {
+    var list = fs.readFileSync(path.join(__dirname,'fixtures','list-100'), 'utf8');
+    var get = tilelive.createReadStream(new Timedsource({}), {type:'list'});
+    for (var i = 0; i < list.length; i++) get.write(list[i]);
+    get.on('finish', function() {
+        assert.deepEqual(get.stats.total, 100);
+        assert.end();
+    });
+    get.end();
+});
+
+test('list: 10000', function(assert) {
+    var file = fs.createReadStream(path.join(__dirname,'fixtures','list-10000'));
+    var get = tilelive.createReadStream(new Timedsource({}), {type:'list'});
+    var put = tilelive.createWriteStream(new Timedsource({}));
+    var errored = false;
+    file.pipe(get).pipe(put);
+    put.on('stop', function(err) {
+        assert.deepEqual(get.stats.total, 10000);
+        assert.end();
+    });
+});
