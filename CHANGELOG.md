@@ -1,3 +1,11 @@
+## 5.7.1
+
+* Fixes a bug that allowed `NaN` values in metadata to pass `tilelive.validate`
+
+## 5.7.0
+
+* Adds a `close` option to `tilelive.copy()` which determines whether sources are closed at the end of a copy operation. The shell-executable script `tilelive-copy` hard-wires this option to `true`.
+
 ## 5.6.3
 
 * Fixes a bug where list streams could miss tile coordinates under certain conditions
