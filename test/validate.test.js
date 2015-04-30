@@ -172,6 +172,10 @@ test('validate', function(t) {
         'Error: center must be an array of the form [lon, lat, z]',
         'invalid center (lat string)');
     t.equal(
+        validate({center:[0,NaN,0]}).toString(),
+        'Error: center must be an array of the form [lon, lat, z]',
+        'invalid center (NaN)');
+    t.equal(
         validate({center:[0,-100,0]}).toString(),
         'Error: center lat value must be between -90 and 90',
         'invalid center (lat < -90)');
