@@ -148,16 +148,16 @@ test('tilelive copy: missing liststream', function(t) {
 test('tilelive.copy: close src/dst', function(t) {
     var src = new Timedsource({});
     src.flag = false;
-    src.close = function(callback) { 
-        this.flag = true; 
-        callback(); 
+    src.close = function(callback) {
+        this.flag = true;
+        callback();
     };
 
     var dst = new Timedsource({});
     dst.flag = false;
-    dst.close = function(callback) { 
-        this.flag = true; 
-        callback(); 
+    dst.close = function(callback) {
+        this.flag = true;
+        callback();
     };
 
     var options = {
@@ -303,6 +303,17 @@ test('tilelive.copy + write err (retry)', function(t) {
         require('../lib/stream-util').retryBackoff = 1000;
         t.ifError(err);
         t.equal(src.fails['0/0/0'], 1, 'failed x1');
+        t.end();
+    });
+});
+
+test('tilelive.copy timeout', function(t) {
+    var src = new Timedsource({timeout: 1000});
+    var dst = new Timedsource({});
+    var options = { timeout: 1000, maxzoom: 21 };
+    tilelive.copy(src, dst, options, function(err) {
+        t.ok(err, 'expected error message');
+        t.equal(err.message, 'Copy operation timed out', 'timeout error');
         t.end();
     });
 });

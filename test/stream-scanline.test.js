@@ -192,7 +192,7 @@ test('scanline: invalid extent', function(assert) {
     require('../lib/stream-util').retryBackoff = 1;
     var get = tilelive.createReadStream(fakesrc, {type:'scanline'});
     var put = tilelive.createWriteStream(new Timedsource({}));
-    get.on('error', function(err) {         
+    get.on('error', function(err) {
         assert.equal(err.message, 'bounds must be an array of the form [west, south, east, north]');
     });
     get.pipe(put);
