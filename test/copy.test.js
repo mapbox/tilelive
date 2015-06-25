@@ -337,6 +337,24 @@ test('tilelive.copy transform', function(t) {
     });
 });
 
+test('tilelive.copy not a transform', function(t) {
+    var src = __dirname + '/fixtures/plain_1.mbtiles';
+    var dst = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelivecopy.mbtiles');
+    var transform = new stream.Writable({ objectMode: true });
+    var count = 0;
+    transform._write = function(tile, enc, callback) {
+        count++;
+        transform.push(tile);
+        callback();
+    };
+
+    tilelive.copy(src, dst, { transform: transform }, function(err){
+        t.equal(err.message, 'You must provide a valid transform stream', 'expected error');
+        t.equal(count, 0, 'no tiles were copied');
+        t.end();
+    });
+});
+
 // Used for progress report
 function report(stats, p) {
     util.print(util.format('\r\033[K[%s] %s%% %s/%s @ %s/s | ✓ %s □ %s | %s left',
