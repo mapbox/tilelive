@@ -20,6 +20,13 @@ function Timedsource(uri, callback) {
     this.fail = uri.fail || 0;
     this.fails = {};
 
+    if (uri.timeout) {
+        var timedsource = this;
+        setTimeout(function() {
+            timedsource.hang = true;
+        }, uri.timeout);
+    }
+
     if (callback) callback(null, this);
     return this;
 }
@@ -45,6 +52,8 @@ Timedsource.prototype.getTile = function(z, x, y, callback) {
         fails[key] = fails[key] || 0;
     }
 
+    if (this.hang) return;
+    
     setTimeout(function() {
         if (fail && fails[key] < fail) {
             fails[key]++;
