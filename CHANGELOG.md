@@ -1,3 +1,8 @@
+## 5.8.0
+
+* `tilelive.copy()` operations that stop doing any processing for 60s will error. This timeout interval is configurable.
+* `tilelive.copy()` callers can provide a transform stream which will receive each tile read from the source on its way to the destination.
+
 ## 5.7.1
 
 * Fixes a bug that allowed `NaN` values in metadata to pass `tilelive.validate`
