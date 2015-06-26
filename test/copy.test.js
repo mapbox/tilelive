@@ -1,5 +1,6 @@
 var test = require('tape');
 var fs = require('fs');
+var stream = require('stream');
 var tmp = require('os').tmpdir();
 var path = require('path');
 var exec = require('child_process').exec;
@@ -314,6 +315,42 @@ test('tilelive.copy timeout', function(t) {
     tilelive.copy(src, dst, options, function(err) {
         t.ok(err, 'expected error message');
         t.equal(err.message, 'Copy operation timed out', 'timeout error');
+        t.end();
+    });
+});
+
+test('tilelive.copy transform', function(t) {
+    var src = __dirname + '/fixtures/plain_1.mbtiles';
+    var dst = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelivecopy.mbtiles');
+    var transform = new stream.Transform({ objectMode: true });
+    var count = 0;
+    transform._transform = function(tile, enc, callback) {
+        count++;
+        transform.push(tile);
+        callback();
+    };
+
+    tilelive.copy(src, dst, { transform: transform }, function(err){
+        t.ifError(err, 'success');
+        t.equal(count, 286, 'tiles were passed through transform stream');
+        t.end();
+    });
+});
+
+test('tilelive.copy not a transform', function(t) {
+    var src = __dirname + '/fixtures/plain_1.mbtiles';
+    var dst = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelivecopy.mbtiles');
+    var transform = new stream.Writable({ objectMode: true });
+    var count = 0;
+    transform._write = function(tile, enc, callback) {
+        count++;
+        transform.push(tile);
+        callback();
+    };
+
+    tilelive.copy(src, dst, { transform: transform }, function(err){
+        t.equal(err.message, 'You must provide a valid transform stream', 'expected error');
+        t.equal(count, 0, 'no tiles were copied');
         t.end();
     });
 });
