@@ -1,3 +1,7 @@
+## 5.8.1
+
+* Fixes a bug in `tilelive.copy()` that caused every copy operation to timeout after 60s (or the specified timeout interval).
+
 ## 5.8.0
 
 * `tilelive.copy()` operations that stop doing any processing for 60s will error. This timeout interval is configurable.
