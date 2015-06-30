@@ -319,6 +319,22 @@ test('tilelive.copy timeout', function(t) {
     });
 });
 
+test('tilelive.copy timeout does not always fail at timeout interval', function(t) {
+    var src = new Timedsource({timeout: 3000});
+    var dst = new Timedsource({});
+    var options = { timeout: 1000, maxzoom: 21 };
+    tilelive.copy(src, dst, options, done);
+
+    function done(err) {
+        if (done.finished) return;
+        t.ifError(err, 'should not error');
+        done.finished = true;
+        t.ok('kept copying past timeout');
+        t.end();
+    }
+    setTimeout(done, 2000);
+});
+
 test('tilelive.copy transform', function(t) {
     var src = __dirname + '/fixtures/plain_1.mbtiles';
     var dst = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelivecopy.mbtiles');
