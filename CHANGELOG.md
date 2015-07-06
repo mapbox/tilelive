@@ -1,3 +1,7 @@
+## 5.8.2
+
+* Exposes `tilelive.copy()` timeout option to commandline util.
+
 ## 5.8.1
 
 * Fixes a bug in `tilelive.copy()` that caused every copy operation to timeout after 60s (or the specified timeout interval).
