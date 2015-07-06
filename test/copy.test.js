@@ -88,6 +88,14 @@ test('copy part zero', function(t) {
     });
 });
 
+test('copy timeout', function(t) {
+    exec(__dirname + '/../bin/tilelive-copy ' + __dirname + '/fixtures/plain_1.mbtiles --timeout=1', function(err, stdout, stderr) {
+        t.ok(err);
+        t.ok(/Copy operation timed out/.test(stderr));
+        t.end();
+    });
+});
+
 test('tilelive.copy', function(t) {
     var src = __dirname + '/fixtures/plain_1.mbtiles';
     var dst = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelivecopy.mbtiles');
