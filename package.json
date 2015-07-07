@@ -37,13 +37,14 @@
     "queue-async": "~1.0.7"
   },
   "devDependencies": {
+    "concat-stream": "1.4.x",
     "coveralls": "~2.11.1",
+    "eslint": "^0.24.0",
     "istanbul": "~0.3.0",
     "mbtiles": "~0.7.7",
     "tape": "2.13.3",
     "tilejson": "~0.8.0",
-    "tilelive-http": "^0.3.0",
-    "concat-stream": "1.4.x"
+    "tilelive-http": "^0.3.0"
   },
   "bin": {
     "tilelive-copy": "./bin/tilelive-copy"
@@ -52,7 +53,7 @@
     "node": ">= 0.10.0 < 0.11.0"
   },
   "scripts": {
-    "test": "tape test/*.test.js",
+    "test": "eslint --no-eslintrc -c .eslintrc lib/*.js && tape test/*.test.js",
     "cov": "istanbul cover tape test/*.test.js && coveralls < ./coverage/lcov.info"
   }
 }
