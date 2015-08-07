@@ -12,6 +12,9 @@ Tilesource.prototype.getTile = function(z, x, y, callback) {
     // obtains tile and calls callback:
     function(err, tile, options) {
         // err is set when the tile does not exist or when retrieval failed.
+        // If the tile does not exist and that's OK, the error message should
+        // explicitly read 'Tile does not exist' in order to be handled correctly
+        // by tilelive.copy.
         // otherwise, tile is a buffer containing the compressed image data
     }
 };
