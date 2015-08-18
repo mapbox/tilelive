@@ -1,11 +1,11 @@
 # tilelive.js
 
-[![Coverage Status](https://coveralls.io/repos/mapbox/tilelive.js/badge.png)](https://coveralls.io/r/mapbox/tilelive.js)
+[![Coverage Status](https://coveralls.io/repos/mapbox/tilelive.js/badge.svg)](https://coveralls.io/r/mapbox/tilelive.js)
 
 - Tilelive is a module to help interactions between tilelive source modules.
 - A tilelive source is an interface implemented by node modules that deal with reading and writing map tiles.
 
-[![Build Status](https://secure.travis-ci.org/mapbox/tilelive.js.png)](http://travis-ci.org/mapbox/tilelive.js)
+[![Build Status](https://secure.travis-ci.org/mapbox/tilelive.js.svg)](http://travis-ci.org/mapbox/tilelive.js)
 
 ## Implementing modules
 
