@@ -1,3 +1,7 @@
+## 5.8.3
+
+* Adds smarter handling of low zoom level tiles to pyramid scheme such that early empty tiles are tolerated without skipping.
+
 ## 5.8.2
 
 * Exposes `tilelive.copy()` timeout option to commandline util.
