@@ -9,12 +9,12 @@ var path = require('path');
 var tmp = require('os').tmpdir();
 var assert = require('assert');
 var unzip = require('zlib').createGunzip();
-
-var filepath = path.join(tmp, 'list.mbtiles');
-var tmpSerial = path.join(tmp, 'tilelive.serialized');
-var tmpDst = path.join(tmp, 'tilelive.dstMbtiles');
+var crypto = require('crypto');
 
 var src, dst;
+
+// This is only used for deserialize: dst and deserialize: round trip tests
+var filepath = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.list_deserialize.mbtiles');
 
 test('deserialize: src', function(t) {
     new MBTiles(__dirname + '/fixtures/plain_1.mbtiles', function(err, s) {
@@ -25,7 +25,6 @@ test('deserialize: src', function(t) {
 });
 
 test('deserialize: dst', function(t) {
-    try { fs.unlinkSync(filepath); } catch(e) {}
     new MBTiles(filepath, function(err, d) {
         t.ifError(err);
         dst = d;
@@ -157,9 +156,8 @@ test('deserialize: garbage', function(t) {
 });
 
 test('de/serialize: round-trip', function(t) {
-    try { fs.unlinkSync(tmpSerial); } catch(e) {}
-    try { fs.unlinkSync(tmpDst); } catch(e) {}
-
+    var tmpDst = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelive_roundtrip.dstMbtiles');
+    var tmpSerial = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelive.serialized');
     var original = tilelive.createReadStream(src, {type: 'scanline'})
         .on('error', function(err) { t.ifError(err); });
     var serialize = tilelive.serialize()
@@ -203,4 +201,66 @@ test('deserialize: incomplete', function(t) {
             t.ok(err instanceof DeserializationError, 'incomplete file throws expected exception');
         })
         .on('end', t.end);
+});
+
+test('deserialize: split into jobs', function(t) {
+    var results = [];
+    var tilesPerJob = [];
+    var tilelist = path.join(__dirname, 'fixtures', 'plain_1.tilelist');
+    var expectedTiles = fs.readFileSync(tilelist, 'utf8').split('\n').slice(0, -1);
+
+    runJob(1, 0, function() {       // one job
+    runJob(4, 0, function() {       // a few jobs
+    runJob(15, 0, function() {      // a moderate number of jobs
+    runJob(285, 0, function() {     // as many jobs as there are tiles
+    runJob(400, 0, t.end.bind(t));  // more jobs than there are tiles
+    });});});});
+
+    function runJob(total, num, done) {
+        var tileCount = 0;
+        var gotInfo = false;
+        fs.createReadStream(path.join(__dirname, 'fixtures', 'plain_1.serialtiles'))
+            .pipe(tilelive.deserialize({ job: { total: total, num: num } }))
+            .on('error', function(err) {
+                t.ifError(err, 'Error during deserialization');
+            })
+            .on('tile', function(tile) {
+                if (tile.hasOwnProperty('x')) { // filters out info objects
+                    results.push([tile.z, tile.x, tile.y].join('/'));
+                    tileCount++;
+                }
+            })
+            .on('info', function(info) {
+                gotInfo = true;
+            })
+            .on('finish', function() {
+                tilesPerJob.push(tileCount);
+                if (num === total - 1) {
+                    t.ok(gotInfo, 'got info object');
+                    t.equal(results.length, 285, 'correct number of tiles across ' + total + ' jobs');
+                    var tiles = results.reduce(function(memo, tile) {
+                        if (memo[tile]) memo[tile]++;
+                        else memo[tile] = 1;
+                        return memo;
+                    }, {});
+
+                    for (var k in tiles) {
+                        if (tiles[k] > 1) t.fail('tile repeated ' + tiles[k] + ' times with ' + total + ' jobs: ' + k);
+                    }
+
+                    var gotAllTiles = expectedTiles.reduce(function(memo, tile) {
+                        if (results.indexOf(tile) < 0) memo = false;
+                        return memo;
+                    }, true);
+                    t.ok(gotAllTiles, 'rendered all expected tiles');
+
+                    results = [];
+                    tilesPerJob = [];
+                    done();
+                } else {
+                    num++;
+                    runJob(total, num, done);
+                }
+            });
+    }
 });

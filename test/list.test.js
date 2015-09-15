@@ -1,19 +1,24 @@
 var test = require('tape');
 var assert = require('assert');
 var tilelive = require('../');
-tilelive.protocols['mbtiles:'] = require('mbtiles');
-tilelive.protocols['tilejson:'] = require('tilejson');
+var MBTiles = require('mbtiles');
+var TileJSON = require('tilejson');
+
+MBTiles.registerProtocols(tilelive);
+TileJSON.registerProtocols(tilelive);
 
 test('should list all available tile sources', function(t) {
     tilelive.list(__dirname + '/fixtures', function(err, sources) {
         t.ifError(err);
         t.deepEqual({
+            'empty': 'mbtiles://' + __dirname + '/fixtures/empty.mbtiles',
             'faulty': 'mbtiles://' + __dirname + '/fixtures/faulty.mbtiles',
             'plain_1': 'mbtiles://' + __dirname + '/fixtures/plain_1.mbtiles',
             'plain_2': 'mbtiles://' + __dirname + '/fixtures/plain_2.mbtiles',
             'plain_4': 'mbtiles://' + __dirname + '/fixtures/plain_4.mbtiles',
             'resume': 'mbtiles://' + __dirname + '/fixtures/resume.mbtiles',
-            'mapquest': 'tilejson://' + __dirname + '/fixtures/mapquest.tilejson'
+            'mapquest': 'tilejson://' + __dirname + '/fixtures/mapquest.tilejson',
+            'null-tile': 'mbtiles://' + __dirname + '/fixtures/null-tile.mbtiles'
         }, sources);
         t.end();
     });

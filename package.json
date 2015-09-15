@@ -1,53 +1,59 @@
 {
-    "name": "tilelive",
-    "version": "5.2.2",
-    "main": "./lib/tilelive.js",
-    "description": "API for various map tile backends",
-    "url": "http://github.com/mapbox/tilelive.js",
-    "keywords": [
-        "map",
-        "mapnik",
-        "tiles"
-    ],
-    "licenses": [
-        {
-            "type": "BSD"
-        }
-    ],
-    "repository": {
-        "type": "git",
-        "url": "http://github.com/mapbox/tilelive.js.git"
-    },
-    "author": {
-        "name": "Mapbox",
-        "url": "https://www.mapbox.com/",
-        "email": "info@mapbox.com"
-    },
-    "contributors": [
-        "Tom MacWright <tmcw>",
-        "Will White <willwhite>",
-        "Dane Springmeyer <springmeyer>",
-        "Young Hahn <yhahn>",
-        "Konstantin Käfer <kkaefer>"
-    ],
-    "dependencies": {
-        "minimist": "~0.2.0",
-        "progress-stream": "~0.5.x",
-        "sphericalmercator": "~1.0.1"
-    },
-    "devDependencies": {
-        "tape": "2.13.3",
-        "mbtiles": "~0.4.3",
-        "tilejson": "~0.8.0",
-        "tilelive-http": "^0.3.0"
-    },
-    "bin": {
-        "tilelive-copy": "./bin/tilelive-copy"
-    },
-    "engines": {
-        "node": ">= 0.10.0 < 0.11.0"
-    },
-    "scripts": {
-        "test": "tape test/*.test.js"
+  "name": "tilelive",
+  "version": "5.8.2",
+  "main": "./lib/tilelive.js",
+  "description": "API for various map tile backends",
+  "url": "http://github.com/mapbox/tilelive.js",
+  "keywords": [
+    "map",
+    "mapnik",
+    "tiles"
+  ],
+  "licenses": [
+    {
+      "type": "BSD"
     }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/mapbox/tilelive.js.git"
+  },
+  "author": {
+    "name": "Mapbox",
+    "url": "https://www.mapbox.com/",
+    "email": "info@mapbox.com"
+  },
+  "contributors": [
+    "Tom MacWright <tmcw>",
+    "Will White <willwhite>",
+    "Dane Springmeyer <springmeyer>",
+    "Young Hahn <yhahn>",
+    "Konstantin Käfer <kkaefer>"
+  ],
+  "dependencies": {
+    "minimist": "~0.2.0",
+    "progress-stream": "~0.5.x",
+    "sphericalmercator": "~1.0.1",
+    "queue-async": "~1.0.7"
+  },
+  "devDependencies": {
+    "concat-stream": "1.4.x",
+    "coveralls": "~2.11.1",
+    "eslint": "^0.24.0",
+    "istanbul": "~0.3.0",
+    "mbtiles": "~0.7.7",
+    "tape": "2.13.3",
+    "tilejson": "~0.8.0",
+    "tilelive-http": "^0.3.0"
+  },
+  "bin": {
+    "tilelive-copy": "./bin/tilelive-copy"
+  },
+  "engines": {
+    "node": ">= 0.10.0 < 0.11.0"
+  },
+  "scripts": {
+    "test": "eslint --no-eslintrc -c .eslintrc lib/*.js && tape test/*.test.js",
+    "cov": "istanbul cover tape test/*.test.js && coveralls < ./coverage/lcov.info"
+  }
 }

@@ -5,6 +5,103 @@ var fs = require('fs');
 var path = require('path');
 var util = require('../lib/stream-util');
 var assert = require('assert');
+var Timedsource = require('./timedsource');
+
+test('retryBackoff (setup)', function(assert) {
+    util.retryBackoff = 10;
+    assert.end();
+});
+
+test('putTileRetry fail=2, tries=2', function(assert) {
+    var source = new Timedsource({fail:2});
+    util.putTileRetry(source, 0, 0, 0, new Buffer(0), 2, function(err) {
+        assert.equal(source.fails['0/0/0'], 2, 'failed x2');
+        assert.ifError(err, 'no error');
+        assert.end();
+    });
+});
+
+test('putTileRetry fail=2, retry=1', function(assert) {
+    var source = new Timedsource({fail:2});
+    util.putTileRetry(source, 0, 0, 0, new Buffer(0), 1, function(err) {
+        assert.equal(source.fails['0/0/0'], 2, 'failed x2');
+        assert.equal(err.toString(), 'Error: Fatal', 'passes error');
+        assert.end();
+    });
+});
+
+test('putTileRetry fail=1, retry=0', function(assert) {
+    var source = new Timedsource({fail:1});
+    util.putTileRetry(source, 0, 0, 0, new Buffer(0), 0, function(err) {
+        assert.equal(source.fails['0/0/0'], 1, 'failed x1');
+        assert.equal(err.toString(), 'Error: Fatal', 'passes error');
+        assert.end();
+    });
+});
+
+test('putTileRetry fail=0, retry=0', function(assert) {
+    var source = new Timedsource({fail:0});
+    util.putTileRetry(source, 0, 0, 0, new Buffer(0), 0, function(err) {
+        assert.equal(source.fails['0/0/0'], undefined, 'failed x0');
+        assert.ifError(err, 'no error');
+        assert.end();
+    });
+});
+
+test('getTileRetry fail=2, retry=2', function(assert) {
+    var source = new Timedsource({fail:2});
+    util.getTileRetry(source, 0, 0, 0, 2, function(err, data, headers) {
+        assert.equal(source.fails['0/0/0'], 2, 'failed x2');
+        assert.ifError(err, 'no error');
+        assert.equal(data instanceof Buffer, true, 'passes buffer');
+        assert.deepEqual(headers, {}, 'passes headers');
+        assert.end();
+    });
+});
+
+test('getTileRetry fail=2, retry=1', function(assert) {
+    var source = new Timedsource({fail:2});
+    util.getTileRetry(source, 0, 0, 0, 1, function(err, data, headers) {
+        assert.equal(source.fails['0/0/0'], 2, 'failed x2');
+        assert.equal(err.toString(), 'Error: Fatal', 'passes error');
+        assert.end();
+    });
+});
+
+
+test('getTileRetry fail=1, retry=0', function(assert) {
+    var source = new Timedsource({fail:1});
+    util.getTileRetry(source, 0, 0, 0, 0, function(err, data, headers) {
+        assert.equal(source.fails['0/0/0'], 1, 'failed x1');
+        assert.equal(err.toString(), 'Error: Fatal', 'passes error');
+        assert.end();
+    });
+});
+
+test('getTileRetry fail=0, retry=0', function(assert) {
+    var source = new Timedsource({fail:0});
+    util.getTileRetry(source, 0, 0, 0, 0, function(err, data, headers) {
+        assert.equal(source.fails['0/0/0'], undefined, 'failed x0');
+        assert.ifError(err, 'no error');
+        assert.equal(data instanceof Buffer, true, 'passes buffer');
+        assert.deepEqual(headers, {}, 'passes headers');
+        assert.end();
+    });
+});
+
+test('getTileRetry Does Not Exist, retry=3', function(assert) {
+    var source = new Timedsource({fail:0});
+    util.getTileRetry(source, 1, 1, 0, 3, function(err, data, headers) {
+        assert.equal(source.gets, 1, '1 attempt');
+        assert.equal(err.toString(), 'Error: Tile does not exist');
+        assert.end();
+    });
+});
+
+test('retryBackoff (reset)', function(assert) {
+    util.retryBackoff = 1000;
+    assert.end();
+});
 
 test('Tile: blank', function(t) {
     var tile;
@@ -71,7 +168,7 @@ test('Tile: serialize', function(t) {
 });
 
 test('Tile: deserialize', function(t) {
-    t.plan(3);
+    t.plan(5);
 
     var data, tile, actual, expected;
 
@@ -80,6 +177,9 @@ test('Tile: deserialize', function(t) {
     expected = new util.Tile(1, 2, 3, new Buffer('hello'));
     actual = util.deserialize(data);
     t.deepEqual(actual, expected, 'good data deserialized as expected');
+
+    t.equal(util.deserialize(data, 'buffer'), '"aGVsbG8="', 'deserialize a property as expected');
+    t.equal(util.deserialize(data, 'x'), '2', 'deserialize a property as expected');
 
     tile = new util.Tile();
     data = '{"this": is not parsable, []}';
@@ -132,4 +232,32 @@ test('Info: deserialize', function(t) {
         var valid = err instanceof util.DeserializationError;
         t.ok(valid, 'unparsable data throws expected exception');
     }
+});
+
+test('Limit bounds', function(t) {
+
+    // these inputs should simply be equal to themselves, since they don't contain
+    // anything out of bounds
+    var valid = {
+        'null island': [0, 0, 0, 0],
+        'full bounds': [-180, -90, 180, 90],
+        'small box': [-10, -10, 10, 10]
+    };
+    for (var name in valid) {
+        t.deepEqual(util.limitBounds(valid[name]), valid[name], 'valid: ' + name);
+    }
+
+    // map of name: [input, output]
+    var out = {
+        'huge': [[-Infinity, -Infinity, Infinity, Infinity], [-180, -90, 180, 90]],
+        'one dimension': [[-200, -90, 180, 90], [-180, -90, 180, 90]],
+        'two dimensions': [[-200, -100, 180, 90], [-180, -90, 180, 90]],
+        'others valid': [[-200, 0, 180, 10], [-180, 0, 180, 10]]
+    };
+    for (name in out) {
+        t.deepEqual(util.limitBounds(out[name][0]), out[name][1], 'out of bounds: ' + name);
+    }
+
+    t.end();
+
 });

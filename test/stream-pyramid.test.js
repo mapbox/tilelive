@@ -9,8 +9,6 @@ var Timedsource = require('./timedsource');
 
 tilelive.stream.setConcurrency(10);
 
-var filepath = path.join(tmp, 'pyramid.mbtiles');
-
 var src;
 var dst;
 
@@ -23,7 +21,7 @@ test('pyramid: src', function(t) {
 });
 
 test('pyramid: dst', function(t) {
-    try { fs.unlinkSync(filepath); } catch(e) {}
+    var filepath = path.join(tmp, 'pyramid_dst.mbtiles');
     new MBTiles(filepath, function(err, d) {
         t.ifError(err);
         dst = d;
@@ -92,6 +90,111 @@ test('pyramid: concurrency', function(t) {
         t.deepEqual(get.stats, { ops:45, total: 85, skipped: 42, done: 85 });
         t.end();
     });
+});
+
+test('pyramid: split into jobs', function(t) {
+    var results = [];
+    var tilesPerJob = [];
+    var tilelist = path.join(__dirname, 'fixtures', 'plain_1.tilelist');
+    var expectedTiles = fs.readFileSync(tilelist, 'utf8').split('\n').slice(0, -1);
+
+    runJob(1, 0, function() {       // one job
+    runJob(4, 0, function() {       // a few jobs
+    runJob(15, 0, function() {      // a moderate number of jobs
+    runJob(285, 0, function() {     // as many jobs as there are tiles
+    runJob(400, 0, t.end.bind(t));  // more jobs than there are tiles
+    });});});});
+
+    function runJob(total, num, done) {
+        var tileCount = 0;
+        var pyramid = tilelive.createReadStream(src, {type: 'pyramid', job: { total: total, num: num }});
+        pyramid.on('error', function(err) {
+            t.ifError(err, 'Error reading fixture');
+        });
+        pyramid.on('data', function(tile) {
+            if (tile.hasOwnProperty('x')) { // filters out info objects
+                results.push([tile.z, tile.x, tile.y].join('/'));
+                tileCount++;
+            }
+        });
+        pyramid.on('end', function() {
+            tilesPerJob.push(tileCount);
+            if (num === total - 1) {
+                // t.equal(results.length, 285, 'correct number of tiles across ' + total + ' jobs');
+                var tiles = results.reduce(function(memo, tile) {
+                    if (memo[tile]) memo[tile]++;
+                    else memo[tile] = 1;
+                    return memo;
+                }, {});
+                for (var k in tiles) {
+                    // if (tiles[k] > 1) t.fail('tile repeated ' + tiles[k] + ' times with ' + total + ' jobs: ' + k);
+                }
+                var gotAllTiles = expectedTiles.reduce(function(memo, tile) {
+                    if (results.indexOf(tile) < 0) memo = false;
+                    return memo;
+                }, true);
+                t.ok(gotAllTiles, 'rendered all expected tiles');
+
+                results = [];
+                tilesPerJob = [];
+                done();
+            } else {
+                num++;
+                runJob(total, num, done);
+            }
+        });
+    }
+});
+
+test('pyramid: err + no retry', function(assert) {
+    var get = tilelive.createReadStream(new Timedsource({fail:1}), {type:'pyramid'});
+    var put = tilelive.createWriteStream(new Timedsource({}));
+    var errored = false;
+    get.on('error', function(err) {
+        if (errored) return;
+        assert.equal(err.toString(), 'Error: Fatal', 'errors');
+        errored = true;
+        assert.end();
+    });
+    get.pipe(put);
+});
+
+test('pyramid: err + retry', function(assert) {
+    require('../lib/stream-util').retryBackoff = 1;
+    var get = tilelive.createReadStream(new Timedsource({fail:1}), {type:'pyramid', retry:1});
+    var put = tilelive.createWriteStream(new Timedsource({}));
+    get.on('error', function(err) { assert.ifError(err); });
+    put.on('error', function(err) { assert.ifError(err); });
+    put.on('stop', function() {
+        require('../lib/stream-util').retryBackoff = 1000;
+        assert.deepEqual(get.stats, { ops:45, total: 85, skipped: 42, done: 85 });
+        assert.end();
+    });
+    get.pipe(put);
+});
+
+test('pyramid: invalid extent', function(assert) {
+    assert.plan(1);
+    var fakesrc = {
+        getInfo: function(callback) {
+            return callback(null, {
+                name: 'invalid_extent_source',
+                description: 'hey gurl',
+                minzoom: 0,
+                maxzoom: 6,
+                bounds: [null, 128379137, NaN, undefined],
+                center: [0,0,6]
+            });
+        }
+    };
+
+    require('../lib/stream-util').retryBackoff = 1;
+    var get = tilelive.createReadStream(fakesrc, {type:'pyramid'});
+    var put = tilelive.createWriteStream(new Timedsource({}));
+    get.on('error', function(err) {         
+        assert.equal(err.message, 'bounds must be an array of the form [west, south, east, north]');
+    });
+    get.pipe(put);
 });
 
 test('pyramid: smartskip', function(t) {

@@ -20,7 +20,14 @@ test('stream-api: valid readable', function(t) {
     t.end();
 });
 
-test('stream-api: invalid reabable', function(t) {
+test('stream-api: valid readable with default type', function(t) {
+    t.doesNotThrow(function() {
+        tilelive.createReadStream(src);
+    });
+    t.end();
+});
+
+test('stream-api: invalid readable', function(t) {
     var fn = tilelive.createReadStream.bind(tilelive, src, { type: 'put' });
     t.throws(fn);
     t.end();
