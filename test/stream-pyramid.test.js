@@ -86,7 +86,7 @@ test('pyramid: concurrency', function(t) {
         t.deepEqual(get.stats, { ops:23, total: 85, skipped: 42, done: 53 });
     }, 40);
     put.on('stop', function() {
-        t.equal(get.length, 43, 'updates length as skips occur');
+        t.equal(get.length, 27, 'updates length as skips occur');
         t.deepEqual(get.stats, { ops:45, total: 85, skipped: 58, done: 85 });
         t.end();
     });
