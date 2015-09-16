@@ -1,3 +1,7 @@
+## 5.9.0
+
+* Added the ability for headers to pass information to tilelive to continue pyramid tiling if the tree below contains data.
+
 ## 5.8.3
 
 * Adds smarter handling of low zoom level tiles to pyramid scheme such that early empty tiles are tolerated without skipping.

@@ -2,7 +2,8 @@ var tiledata = new Buffer(1024);
 
 module.exports = Nearemptysource;
 
-function Nearemptysource(uri, callback) {
+function Nearemptysource(uri, callback, options) {
+    options = options || {};
     this.time = uri.time || 5;
     this.maxzoom = uri.maxzoom || 3;
     this.emptymax = uri.emptymax || false;
