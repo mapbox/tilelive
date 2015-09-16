@@ -59,11 +59,9 @@ Timedsource.prototype.getTile = function(z, x, y, callback) {
             fails[key]++;
             callback(new Error('Fatal'));
         } else if (x >= (Math.pow(2,z)/2)) {
-            callback(new Error('Tile does not exist'));
-        } else if (false && y >= (Math.pow(2,z)/2)) {
-            var solid = new Buffer(1024);
-            solid.solid = [(x%256),(x%256),(y%256),1].join(',');
-            callback(null, solid, {});
+            callback(new Error('Tile does not exist'), null, {'x-tilelive-contains-data':false});
+        } else if (z >= 3 && y >= (Math.pow(2,z)/2)) {
+            callback(new Error('Tile does not exist'), null, {'x-tilelive-contains-data':true});
         } else {
             callback(null, tiledata, {});
         }

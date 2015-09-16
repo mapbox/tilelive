@@ -86,7 +86,7 @@ test('pyramid: concurrency', function(t) {
     }, 40);
     put.on('stop', function() {
         t.equal(get.length, 43, 'updates length as skips occur');
-        t.deepEqual(get.stats, { ops:45, total: 85, skipped: 42, done: 85 });
+        t.deepEqual(get.stats, { ops:45, total: 85, skipped: 58, done: 85 });
         t.end();
     });
 });
@@ -166,7 +166,7 @@ test('pyramid: err + retry', function(assert) {
     put.on('error', function(err) { assert.ifError(err); });
     put.on('stop', function() {
         require('../lib/stream-util').retryBackoff = 1000;
-        assert.deepEqual(get.stats, { ops:45, total: 85, skipped: 42, done: 85 });
+        assert.deepEqual(get.stats, { ops:45, total: 85, skipped: 58, done: 85 });
         assert.end();
     });
     get.pipe(put);
