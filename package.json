@@ -1,6 +1,6 @@
 {
   "name": "tilelive",
-  "version": "5.8.3",
+  "version": "5.9.0",
   "main": "./lib/tilelive.js",
   "description": "API for various map tile backends",
   "url": "http://github.com/mapbox/tilelive.js",
@@ -28,7 +28,8 @@
     "Will White <willwhite>",
     "Dane Springmeyer <springmeyer>",
     "Young Hahn <yhahn>",
-    "Konstantin Käfer <kkaefer>"
+    "Konstantin Käfer <kkaefer>",
+    "Blake Thompson <flippmoke>"
   ],
   "dependencies": {
     "minimist": "~0.2.0",
