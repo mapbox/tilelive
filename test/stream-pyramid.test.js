@@ -5,6 +5,7 @@ var fs = require('fs');
 var tmp = require('os').tmpdir();
 var path = require('path');
 var Nearemptysource = require('./nearemptysource');
+var Containsdatasource = require('./containsdatasource');
 var Timedsource = require('./timedsource');
 
 tilelive.stream.setConcurrency(10);
@@ -86,8 +87,8 @@ test('pyramid: concurrency', function(t) {
         t.deepEqual(get.stats, { ops:23, total: 85, skipped: 42, done: 53 });
     }, 40);
     put.on('stop', function() {
-        t.equal(get.length, 27, 'updates length as skips occur');
-        t.deepEqual(get.stats, { ops:45, total: 85, skipped: 58, done: 85 });
+        t.equal(get.length, 43, 'updates length as skips occur');
+        t.deepEqual(get.stats, { ops:45, total: 85, skipped: 42, done: 85 });
         t.end();
     });
 });
@@ -167,7 +168,7 @@ test('pyramid: err + retry', function(assert) {
     put.on('error', function(err) { assert.ifError(err); });
     put.on('stop', function() {
         require('../lib/stream-util').retryBackoff = 1000;
-        assert.deepEqual(get.stats, { ops:45, total: 85, skipped: 58, done: 85 });
+        assert.deepEqual(get.stats, { ops:45, total: 85, skipped: 42, done: 85 });
         assert.end();
     });
     get.pipe(put);
@@ -213,6 +214,26 @@ test('pyramid: smartskip', function(t) {
         // Final length should be Math.pow(4,2)/2 + Math.pow(4,3)/2
         t.equal(get.length, 40, 'updates length as skips occur');
         t.deepEqual(get.stats, { ops:69, total: 85, skipped: 45, done: 85 });
+        t.end();
+    });
+});
+
+test('pyramid: contains data', function(t) {
+    var src = new Containsdatasource({time:1});
+    var dst = new Timedsource({time:1});
+    var get = tilelive.createReadStream(src, {type:'pyramid'});
+    var put = tilelive.createWriteStream(dst);
+    get.once('length', function(length) {
+        t.equal(length, 85, 'sets length to total');
+        t.equal(get.length, 85, 'sets length to total');
+    });
+    get.on('error', function(err) { t.ifError(err); });
+    put.on('error', function(err) { t.ifError(err); });
+    get.pipe(put);
+    put.on('stop', function() {
+        // Final length should be Math.pow(4,2)/2 + Math.pow(4,3)/2 + 1
+        t.equal(get.length, 41, 'updates length as skips occur');
+        t.deepEqual(get.stats, { ops:45, total: 85, skipped: 44, done: 85 });
         t.end();
     });
 });

@@ -85,8 +85,8 @@ test('scanline: concurrency', function(t) {
         t.deepEqual(get.stats, { ops: 20, total: 85, skipped: 4, done: 10 }, 'concurrency 10 at work');
     }, 20);
     put.on('stop', function() {
-        t.equal(get.length, 27, 'updates length as skips occur');
-        t.deepEqual(get.stats, { ops: 85, total: 85, skipped: 58, done: 85 });
+        t.equal(get.length, 43, 'updates length as skips occur');
+        t.deepEqual(get.stats, { ops: 85, total: 85, skipped: 42, done: 85 });
         t.end();
     });
 });
@@ -168,7 +168,7 @@ test('scanline: err + retry', function(assert) {
     put.on('error', function(err) { assert.ifError(err); });
     put.on('stop', function() {
         require('../lib/stream-util').retryBackoff = 1000;
-        assert.deepEqual(get.stats, { ops: 85, total: 85, skipped: 58, done: 85 });
+        assert.deepEqual(get.stats, { ops: 85, total: 85, skipped: 42, done: 85 });
         assert.end();
     });
     get.pipe(put);

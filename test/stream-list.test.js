@@ -105,7 +105,7 @@ test('list: concurrency', function(t) {
         t.deepEqual(get.stats, { done:30, ops:40, skipped:14, total:77 }, 'concurrency 10');
     }, 40);
     put.on('stop', function() {
-        t.deepEqual(get.stats, { ops:77, total: 77, skipped: 50, done: 77 });
+        t.deepEqual(get.stats, { ops:77, total: 77, skipped: 38, done: 77 });
         t.end();
     });
 });
@@ -192,7 +192,7 @@ test('list: err + retry', function(assert) {
     put.on('error', function(err) { t.ifError(err); });
     put.on('stop', function() {
         require('../lib/stream-util').retryBackoff = 1000;
-        assert.deepEqual(get.stats, { ops:77, total: 77, skipped: 50, done: 77 });
+        assert.deepEqual(get.stats, { ops:77, total: 77, skipped: 38, done: 77 });
         assert.end();
     });
 });
