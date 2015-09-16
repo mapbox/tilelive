@@ -4,6 +4,7 @@ var tilelive = require('..');
 var fs = require('fs');
 var tmp = require('os').tmpdir();
 var path = require('path');
+var Nearemptysource = require('./nearemptysource');
 var Timedsource = require('./timedsource');
 
 tilelive.stream.setConcurrency(10);
@@ -194,4 +195,24 @@ test('pyramid: invalid extent', function(assert) {
         assert.equal(err.message, 'bounds must be an array of the form [west, south, east, north]');
     });
     get.pipe(put);
+});
+
+test('pyramid: smartskip', function(t) {
+    var src = new Nearemptysource({time:1});
+    var dst = new Timedsource({time:1});
+    var get = tilelive.createReadStream(src, {type:'pyramid'});
+    var put = tilelive.createWriteStream(dst);
+    get.once('length', function(length) {
+        t.equal(length, 85, 'sets length to total');
+        t.equal(get.length, 85, 'sets length to total');
+    });
+    get.on('error', function(err) { t.ifError(err); });
+    put.on('error', function(err) { t.ifError(err); });
+    get.pipe(put);
+    put.on('stop', function() {
+        // Final length should be Math.pow(4,2)/2 + Math.pow(4,3)/2
+        t.equal(get.length, 40, 'updates length as skips occur');
+        t.deepEqual(get.stats, { ops:69, total: 85, skipped: 45, done: 85 });
+        t.end();
+    });
 });
