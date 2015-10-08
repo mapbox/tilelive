@@ -61,8 +61,14 @@ test('auto protocol http://', function(t) {
         t.end();
     });
 });
+test('auto should parse qs ', function(t) {
+    tilelive.protocols = {};
+    var uri = tilelive.auto('http://tile.stamen.com/toner/{z}/{x}/{y}.png?foo=bar');
+    t.equal('http:', uri.protocol);
+    t.equal('bar', uri.query.foo);
+    t.end();
+});
 test('cleanup', function(t) {
     tilelive.protocols = orig;
     t.end();
 });
-
