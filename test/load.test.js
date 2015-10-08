@@ -141,6 +141,13 @@ var data = [
     }
 ];
 
+test('loading: no callback no fun', function(t) {
+    t.throws(function() {
+        tilelive.load('http://foo/bar');
+    });
+    t.end();
+});
+
 test('loading: should refuse loading an invalid url', function(t) {
     tilelive.load('http://foo/bar', function(err) {
         t.ok(err);

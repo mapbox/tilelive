@@ -51,10 +51,10 @@ test('auto protocol tilejson://', function(t) {
         t.end();
     });
 });
-test('auto protocol http://', function(t) {
+test('auto protocol tilejson+http://', function(t) {
     tilelive.protocols = {};
-    var uri = tilelive.auto('http://tile.stamen.com/toner/{z}/{x}/{y}.png');
-    t.equal('http:', uri.protocol);
+    var uri = tilelive.auto('tilejson+http://tile.stamen.com/toner/index.json');
+    t.equal('tilejson+http:', uri.protocol);
     tilelive.load(uri, function(err, source) {
         t.ifError(err);
         t.ok(source);
