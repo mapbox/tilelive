@@ -1,3 +1,7 @@
+## 5.9.1
+
+* Fixes for uri parsing and protocol handling in `tilelive.auto()`
+
 ## 5.9.0
 
 * Added the ability for headers to pass information to tilelive to continue pyramid tiling if the tree below contains data.
