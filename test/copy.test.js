@@ -396,7 +396,7 @@ test('tilelive.copy not a transform', function(t) {
 
 // Used for progress report
 function report(stats, p) {
-    util.print(util.format('\r\033[K[%s] %s%% %s/%s @ %s/s | ✓ %s □ %s | %s left',
+    console.log(util.format('\r\033[K[%s] %s%% %s/%s @ %s/s | ✓ %s □ %s | %s left',
         pad(formatDuration(process.uptime()), 4, true),
         pad((p.percentage).toFixed(4), 8, true),
         pad(formatNumber(p.transferred),6,true),
