@@ -95,6 +95,10 @@ function copy() {
     }
     if (!dsturi) options.outStream = process.stdout;
 
+    if (options.slow) options.onslow = function(method, z, x, y, time) {
+        console.warn('[slow tile] %s %d/%d/%d %dms', method, z, x, y, time);
+    };
+
     tilelive.copy(srcuri, dsturi, options, function(err) {
         if (err) throw err;
         console.log('');

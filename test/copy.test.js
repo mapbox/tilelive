@@ -140,6 +140,33 @@ test('tilelive.copy: concurrency', function(t) {
     });
 });
 
+test('tilelive.copy: onslow', function(t) {
+    var src = __dirname + '/fixtures/plain_1.mbtiles';
+    var dst = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelivecopy_concurrency.mbtiles');
+    var log = [];
+    var options = {
+        slow: 20,
+        onslow: function(method, z, x, y, time) {
+            t.equal(/^(get|put)$/.test(method), true);
+            t.equal(typeof z, 'number');
+            t.equal(typeof x, 'number');
+            t.equal(typeof y, 'number');
+            t.equal(typeof time, 'number');
+            log.push({method:method, z:z, x:x, y:y, time:time});
+        },
+        progress: report,
+        concurrency: 10
+    };
+
+    tilelive.copy(src, dst, options, function(err){
+        if (err) throw err;
+        t.ifError(err);
+        t.equal(log.length > 0, true, 'calls onslow callback');
+        tilelive.stream.slowTime = 60e3;
+        t.end();
+    });
+});
+
 test('tilelive copy: list', function(t) {
     var src = __dirname + '/fixtures/plain_1.mbtiles';
     var dst = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelivecopy_list.mbtiles');
