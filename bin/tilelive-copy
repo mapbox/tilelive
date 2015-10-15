@@ -30,6 +30,7 @@ if (!argv._[0]) {
     console.log('  --concurrency=[number]            Copy concurrency.');
     console.log('  --withoutprogress                 Shows progress by default.');
     console.log('  --timeout=[number]                Timeout after n ms of inactivity.');
+    console.log('  --slow=[number]                   Warn on slow tiles.');
     console.log('  --bounds=[w,s,e,n]');
     console.log('  --minzoom=[number]');
     console.log('  --maxzoom=[number]');
@@ -50,6 +51,7 @@ argv.parts = isNumeric(argv.parts) ? argv.parts : undefined;
 argv.part = isNumeric(argv.part) ? argv.part : undefined;
 argv.retry = isNumeric(argv.retry) ? parseInt(argv.retry,10) : undefined;
 argv.timeout = isNumeric(argv.timeout) ? parseInt(argv.timeout,10) : undefined;
+argv.slow = isNumeric(argv.slow) ? parseInt(argv.slow,10) : undefined;
 
 if (argv.scheme !== 'pyramid' && argv.scheme !== 'scanline' && argv.scheme !== 'list') {
     console.warn('scheme must be one of pyramid, scanline, list');
@@ -76,6 +78,7 @@ function copy() {
         maxzoom:argv.maxzoom,
         bounds:argv.bounds,
         retry:argv.retry,
+        slow:argv.slow,
         timeout:argv.timeout,
         close:true
     };
