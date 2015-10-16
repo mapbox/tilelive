@@ -1,3 +1,7 @@
+## 5.10.0
+
+* Add option for slow tile logging in `tilelive.copy()`
+
 ## 5.9.1
 
 * Fixes for uri parsing and protocol handling in `tilelive.auto()`
