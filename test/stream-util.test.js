@@ -6,6 +6,7 @@ var path = require('path');
 var util = require('../lib/stream-util');
 var assert = require('assert');
 var Timedsource = require('./timedsource');
+var EventEmitter = require('events').EventEmitter;
 
 test('retryBackoff (setup)', function(assert) {
     util.retryBackoff = 10;
@@ -14,7 +15,9 @@ test('retryBackoff (setup)', function(assert) {
 
 test('putTileRetry fail=2, tries=2', function(assert) {
     var source = new Timedsource({fail:2});
-    util.putTileRetry(source, 0, 0, 0, new Buffer(0), 2, function(err) {
+    var emitter = new EventEmitter();
+    emitter.on('slow', function() { assert.fail('does not emit "slow" event'); });
+    util.putTileRetry(source, 0, 0, 0, new Buffer(0), 2, emitter, function(err) {
         assert.equal(source.fails['0/0/0'], 2, 'failed x2');
         assert.ifError(err, 'no error');
         assert.end();
@@ -23,7 +26,9 @@ test('putTileRetry fail=2, tries=2', function(assert) {
 
 test('putTileRetry fail=2, retry=1', function(assert) {
     var source = new Timedsource({fail:2});
-    util.putTileRetry(source, 0, 0, 0, new Buffer(0), 1, function(err) {
+    var emitter = new EventEmitter();
+    emitter.on('slow', function() { assert.fail('does not emit "slow" event'); });
+    util.putTileRetry(source, 0, 0, 0, new Buffer(0), 1, emitter, function(err) {
         assert.equal(source.fails['0/0/0'], 2, 'failed x2');
         assert.equal(err.toString(), 'Error: Fatal', 'passes error');
         assert.end();
@@ -32,7 +37,9 @@ test('putTileRetry fail=2, retry=1', function(assert) {
 
 test('putTileRetry fail=1, retry=0', function(assert) {
     var source = new Timedsource({fail:1});
-    util.putTileRetry(source, 0, 0, 0, new Buffer(0), 0, function(err) {
+    var emitter = new EventEmitter();
+    emitter.on('slow', function() { assert.fail('does not emit "slow" event'); });
+    util.putTileRetry(source, 0, 0, 0, new Buffer(0), 0, emitter, function(err) {
         assert.equal(source.fails['0/0/0'], 1, 'failed x1');
         assert.equal(err.toString(), 'Error: Fatal', 'passes error');
         assert.end();
@@ -41,7 +48,40 @@ test('putTileRetry fail=1, retry=0', function(assert) {
 
 test('putTileRetry fail=0, retry=0', function(assert) {
     var source = new Timedsource({fail:0});
-    util.putTileRetry(source, 0, 0, 0, new Buffer(0), 0, function(err) {
+    var emitter = new EventEmitter();
+    emitter.on('slow', function() { assert.fail('does not emit "slow" event'); });
+    util.putTileRetry(source, 0, 0, 0, new Buffer(0), 0, emitter, function(err) {
+        assert.equal(source.fails['0/0/0'], undefined, 'failed x0');
+        assert.ifError(err, 'no error');
+        assert.end();
+    });
+});
+
+test('putTileRetry (slow)', function(assert) {
+    util.slowTime = 50;
+    var source = new Timedsource({fail:0, time:100});
+    var emitter = new EventEmitter();
+    emitter.on('slow', function(method, z, x, y, time) {
+        assert.equal(method, 'put', 'method = put');
+        assert.equal(z, 0, 'z = 0');
+        assert.equal(z, 0, 'x = 0');
+        assert.equal(z, 0, 'y = 0');
+        assert.equal(time > 50, true, 'time taken is > 50ms');
+        util.slowTime = 60e3;
+        assert.end();
+    });
+    util.putTileRetry(source, 0, 0, 0, new Buffer(0), 0, emitter, function(err) {
+        assert.equal(source.fails['0/0/0'], undefined, 'failed x0');
+        assert.ifError(err, 'no error');
+    });
+});
+
+test('putTileRetry (slow=0)', function(assert) {
+    util.slowTime = 0;
+    var source = new Timedsource({fail:0, time:100});
+    var emitter = new EventEmitter();
+    emitter.on('slow', function() { assert.fail('does not emit "slow" event'); });
+    util.putTileRetry(source, 0, 0, 0, new Buffer(0), 0, emitter, function(err) {
         assert.equal(source.fails['0/0/0'], undefined, 'failed x0');
         assert.ifError(err, 'no error');
         assert.end();
@@ -50,7 +90,9 @@ test('putTileRetry fail=0, retry=0', function(assert) {
 
 test('getTileRetry fail=2, retry=2', function(assert) {
     var source = new Timedsource({fail:2});
-    util.getTileRetry(source, 0, 0, 0, 2, function(err, data, headers) {
+    var emitter = new EventEmitter();
+    emitter.on('slow', function() { assert.fail('does not emit "slow" event'); });
+    util.getTileRetry(source, 0, 0, 0, 2, emitter, function(err, data, headers) {
         assert.equal(source.fails['0/0/0'], 2, 'failed x2');
         assert.ifError(err, 'no error');
         assert.equal(data instanceof Buffer, true, 'passes buffer');
@@ -61,7 +103,9 @@ test('getTileRetry fail=2, retry=2', function(assert) {
 
 test('getTileRetry fail=2, retry=1', function(assert) {
     var source = new Timedsource({fail:2});
-    util.getTileRetry(source, 0, 0, 0, 1, function(err, data, headers) {
+    var emitter = new EventEmitter();
+    emitter.on('slow', function() { assert.fail('does not emit "slow" event'); });
+    util.getTileRetry(source, 0, 0, 0, 1, emitter, function(err, data, headers) {
         assert.equal(source.fails['0/0/0'], 2, 'failed x2');
         assert.equal(err.toString(), 'Error: Fatal', 'passes error');
         assert.end();
@@ -71,7 +115,9 @@ test('getTileRetry fail=2, retry=1', function(assert) {
 
 test('getTileRetry fail=1, retry=0', function(assert) {
     var source = new Timedsource({fail:1});
-    util.getTileRetry(source, 0, 0, 0, 0, function(err, data, headers) {
+    var emitter = new EventEmitter();
+    emitter.on('slow', function() { assert.fail('does not emit "slow" event'); });
+    util.getTileRetry(source, 0, 0, 0, 0, emitter, function(err, data, headers) {
         assert.equal(source.fails['0/0/0'], 1, 'failed x1');
         assert.equal(err.toString(), 'Error: Fatal', 'passes error');
         assert.end();
@@ -80,7 +126,9 @@ test('getTileRetry fail=1, retry=0', function(assert) {
 
 test('getTileRetry fail=0, retry=0', function(assert) {
     var source = new Timedsource({fail:0});
-    util.getTileRetry(source, 0, 0, 0, 0, function(err, data, headers) {
+    var emitter = new EventEmitter();
+    emitter.on('slow', function() { assert.fail('does not emit "slow" event'); });
+    util.getTileRetry(source, 0, 0, 0, 0, emitter, function(err, data, headers) {
         assert.equal(source.fails['0/0/0'], undefined, 'failed x0');
         assert.ifError(err, 'no error');
         assert.equal(data instanceof Buffer, true, 'passes buffer');
@@ -91,9 +139,46 @@ test('getTileRetry fail=0, retry=0', function(assert) {
 
 test('getTileRetry Does Not Exist, retry=3', function(assert) {
     var source = new Timedsource({fail:0});
-    util.getTileRetry(source, 1, 1, 0, 3, function(err, data, headers) {
+    var emitter = new EventEmitter();
+    emitter.on('slow', function() { assert.fail('does not emit "slow" event'); });
+    util.getTileRetry(source, 1, 1, 0, 3, emitter, function(err, data, headers) {
         assert.equal(source.gets, 1, '1 attempt');
         assert.equal(err.toString(), 'Error: Tile does not exist');
+        assert.end();
+    });
+});
+
+test('getTileRetry (slow)', function(assert) {
+    util.slowTime = 50;
+    var source = new Timedsource({fail:0, time:100});
+    var emitter = new EventEmitter();
+    emitter.on('slow', function(method, z, x, y, time) {
+        assert.equal(method, 'get', 'method = get');
+        assert.equal(z, 0, 'z = 0');
+        assert.equal(z, 0, 'x = 0');
+        assert.equal(z, 0, 'y = 0');
+        assert.equal(time > 50, true, 'time taken is > 50ms');
+        util.slowTime = 60e3;
+        assert.end();
+    });
+    util.getTileRetry(source, 0, 0, 0, 0, emitter, function(err, data, headers) {
+        assert.equal(source.fails['0/0/0'], undefined, 'failed x0');
+        assert.ifError(err, 'no error');
+        assert.equal(data instanceof Buffer, true, 'passes buffer');
+        assert.deepEqual(headers, {}, 'passes headers');
+    });
+});
+
+test('getTileRetry (slow=0)', function(assert) {
+    util.slowTime = 0;
+    var source = new Timedsource({fail:0, time:50});
+    var emitter = new EventEmitter();
+    emitter.on('slow', function() { assert.fail('does not emit "slow" event'); });
+    util.getTileRetry(source, 0, 0, 0, 0, emitter, function(err, data, headers) {
+        assert.equal(source.fails['0/0/0'], undefined, 'failed x0');
+        assert.ifError(err, 'no error');
+        assert.equal(data instanceof Buffer, true, 'passes buffer');
+        assert.deepEqual(headers, {}, 'passes headers');
         assert.end();
     });
 });

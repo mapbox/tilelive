@@ -30,6 +30,7 @@ if (!argv._[0]) {
     console.log('  --concurrency=[number]            Copy concurrency.');
     console.log('  --withoutprogress                 Shows progress by default.');
     console.log('  --timeout=[number]                Timeout after n ms of inactivity.');
+    console.log('  --slow=[number]                   Warn on slow tiles.');
     console.log('  --bounds=[w,s,e,n]');
     console.log('  --minzoom=[number]');
     console.log('  --maxzoom=[number]');
@@ -50,6 +51,7 @@ argv.parts = isNumeric(argv.parts) ? argv.parts : undefined;
 argv.part = isNumeric(argv.part) ? argv.part : undefined;
 argv.retry = isNumeric(argv.retry) ? parseInt(argv.retry,10) : undefined;
 argv.timeout = isNumeric(argv.timeout) ? parseInt(argv.timeout,10) : undefined;
+argv.slow = isNumeric(argv.slow) ? parseInt(argv.slow,10) : undefined;
 
 if (argv.scheme !== 'pyramid' && argv.scheme !== 'scanline' && argv.scheme !== 'list') {
     console.warn('scheme must be one of pyramid, scanline, list');
@@ -76,6 +78,7 @@ function copy() {
         maxzoom:argv.maxzoom,
         bounds:argv.bounds,
         retry:argv.retry,
+        slow:argv.slow,
         timeout:argv.timeout,
         close:true
     };
@@ -92,6 +95,10 @@ function copy() {
     }
     if (!dsturi) options.outStream = process.stdout;
 
+    if (options.slow) options.onslow = function(method, z, x, y, time) {
+        console.warn('[slow tile] %s %d/%d/%d %dms', method, z, x, y, time);
+    };
+
     tilelive.copy(srcuri, dsturi, options, function(err) {
         if (err) throw err;
         console.log('');
@@ -99,7 +106,7 @@ function copy() {
 }
 
 function report(stats, p) {
-    util.print(util.format('\r\033[K[%s] %s%% %s/%s @ %s/s | ✓ %s □ %s | %s left',
+    console.log(util.format('\r\033[K[%s] %s%% %s/%s @ %s/s | ✓ %s □ %s | %s left',
         pad(formatDuration(process.uptime()), 4, true),
         pad((p.percentage).toFixed(4), 8, true),
         pad(formatNumber(p.transferred),6,true),
