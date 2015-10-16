@@ -106,7 +106,7 @@ test('copy slow', function(t) {
     var filepath = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.copy_slow.mbtiles');
     exec(__dirname + '/../bin/tilelive-copy --slow=20 ' + __dirname + '/fixtures/plain_1.mbtiles ' + filepath, function(err, stdout, stderr) {
         t.ifError(err, 'no errors');
-        t.ok((/\[slow tile\] get \d+\/\d+\/\d+ \d+ms/).test(stderr), 'logs slow tiles to stderr');
+        t.ok((/\[slow tile\] (get|put) \d+\/\d+\/\d+ \d+ms/).test(stderr), 'logs slow tiles to stderr');
         t.end();
     });
 });
