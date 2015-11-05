@@ -1,3 +1,7 @@
+## 5.11.0
+
+* Attempt to generate a default list stream from source in `tilelive.copy()` if no explicit list is provided
+
 ## 5.10.0
 
 * Add option for slow tile logging in `tilelive.copy()`
