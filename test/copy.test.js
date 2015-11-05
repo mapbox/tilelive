@@ -172,20 +172,36 @@ test('tilelive copy: list', function(t) {
     var dst = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelivecopy_list.mbtiles');
     var list = __dirname + '/fixtures/plain_1.tilelist';
     var options = {};
+    var stats = {};
     options.type = 'list';
-    options.progress = report;
+    options.progress = function(s) { stats = s; };
     options.listStream = fs.createReadStream(list);
     tilelive.copy(src, dst, options, function(err){
         if (err) throw err;
+        t.equal(stats.ops, 285, '285 ops');
+        t.ifError(err);
+        t.end();
+    });
+});
+
+test('tilelive copy: list auto', function(t) {
+    var src = __dirname + '/fixtures/plain_1.mbtiles';
+    var dst = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelivecopy_listauto.mbtiles');
+    var options = {};
+    var stats = {};
+    options.type = 'list';
+    options.progress = function(s) { stats = s; };
+    tilelive.copy(src, dst, options, function(err){
+        if (err) throw err;
+        t.equal(stats.ops, 285, '285 ops');
         t.ifError(err);
         t.end();
     });
 });
 
 test('tilelive copy: missing liststream', function(t) {
-    var src = __dirname + '/fixtures/plain_1.mbtiles';
+    var src = 'tilejson+http://api.mapbox.com/v3/mapbox.world-bright.json';
     var dst = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelivecopy_liststream.mbtiles');
-    var list = __dirname + '/fixtures/plain_1.tilelist';
     var options = {};
     options.type = 'list';
     options.progress = report;

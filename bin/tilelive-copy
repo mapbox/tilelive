@@ -58,11 +58,6 @@ if (argv.scheme !== 'pyramid' && argv.scheme !== 'scanline' && argv.scheme !== '
     process.exit(1);
 }
 
-if (argv.scheme === 'list' && !argv.list) {
-    console.warn('--list=file required for list scheme');
-    process.exit(1);
-}
-
 var srcuri = argv._[0];
 var dsturi = argv._[1] ? argv._[1] : false;
 // register modules
@@ -90,7 +85,7 @@ function copy() {
         num:argv.part
     };
     // Create readstream for lists
-    if (options.type === 'list') {
+    if (options.type === 'list' && argv.list) {
         options.listStream = fs.createReadStream(argv.list);
     }
     if (!dsturi) options.outStream = process.stdout;
