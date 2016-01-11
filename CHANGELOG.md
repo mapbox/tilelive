@@ -1,3 +1,7 @@
+## 5.12.0
+
+* Add an `--exit` flag to `tilelive-copy` to exit explicitly when copy completes successfully
+
 ## 5.11.0
 
 * Attempt to generate a default list stream from source in `tilelive.copy()` if no explicit list is provided
