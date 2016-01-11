@@ -7,7 +7,7 @@ tilelive.protocols['tilejson:'] = require('tilejson');
 var data = [
     {
         name: 'MapQuest Open',
-        scheme: 'tms',
+        scheme: 'xyz',
         tiles: [ 'http://otile1.mqcdn.com/tiles/1.0.0/osm/${z}/${x}/${y}.jpg' ],
         minzoom: 0,
         maxzoom: 18,
