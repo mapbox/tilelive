@@ -42,7 +42,7 @@
     "coveralls": "~2.11.1",
     "eslint": "^0.24.0",
     "istanbul": "~0.3.0",
-    "mbtiles": "~0.7.7",
+    "mbtiles": "~0.8.2",
     "tape": "2.13.3",
     "tilejson": "~1.0.0"
   },
@@ -50,7 +50,7 @@
     "tilelive-copy": "./bin/tilelive-copy"
   },
   "engines": {
-    "node": ">= 0.10.0 < 0.11.0"
+    "node": ">= 0.10.0 < 5"
   },
   "scripts": {
     "test": "eslint --no-eslintrc -c .eslintrc lib/*.js && tape test/*.test.js",
