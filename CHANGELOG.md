@@ -1,3 +1,7 @@
+## 5.12.1
+
+* Ignore negative x and y that are generated from wide bounds
+
 ## 5.12.0
 
 * Add an `--exit` flag to `tilelive-copy` to exit explicitly when copy completes successfully
