@@ -198,6 +198,28 @@ test('pyramid: invalid extent', function(assert) {
     get.pipe(put);
 });
 
+test('pyramid: works beyond valid extent', function(assert) {
+    var src = new Nearemptysource({time:1});
+    src.getInfo = function(callback) {
+        return callback(null, {
+            name: 'extra_wide_extent_source',
+            description: 'hey boi',
+            minzoom: 0,
+            maxzoom: 0,
+            bounds: [-180,-90,180,90],
+            center: [0,0,0]
+        });
+    };
+
+    var get = tilelive.createReadStream(src, {type:'pyramid'});
+    var put = tilelive.createWriteStream(new Timedsource({}));
+    get.pipe(put);
+    put.on('stop', function() {
+        assert.deepEqual(get.stats, { ops:1, total: 1, skipped: 1, done: 1 });
+        assert.end();
+    });
+});
+
 test('pyramid: smartskip', function(t) {
     var src = new Nearemptysource({time:1});
     var dst = new Timedsource({time:1});

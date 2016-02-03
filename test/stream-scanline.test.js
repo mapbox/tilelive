@@ -5,6 +5,7 @@ var fs = require('fs');
 var tmp = require('os').tmpdir();
 var path = require('path');
 var Timedsource = require('./timedsource');
+var Nearemptysource = require('./nearemptysource');
 
 tilelive.stream.setConcurrency(10);
 
@@ -196,4 +197,26 @@ test('scanline: invalid extent', function(assert) {
         assert.equal(err.message, 'bounds must be an array of the form [west, south, east, north]');
     });
     get.pipe(put);
+});
+
+test('scanline: works beyond valid extent', function(assert) {
+    var src = new Nearemptysource({time:1});
+    src.getInfo = function(callback) {
+        return callback(null, {
+            name: 'extra_wide_extent_source',
+            description: 'hey boi',
+            minzoom: 0,
+            maxzoom: 0,
+            bounds: [-180,-90,180,90],
+            center: [0,0,0]
+        });
+    };
+
+    var get = tilelive.createReadStream(src, {type:'scanline'});
+    var put = tilelive.createWriteStream(new Timedsource({}));
+    get.pipe(put);
+    put.on('stop', function() {
+        assert.deepEqual(get.stats, { ops:1, total: 1, skipped: 1, done: 1 });
+        assert.end();
+    });
 });
