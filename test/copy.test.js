@@ -419,6 +419,21 @@ test('tilelive.copy transform', function(t) {
     });
 });
 
+test('tilelive.copy transform errors', function(t) {
+    var src = __dirname + '/fixtures/plain_1.mbtiles';
+    var dst = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelivecopy.mbtiles');
+    var transform = new stream.Transform({ objectMode: true });
+    transform._transform = function(tile, enc, callback) {
+        return callback(new Error('hello error'));
+    };
+
+    tilelive.copy(src, dst, { transform: transform }, function(err){
+        t.ok(err, 'failed');
+        t.equal(err.message, 'hello error', 'error was passed to the callback');
+        t.end();
+    });
+});
+
 test('tilelive.copy not a transform', function(t) {
     var src = __dirname + '/fixtures/plain_1.mbtiles';
     var dst = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelivecopy.mbtiles');
