@@ -412,14 +412,59 @@ test('tilelive.copy transform', function(t) {
         callback();
     };
 
-    tilelive.copy(src, dst, { transform: transform }, function(err){
+    tilelive.copy(src, dst, { transform: [transform] }, function(err){
         t.ifError(err, 'success');
         t.equal(count, 286, 'tiles were passed through transform stream');
         t.end();
     });
 });
 
-test('tilelive.copy not a transform', function(t) {
+test('tilelive.copy double transform', function(t) {
+    var src = __dirname + '/fixtures/plain_1.mbtiles';
+    var dst = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelivecopy.mbtiles');
+    var transform1 = new stream.Transform({ objectMode: true });
+    var count1 = 0;
+    transform1._transform = function(tile, enc, callback) {
+        count1++;
+        transform1.push(tile);
+        callback();
+    };
+
+    var transform2 = new stream.Transform({ objectMode: true });
+    var count2 = 0;
+    transform2._transform = function(tile, enc, callback) {
+        count2++;
+        transform2.push(tile);
+        callback();
+    };
+
+    tilelive.copy(src, dst, { transform: [transform1, transform2] }, function(err){
+        t.ifError(err, 'success');
+        t.equal(count1, 286, 'tiles were passed through transform stream 1');
+        t.equal(count2, 286, 'tiles were passed through transform stream 2');
+        t.end();
+    });
+});
+
+test('tilelive.copy not an array', function(t) {
+    var src = __dirname + '/fixtures/plain_1.mbtiles';
+    var dst = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelivecopy.mbtiles');
+    var transform = new stream.Transform({ objectMode: true });
+    var count = 0;
+    transform._transform = function(tile, enc, callback) {
+        count++;
+        transform.push(tile);
+        callback();
+    };
+
+    tilelive.copy(src, dst, { transform: transform }, function(err){
+        t.equal(err.message, 'You must provide an array of valid transform streams', 'expected error');
+        t.equal(count, 0, 'no tiles were copied');
+        t.end();
+    });
+});
+
+test('tilelive.copy not an array of transforms', function(t) {
     var src = __dirname + '/fixtures/plain_1.mbtiles';
     var dst = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelivecopy.mbtiles');
     var transform = new stream.Writable({ objectMode: true });
@@ -430,8 +475,8 @@ test('tilelive.copy not a transform', function(t) {
         callback();
     };
 
-    tilelive.copy(src, dst, { transform: transform }, function(err){
-        t.equal(err.message, 'You must provide a valid transform stream', 'expected error');
+    tilelive.copy(src, dst, { transform: [transform] }, function(err){
+        t.equal(err.message, 'You must provide an array of valid transform streams', 'expected error');
         t.equal(count, 0, 'no tiles were copied');
         t.end();
     });
