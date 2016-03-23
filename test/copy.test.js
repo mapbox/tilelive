@@ -7,6 +7,7 @@ var exec = require('child_process').exec;
 var tilelive = require('../');
 var util = require('util');
 var concat = require('concat-stream');
+var combine = require('stream-combiner');
 var MBTiles = require('mbtiles');
 //register protocols
 MBTiles.registerProtocols(tilelive);
@@ -430,6 +431,34 @@ test('tilelive.copy transform errors', function(t) {
     tilelive.copy(src, dst, { transform: transform }, function(err){
         t.ok(err, 'failed');
         t.equal(err.message, 'hello error', 'error was passed to the callback');
+        t.end();
+    });
+});
+
+test('tilelive.copy transform with a transform-like stream', function(t) {
+    var src = __dirname + '/fixtures/plain_1.mbtiles';
+    var dst = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelivecopy.mbtiles');
+
+    var transform1 = new stream.Transform({ objectMode: true });
+    var count1 = 0;
+    transform1._transform = function(tile, enc, callback) {
+        count1++;
+        transform1.push(tile);
+        callback();
+    };
+
+    var transform2 = new stream.Transform({ objectMode: true });
+    var count2 = 0;
+    transform2._transform = function(tile, enc, callback) {
+        count2++;
+        transform2.push(tile);
+        callback();
+    };
+
+    tilelive.copy(src, dst, { transform: combine(transform1, transform2) }, function(err){
+        t.ifError(err, 'success');
+        t.equal(count1, 286, 'tiles were passed through transform stream');
+        t.equal(count2, 286, 'tiles were passed through transform stream');
         t.end();
     });
 });
