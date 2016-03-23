@@ -1,3 +1,8 @@
+## 5.12.2
+
+* Allow transform-like streams to be used in the `transform` property
+* Catch errors in transform stream
+
 ## 5.12.1
 
 * Ignore negative x and y that are generated from wide bounds
