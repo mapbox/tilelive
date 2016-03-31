@@ -51,7 +51,7 @@
     "tilelive-copy": "./bin/tilelive-copy"
   },
   "engines": {
-    "node": ">= 0.10.0 < 5"
+    "node": ">= 0.10.0"
   },
   "scripts": {
     "test": "eslint --no-eslintrc -c .eslintrc lib/*.js && tape test/*.test.js",
