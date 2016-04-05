@@ -104,7 +104,7 @@ function copy() {
 }
 
 function report(stats, p) {
-    console.log(util.format('\r\033[K[%s] %s%% %s/%s @ %s/s | ✓ %s □ %s | %s left',
+    process.stdout.write(util.format('\r\033[K[%s] %s%% %s/%s @ %s/s | ✓ %s □ %s | %s left',
         pad(formatDuration(process.uptime()), 4, true),
         pad((p.percentage).toFixed(4), 8, true),
         pad(formatNumber(p.transferred),6,true),
@@ -128,7 +128,7 @@ function formatDuration(duration) {
     return (days > 0 ? days + 'd ' : '') +
         (hours > 0 || days > 0 ? hours + 'h ' : '') +
         (minutes > 0 || hours > 0 || days > 0 ? minutes + 'm ' : '') +
-        seconds + 's';
+        seconds.toFixed(1) + 's';
 }
 
 function pad(str, len, r) {
