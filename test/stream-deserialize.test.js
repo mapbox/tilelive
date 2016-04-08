@@ -186,7 +186,7 @@ test('de/serialize: round-trip', function(t) {
 
         var sizeDiff = Math.abs(originalStats.size - finalStats.size) / originalStats.size;
 
-        t.ok(sizeDiff < 0.01, 'round-tripped mbtiles are approx. the same size');
+        t.ok(sizeDiff < 0.01, 'round-tripped mbtiles are approx. the same size: ' +originalStats.size + '/' + finalStats.size);
         t.end();
     }
 
