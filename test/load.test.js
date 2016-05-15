@@ -141,6 +141,21 @@ var data = [
     }
 ];
 
+test('loading: url without pathname', function(t) {
+    // Create a dummy protocol handler
+    tilelive.protocols['nopathname:'] = function NoPathNameSource(uri, callback) {
+        this.search = uri.search;
+        callback(undefined, this);
+    };
+    var searchStr = '?test=1';
+    tilelive.load('nopathname://' + searchStr, function(err, source) {
+        if (err) throw err;
+        t.equal(source.search, searchStr);
+        delete tilelive.protocols['nopathname:'];
+        t.end();
+    });
+});
+
 test('loading: no callback no fun', function(t) {
     t.throws(function() {
         tilelive.load('http://foo/bar');
