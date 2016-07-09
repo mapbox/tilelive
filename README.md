@@ -7,13 +7,57 @@
 - A tilelive source is an interface implemented by node modules that deal with reading and writing map tiles.
 
 
-## Implementing modules
+## Awesome tilelive modules
 
-- [node-mbtiles](https://github.com/mapbox/node-mbtiles)
-- [node-tilejson](https://github.com/mapbox/node-tilejson)
-- [tilelive-mapnik](https://github.com/mapbox/tilelive-mapnik)
-- [tilelive-vector](https://github.com/mapbox/tilelive-vector)
-- [tilelive-bridge](https://github.com/mapbox/tilelive-bridge)
+- [tilelive-vector](https://github.com/mapbox/tilelive-vector) - Implements the tilelive API for rendering mapnik vector tiles to raster images.
+- [tilelive-bridge](https://github.com/mapbox/tilelive-bridge) - Implements the tilelive API for generating mapnik vector tiles from traditional mapnik datasources.
+- [tilelive-mapnik](https://github.com/mapbox/tilelive-mapnik) - mapnik renderer backend for tilelive.
+- [tilelive-s3](https://github.com/mapbox/tilelive-s3) - Extends TileJSON for S3-specific tasks.
+- [tilelive-file](https://github.com/mapbox/tilelive-file) - tilelive.js adapter for reading from the filesystem.
+- [tilelive-tmsource](https://github.com/mojodna/tilelive-tmsource) - A tilelive provider for TM2 sources.
+- [tilelive-cache](https://github.com/mojodna/tilelive-cache) - A caching wrapper for tilelive.js
+- [tilelive-overlay](https://github.com/mapbox/tilelive-overlay) - Render GeoJSON features with simplestyle styles in a tilelive pipeline.
+- [tilelive-tmstyle](https://github.com/mojodna/tilelive-tmstyle) - A tilelive provider for tmstyle sources.
+- [tilelive-http](https://github.com/mojodna/tilelive-http) - An HTTP source for tilelive.
+- [node-mbtiles](https://github.com/mapbox/node-mbtiles) - A mbtiles renderer and storage backend for tilelive.
+- [tl](https://github.com/mojodna/tl) - An alternate command line interface to tilelive.
+- [tilelive-omnivore](https://github.com/mapbox/tilelive-omnivore) - Implements the tilelive api for a variety of data sources.
+- [tilelive-xray](https://github.com/mojodna/tilelive-xray) - Tilelive vector tile visualization.
+- [tilelive-merge](https://github.com/mojodna/tilelive-merge) - A tilelive source that merges sources.
+- [tilelive-streaming](https://github.com/mojodna/tilelive-streaming) - Streaming functionality for tilelive modules.
+- [tilelive-redis](https://github.com/mapbox/tilelive-redis) - Redis wrapping source for tilelive.
+- [tilelive-modules](https://github.com/mojodna/tilelive-modules) - A listing of known tilelive modules.
+- [tilelive-decorator](https://github.com/mapbox/tilelive-decorator) - Load vector tiles from a tilelive source and decorate them with properties from redis.
+- [tilelive-blend](https://github.com/mojodna/tilelive-blend) - A tilelive provider that blends.
+- [tilelive-carto](https://github.com/mojodna/tilelive-carto) - A Carto style source for tilelive
+- [mongotiles](https://github.com/vsivsi/mongotiles) - mongotiles is a tilelive backend plug-in for MongoDB GridFS.
+- [tilelive-rasterpbf](https://github.com/mojodna/tilelive-rasterpbf) - A tilelive source for outputting PBF-encoded rasters from PostGIS.
+- [tilelive-memcached](https://github.com/mapbox/tilelive-memcached) - A memcached wrapping source for tilelive.
+- [tilelive-csvin](https://github.com/mojodna/tilelive-csvin) - A streaming tilelive source for CSV inputs.
+- [tilelive-tms](https://github.com/oscarfonts/tilelive-tms) - A tilelive.js adapter for reading from a TMS service.
+- [tilelive-multicache](https://github.com/mapbox/tilelive-multicache) - Module for adding a caching layer in front a tilelive source. 
+- [tilelive-cardboard](https://github.com/mapbox/tilelive-cardboard) - Renders vector tiles from a cardboard dataset.
+- [tilelive-utfgrig](https://github.com/mojodna/tilelive-utfgrid) - A tilelive provider that treats grids as tiles
+- [tilelive-arcgis](https://github.com/FuZhenn/tilelive-arcgis) - A tilelive.js adapter for ArcGIS tile caches.
+- [tilelive-mapbox](https://github.com/mojodna/tilelive-mapbox) - A tilelive.js source for mapbox:// URIs.
+- [tilelive-solid](https://github.com/mojodna/tilelive-solid) - A tilelive provider that generates solid colored tiles.
+- [tilelive-raster](https://github.com/mojodna/tilelive-raster) - A tilelive source for simple rasters, both local and remote.
+- [tilelive-null](https://github.com/mojodna/tilelive-null) - A noop sink for tilelive.
+- [tilelive-noop](https://github.com/mapbox/tilelive-noop) - A no-op tilelive source.
+- [tilelive-csv](https://github.com/mojodna/tilelive-csv) - PBF → CSV with tilelive.
+- [tilelive-error](https://github.com/mojodna/tilelive-error) - Avoid repeating error-prone initialization.
+- [tilelive-lambda](https://github.com/mojodna/tilelive-lambda) - AWS Lambda source for tilelive.
+- [tilelive-cartodb](https://github.com/mojodna/tilelive-cartodb) - A tilelive source for CartoDB.
+- [cdbtiles](https://github.com/vsivsi/cdbtiles) - A tilelive backend plug-in for CouchDB.
+- [node-tilejson](https://github.com/mapbox/node-tilejson) - Tile source backend for online tile sources.
+- [tilelive-foxgis](https://github.com/FoxGIS/tilelive-foxgis) - A tilelive plugin to serve tiles with mongodb
+- [tessera](https://github.com/mapbox/tilelive-mapnik) - A tilelive-based tile server.
+
+## Ecosytem of tilelive
+![image](https://cloud.githubusercontent.com/assets/1522494/16645056/a8f8fff2-4453-11e6-8ba7-b9aff033f2cd.png)
+
+
+
 
 ## Usage
 
