@@ -37,7 +37,7 @@
 - [tilelive-tms](https://github.com/oscarfonts/tilelive-tms) - A tilelive.js adapter for reading from a TMS service.
 - [tilelive-multicache](https://github.com/mapbox/tilelive-multicache) - Module for adding a caching layer in front a tilelive source. 
 - [tilelive-cardboard](https://github.com/mapbox/tilelive-cardboard) - Renders vector tiles from a cardboard dataset.
-- [tilelive-utfgrig](https://github.com/mojodna/tilelive-utfgrid) - A tilelive provider that treats grids as tiles
+- [tilelive-utfgrid](https://github.com/mojodna/tilelive-utfgrid) - A tilelive provider that treats grids as tiles
 - [tilelive-arcgis](https://github.com/FuZhenn/tilelive-arcgis) - A tilelive.js adapter for ArcGIS tile caches.
 - [tilelive-mapbox](https://github.com/mojodna/tilelive-mapbox) - A tilelive.js source for mapbox:// URIs.
 - [tilelive-solid](https://github.com/mojodna/tilelive-solid) - A tilelive provider that generates solid colored tiles.
