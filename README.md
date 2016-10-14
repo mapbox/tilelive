@@ -51,7 +51,7 @@
 - [cdbtiles](https://github.com/vsivsi/cdbtiles) - A tilelive backend plug-in for CouchDB.
 - [node-tilejson](https://github.com/mapbox/node-tilejson) - Tile source backend for online tile sources.
 - [tilelive-foxgis](https://github.com/FoxGIS/tilelive-foxgis) - A tilelive plugin to serve tiles with mongodb
-- [tessera](https://github.com/mapbox/tilelive-mapnik) - A tilelive-based tile server.
+- [tessera](https://github.com/mojodna/tessera) - A tilelive-based tile server.
 
 ## Ecosytem of tilelive
 ![image](https://cloud.githubusercontent.com/assets/1522494/16645056/a8f8fff2-4453-11e6-8ba7-b9aff033f2cd.png)
