@@ -55,8 +55,8 @@ test('copy min/max', function(t) {
 });
 
 test('copy min/max scale denominator', function(t) { 
-    var filepath = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.copy_minmax.mbtiles'); 
-    exec(__dirname + '/../bin/tilelive-copy --minimum_scale_denominator=1 --maximum_scale_denominator=2 ' + __dirname + '/fixtures/plain_1.mbtiles ' + filepath, function(err, stdout, stderr) { 
+    var filepath = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.copy_minmax_denominator.mbtiles'); 
+    exec(__dirname + '/../bin/tilelive-copy --minimum-scale-denominator=1 --maximum-scale-denominator=2 ' + __dirname + '/fixtures/plain_1.mbtiles ' + filepath, function(err, stdout, stderr) { 
         t.ifError(err, 'no errors'); 
         t.equal(stderr, '', 'no stderr'); 
         t.ok(stdout.indexOf('100.0000%') !== -1, 'pct complete'); 
