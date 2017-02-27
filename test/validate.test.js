@@ -24,20 +24,20 @@ test('validate', function(t) {
     // minzoom
     t.equal(
         validate({minzoom:'Hello world'}).toString(),
-        'Error: minzoom must be an integer between 0 and 22',
+        'Error: minzoom must be an integer between 0 and 30',
         'invalid minzoom (string)');
     t.equal(
         validate({minzoom:-1}).toString(),
-        'Error: minzoom must be an integer between 0 and 22',
+        'Error: minzoom must be an integer between 0 and 30',
         'invalid minzoom (negative)');
     t.equal(
         validate({minzoom:15.5}).toString(),
-        'Error: minzoom must be an integer between 0 and 22',
+        'Error: minzoom must be an integer between 0 and 30',
         'invalid minzoom (float)');
     t.equal(
-        validate({minzoom:23}).toString(),
-        'Error: minzoom must be an integer between 0 and 22',
-        'invalid minzoom (> 22)');
+        validate({minzoom:31}).toString(),
+        'Error: minzoom must be an integer between 0 and 30',
+        'invalid minzoom (> 30)');
     t.equal(
         validate({minzoom:0}),
         undefined,
@@ -46,20 +46,20 @@ test('validate', function(t) {
     // maxzoom
     t.equal(
         validate({maxzoom:'Hello world'}).toString(),
-        'Error: maxzoom must be an integer between 0 and 22',
+        'Error: maxzoom must be an integer between 0 and 30',
         'invalid maxzoom (string)');
     t.equal(
         validate({maxzoom:-1}).toString(),
-        'Error: maxzoom must be an integer between 0 and 22',
+        'Error: maxzoom must be an integer between 0 and 30',
         'invalid maxzoom (negative)');
     t.equal(
         validate({maxzoom:15.5}).toString(),
-        'Error: maxzoom must be an integer between 0 and 22',
+        'Error: maxzoom must be an integer between 0 and 30',
         'invalid maxzoom (float)');
     t.equal(
-        validate({maxzoom:23}).toString(),
-        'Error: maxzoom must be an integer between 0 and 22',
-        'invalid maxzoom (> 22)');
+        validate({maxzoom:31}).toString(),
+        'Error: maxzoom must be an integer between 0 and 30',
+        'invalid maxzoom (> 30)');
     t.equal(
         validate({maxzoom:0}),
         undefined,
@@ -185,11 +185,11 @@ test('validate', function(t) {
         'invalid center (z string)');
     t.equal(
         validate({center:[0,0,-1]}).toString(),
-        'Error: center z value must be an integer between 0 and 22',
+        'Error: center z value must be an integer between 0 and 30',
         'invalid center (z negative)');
     t.equal(
         validate({center:[0,0,5.5]}).toString(),
-        'Error: center z value must be an integer between 0 and 22',
+        'Error: center z value must be an integer between 0 and 30',
         'invalid center (z float)');
     t.equal(
         validate({center:[0,0,5]}),

@@ -45,7 +45,7 @@ var data = [
         version: '1.0.0',
         legend: null,
         minzoom: 0,
-        maxzoom: 22,
+        maxzoom: 30,
         center: null
     },
     {
@@ -135,7 +135,7 @@ var data = [
         version: '1.0.0',
         legend: null,
         minzoom: 0,
-        maxzoom: 22,
+        maxzoom: 30,
         bounds: [ -180, -85.05112877980659, 180, 85.05112877980659 ],
         center: null
     }
