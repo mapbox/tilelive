@@ -1,6 +1,7 @@
 ## 5.12.3
 
 * Increase maxzoom to z30, based on [updated tilejson-spec](https://github.com/mapbox/tilejson-spec/pull/21)
+* Move to @mapbox/tilelive namespace
 
 ## 5.12.2
 
