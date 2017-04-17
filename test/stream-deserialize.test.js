@@ -164,14 +164,14 @@ test('de/serialize: round-trip', function(t) {
         .on('error', function(err) { t.ifError(err); });
     var deserialize = tilelive.deserialize()
         .on('error', function(err) { t.ifError(err); });
-    var out;
+    var before, after;
 
     new MBTiles(tmpDst, function(err, outMbtiles) {
         t.ifError(err);
-        out = outMbtiles;
+        before = outMbtiles;
         original.pipe(serialize).pipe(fs.createWriteStream(tmpSerial))
             .on('finish', function() {
-                var final = tilelive.createWriteStream(outMbtiles)
+                var final = after = tilelive.createWriteStream(outMbtiles)
                     .on('error', function(err) { t.ifError(err); });
 
                 fs.createReadStream(tmpSerial)
@@ -182,9 +182,9 @@ test('de/serialize: round-trip', function(t) {
     });
 
     function makeAssertions() {
-        dst.getInfo(function(err, inInfo) {
+        before.getInfo(function(err, inInfo) {
           t.ifError(err);
-          out.getInfo(function(err, outInfo) {
+          after.source.getInfo(function(err, outInfo) {
             t.ifError(err);
             t.deepEqual(outInfo, inInfo, 'input and output info is the same');
             t.end();
