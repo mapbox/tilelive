@@ -146,7 +146,7 @@ test('deserialize: verify put', function(t) {
 
 test('deserialize: garbage', function(t) {
     t.plan(1);
-    fs.createReadStream(path.join(__dirname,'fixtures','filescheme.flat'))
+    fs.createReadStream(path.join(__dirname, 'fixtures', 'filescheme.flat'))
         .pipe(tilelive.deserialize())
         .on('data', function(d) { t.notOk(d, 'no data should be received'); })
         .on('end', function() { t.notOk(true, 'error should\'ve occurred'); })
@@ -164,9 +164,11 @@ test('de/serialize: round-trip', function(t) {
         .on('error', function(err) { t.ifError(err); });
     var deserialize = tilelive.deserialize()
         .on('error', function(err) { t.ifError(err); });
+    var out;
 
     new MBTiles(tmpDst, function(err, outMbtiles) {
         t.ifError(err);
+        out = outMbtiles;
         original.pipe(serialize).pipe(fs.createWriteStream(tmpSerial))
             .on('finish', function() {
                 var final = tilelive.createWriteStream(outMbtiles)
@@ -180,15 +182,14 @@ test('de/serialize: round-trip', function(t) {
     });
 
     function makeAssertions() {
-        var originalStats = fs.statSync(filepath);
-        var serializedStats = fs.statSync(tmpSerial);
-        var finalStats = fs.statSync(tmpDst);
-
-        var sizeDiff = Math.abs(originalStats.size - finalStats.size) / originalStats.size;
-
-        console.log(sizeDiff);
-        t.ok(sizeDiff < 0.01, 'round-tripped mbtiles are approx. the same size');
-        t.end();
+        dst.getInfo(function(err, inInfo) {
+          t.ifError(err);
+          out.getInfo(function(err, outInfo) {
+            t.ifError(err);
+            t.deepEqual(outInfo, inInfo, 'input and output info is the same');
+            t.end();
+          });
+        });
     }
 
 });
