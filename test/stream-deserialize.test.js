@@ -182,11 +182,11 @@ test('de/serialize: round-trip', function(t) {
     });
 
     function makeAssertions() {
-        before.getInfo(function(err, inInfo) {
+        before.getInfo(function(err, beforeInfo) {
           t.ifError(err);
-          after.source.getInfo(function(err, outInfo) {
+          after.source.getInfo(function(err, afterInfo) {
             t.ifError(err);
-            t.deepEqual(outInfo, inInfo, 'input and output info is the same');
+            t.deepEqual(beforeInfo, afterInfo, 'input and output info is the same');
             t.end();
           });
         });
