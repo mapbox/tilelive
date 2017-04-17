@@ -249,6 +249,11 @@ test('Tile: serialize', function(t) {
     expected = '{"z":null,"x":null,"y":null,"buffer":null}';
     t.equal(util.serialize(tile), expected, 'serialize garbage tile as expected');
 
+    tile = new util.Tile(1, 2, 3, new Buffer(1e9));
+    t.throws(function() {
+        util.serialize(tile);
+    }, 'Tile is larger than limit');
+
     t.end();
 });
 
