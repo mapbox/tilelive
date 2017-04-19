@@ -177,18 +177,39 @@ test('de/serialize: round-trip', function(t) {
                 fs.createReadStream(tmpSerial)
                     .pipe(deserialize)
                     .pipe(final)
-                    .on('stop', makeAssertions);
+                    .on('stop', getStreamQueues);
             });
     });
 
+    var beforeQueue;
+    var afterQueue;
+    function getStreamQueues() {
+        var beforeOutput = '';
+        var afterOutput = '';
+        var beforeStream = before.createZXYStream();
+        beforeStream.on('data', function(lines) { beforeOutput += lines; });
+        beforeStream.on('end', function() {
+            var afterStream = after.source.createZXYStream();
+            afterStream.on('data', function(lines) { afterOutput += lines; });
+            afterStream.on('end', function() {
+                beforeQueue = beforeOutput.toString().split('\n');
+                afterQueue = afterOutput.toString().split('\n');
+                makeAssertions();
+            });
+        });
+    }
+
     function makeAssertions() {
         before.getInfo(function(err, beforeInfo) {
-          t.ifError(err);
-          after.source.getInfo(function(err, afterInfo) {
             t.ifError(err);
-            t.deepEqual(beforeInfo, afterInfo, 'input and output info is the same');
-            t.end();
-          });
+            after.source.getInfo(function(err, afterInfo) {
+                t.ifError(err);
+                t.deepEqual(beforeInfo, afterInfo, 'input and output info is the same');
+                beforeQueue.forEach(function(b, i) {
+                  t.equal(b, afterQueue[i], 'zxy matches for both streams');
+                });
+                t.end();
+            });
         });
     }
 
