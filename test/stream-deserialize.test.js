@@ -146,7 +146,7 @@ test('deserialize: verify put', function(t) {
 
 test('deserialize: garbage', function(t) {
     t.plan(1);
-    fs.createReadStream(path.join(__dirname,'fixtures','filescheme.flat'))
+    fs.createReadStream(path.join(__dirname, 'fixtures', 'filescheme.flat'))
         .pipe(tilelive.deserialize())
         .on('data', function(d) { t.notOk(d, 'no data should be received'); })
         .on('end', function() { t.notOk(true, 'error should\'ve occurred'); })
@@ -164,30 +164,53 @@ test('de/serialize: round-trip', function(t) {
         .on('error', function(err) { t.ifError(err); });
     var deserialize = tilelive.deserialize()
         .on('error', function(err) { t.ifError(err); });
+    var before, after;
 
     new MBTiles(tmpDst, function(err, outMbtiles) {
         t.ifError(err);
+        before = outMbtiles;
         original.pipe(serialize).pipe(fs.createWriteStream(tmpSerial))
             .on('finish', function() {
-                var final = tilelive.createWriteStream(outMbtiles)
+                var final = after = tilelive.createWriteStream(outMbtiles)
                     .on('error', function(err) { t.ifError(err); });
 
                 fs.createReadStream(tmpSerial)
                     .pipe(deserialize)
                     .pipe(final)
-                    .on('stop', makeAssertions);
+                    .on('stop', getStreamQueues);
             });
     });
 
+    var beforeQueue;
+    var afterQueue;
+    function getStreamQueues() {
+        var beforeOutput = '';
+        var afterOutput = '';
+        var beforeStream = before.createZXYStream();
+        beforeStream.on('data', function(lines) { beforeOutput += lines; });
+        beforeStream.on('end', function() {
+            var afterStream = after.source.createZXYStream();
+            afterStream.on('data', function(lines) { afterOutput += lines; });
+            afterStream.on('end', function() {
+                beforeQueue = beforeOutput.toString().split('\n');
+                afterQueue = afterOutput.toString().split('\n');
+                makeAssertions();
+            });
+        });
+    }
+
     function makeAssertions() {
-        var originalStats = fs.statSync(filepath);
-        var serializedStats = fs.statSync(tmpSerial);
-        var finalStats = fs.statSync(tmpDst);
-
-        var sizeDiff = Math.abs(originalStats.size - finalStats.size) / originalStats.size;
-
-        t.ok(sizeDiff < 0.01, 'round-tripped mbtiles are approx. the same size');
-        t.end();
+        before.getInfo(function(err, beforeInfo) {
+            t.ifError(err);
+            after.source.getInfo(function(err, afterInfo) {
+                t.ifError(err);
+                t.deepEqual(beforeInfo, afterInfo, 'input and output info is the same');
+                beforeQueue.forEach(function(b, i) {
+                  t.equal(b, afterQueue[i], 'zxy matches for both streams');
+                });
+                t.end();
+            });
+        });
     }
 
 });
