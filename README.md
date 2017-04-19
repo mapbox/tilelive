@@ -14,6 +14,7 @@
 - [tilelive-mapnik](https://github.com/mapbox/tilelive-mapnik) - mapnik renderer backend for tilelive.
 - [tilelive-s3](https://github.com/mapbox/tilelive-s3) - Extends TileJSON for S3-specific tasks.
 - [tilelive-file](https://github.com/mapbox/tilelive-file) - tilelive.js adapter for reading from the filesystem.
+- [tilelive-postgis](https://github.com/stepankuzmin/tilelive-postgis) - A tilelive source for outputting PBF-encoded tiles from PostGIS.
 - [tilelive-tmsource](https://github.com/mojodna/tilelive-tmsource) - A tilelive provider for TM2 sources.
 - [tilelive-cache](https://github.com/mojodna/tilelive-cache) - A caching wrapper for tilelive.js
 - [tilelive-overlay](https://github.com/mapbox/tilelive-overlay) - Render GeoJSON features with simplestyle styles in a tilelive pipeline.
