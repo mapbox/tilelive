@@ -34,7 +34,7 @@
   "dependencies": {
     "minimist": "~0.2.0",
     "progress-stream": "~0.5.x",
-    "sphericalmercator": "~1.0.1",
+    "@mapbox/sphericalmercator": "~1.0.1",
     "queue-async": "~1.0.7"
   },
   "devDependencies": {
@@ -42,10 +42,10 @@
     "coveralls": "~2.11.1",
     "eslint": "^0.24.0",
     "istanbul": "~0.3.0",
-    "mbtiles": "~0.8.2",
+    "@mapbox/mbtiles": "~0.9.0",
     "stream-combiner": "^0.2.2",
     "tape": "2.13.3",
-    "tilejson": "~1.0.0"
+    "@mapbox/tilejson": "~1.0.4"
   },
   "bin": {
     "tilelive-copy": "./bin/tilelive-copy"

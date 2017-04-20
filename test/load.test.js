@@ -1,8 +1,8 @@
 var test = require('tape');
 var assert = require('assert');
 var tilelive = require('../');
-tilelive.protocols['mbtiles:'] = require('mbtiles');
-tilelive.protocols['tilejson:'] = require('tilejson');
+tilelive.protocols['mbtiles:'] = require('@mapbox/mbtiles');
+tilelive.protocols['tilejson:'] = require('@mapbox/tilejson');
 
 var data = [
     {
