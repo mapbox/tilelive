@@ -1,5 +1,5 @@
 var test = require('tape');
-var MBTiles = require('mbtiles');
+var MBTiles = require('@mapbox/mbtiles');
 var tilelive = require('..');
 var fs = require('fs');
 var tmp = require('os').tmpdir();
