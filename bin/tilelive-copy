@@ -33,6 +33,8 @@ if (!argv._[0]) {
     console.log('  --slow=[number]                   Warn on slow tiles.');
     console.log('  --exit                            Exit explicitly when copy is complete.');
     console.log('  --bounds=[w,s,e,n]');
+    console.log('  --minimum-scale-denominator=[number]');
+    console.log('  --maximum-scale-denominator=[number]');
     console.log('  --minzoom=[number]');
     console.log('  --maxzoom=[number]');
     console.log('  --parts=[number]');
@@ -45,6 +47,8 @@ argv.scheme = argv.scheme || 'scanline';
 argv.list = argv.list || undefined;
 argv.concurrency = argv.concurrency !== undefined ? parseInt(argv.concurrency,10) : undefined;
 argv.bounds = argv.bounds !== undefined ? argv.bounds.split(',').map(function(v) { return parseFloat(v); }) : undefined;
+argv.minimum-scale-denominator = argv.minimum-scale-denominator !== undefined ? parseInt(argv.minimum-scale-denominator,10) : undefined;
+argv.maximum-scale-denominator = argv.maximum-scale-denominator !== undefined ? parseInt(argv.maximum-scale-denominator,10) : undefined;
 argv.minzoom = argv.minzoom !== undefined ? parseInt(argv.minzoom,10) : undefined;
 argv.maxzoom = argv.maxzoom !== undefined ? parseInt(argv.maxzoom,10) : undefined;
 argv.withoutprogress = argv.withoutprogress ? true : false;
@@ -71,6 +75,8 @@ copy();
 function copy() {
     var options = {
         type:argv.scheme,
+        minimum-scale-denominator:argv.minimum-scale-denominator,
+        maximum-scale-denominator:argv.maximum-scale-denominator,
         minzoom:argv.minzoom,
         maxzoom:argv.maxzoom,
         bounds:argv.bounds,
