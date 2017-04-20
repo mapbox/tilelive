@@ -243,3 +243,27 @@ test('list: 10000', function(assert) {
         assert.end();
     });
 });
+
+test('list: minzoom', function(assert) {
+    var file = fs.createReadStream(path.join(__dirname,'fixtures','list-zoomlevels'));
+    var get = tilelive.createReadStream(new Timedsource({}), {type:'list', minzoom:10});
+    var put = tilelive.createWriteStream(new Timedsource({}));
+    var errored = false;
+    file.pipe(get).pipe(put);
+    put.on('stop', function(err) {
+        assert.deepEqual(get.stats, { ops: 6, total: 6, skipped: 2, done: 6 });
+        assert.end();
+    });
+});
+
+test('list: maxzoom', function(assert) {
+    var file = fs.createReadStream(path.join(__dirname,'fixtures','list-zoomlevels'));
+    var get = tilelive.createReadStream(new Timedsource({}), {type:'list', maxzoom:10});
+    var put = tilelive.createWriteStream(new Timedsource({}));
+    var errored = false;
+    file.pipe(get).pipe(put);
+    put.on('stop', function(err) {
+        assert.deepEqual(get.stats, { ops: 6, total: 6, skipped: 3, done: 6 });
+        assert.end();
+    });
+});
