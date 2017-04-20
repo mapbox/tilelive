@@ -1,8 +1,8 @@
 var test = require('tape');
 var assert = require('assert');
 var tilelive = require('../');
-var MBTiles = require('mbtiles');
-var TileJSON = require('tilejson');
+var MBTiles = require('@mapbox/mbtiles');
+var TileJSON = require('@mapbox/tilejson');
 
 MBTiles.registerProtocols(tilelive);
 TileJSON.registerProtocols(tilelive);

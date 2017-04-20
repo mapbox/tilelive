@@ -8,7 +8,7 @@ var tilelive = require('../');
 var util = require('util');
 var concat = require('concat-stream');
 var combine = require('stream-combiner');
-var MBTiles = require('mbtiles');
+var MBTiles = require('@mapbox/mbtiles');
 //register protocols
 MBTiles.registerProtocols(tilelive);
 var crypto = require('crypto');

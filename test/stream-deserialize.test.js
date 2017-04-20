@@ -1,5 +1,5 @@
 var test = require('tape');
-var MBTiles = require('mbtiles');
+var MBTiles = require('@mapbox/mbtiles');
 var tilelive = require('..');
 var Tile = require('../lib/stream-util').Tile;
 var Info = require('../lib/stream-util').Info;
