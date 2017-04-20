@@ -1,3 +1,7 @@
+## 5.12.6
+
+* Updated several dependencies to the @mapbox namespaced version
+
 ## 5.12.5
 
 * Update all CI tests to run on node v0.10, v4, and v6 [#194](https://github.com/mapbox/tilelive/issues/194)
