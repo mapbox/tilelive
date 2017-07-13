@@ -3,9 +3,21 @@
 [![Build Status](https://travis-ci.org/mapbox/tilelive.svg?branch=master)](https://travis-ci.org/mapbox/tilelive)
 [![Coverage Status](https://coveralls.io/repos/github/mapbox/tilelive/badge.svg?branch=master)](https://coveralls.io/github/mapbox/tilelive?branch=master)
 
-- Tilelive is a module to help interactions between tilelive source modules.
-- A tilelive source is an interface implemented by node modules that deal with reading and writing map tiles.
+Tilelive is designed for streaming map tiles from _sources_ (like custom geographic data formats) to _sinks_ (destinations, like file systems) by providing a consistent API. This repository enables the interaction between sources and sinks and is meant to be used in tandem with at least one Tilelive plugin. Tilelive plugins (modules) follow a consistent architecture (defined in [API.md](https://github.com/mapbox/tilelive/blob/master/API.md)) and implement the logic for generating and reading map tiles from a source or putting map tiles to a destination, or both.
 
+An example of a plugin that implements both reading (can be a source) and writing (can be a sink) is [tilelive-s3](https://github.com/mapbox/tilelive-s3).
+
+An example use case for tilelive is creating vector tiles from a geojson file and putting them to Amazon S3. This can be accomplished by using [tilelive-omnivore](https://github.com/mapbox/tilelive-omnivore) as the source and using [tilelive-s3](https://github.com/mapbox/tilelive-s3) as the sink. Tilelive omnivore performs special operations for generating map tiles (using mapnik), whereas tilelive-s3 is able to properly connect to Amazon S3 for putting tiles in their proper location. The Tilelive module performs all of the getting and putting within `tilelive.copy`.
+
+Basic tilelive steps:
+
+1. Require tilelive in your script, `var tilelive = require('@mapbox/tilelive')`
+1. Register custom protocols via plugins, `CustomTileSourcePlugin.registerProtocols(tilelive)` or `CustomTileSinkPlugin.registerProtocols(tilelive)`
+1. Load protocols using `tilelive.load`, this creates read and write streams
+1. Copy from source to destination (the creating of tiles is left to the plugin) using `tilelive.copy(source, sink, callback)`
+1. Once tiles are copied the streams are closed
+
+See [Usage](#Usage) for more details on the tilelive module API.
 
 ## Awesome tilelive modules
 
@@ -36,7 +48,7 @@
 - [tilelive-memcached](https://github.com/mapbox/tilelive-memcached) - A memcached wrapping source for tilelive.
 - [tilelive-csvin](https://github.com/mojodna/tilelive-csvin) - A streaming tilelive source for CSV inputs.
 - [tilelive-tms](https://github.com/oscarfonts/tilelive-tms) - A tilelive.js adapter for reading from a TMS service.
-- [tilelive-multicache](https://github.com/mapbox/tilelive-multicache) - Module for adding a caching layer in front a tilelive source. 
+- [tilelive-multicache](https://github.com/mapbox/tilelive-multicache) - Module for adding a caching layer in front a tilelive source.
 - [tilelive-cardboard](https://github.com/mapbox/tilelive-cardboard) - Renders vector tiles from a cardboard dataset.
 - [tilelive-utfgrid](https://github.com/mojodna/tilelive-utfgrid) - A tilelive provider that treats grids as tiles
 - [tilelive-arcgis](https://github.com/FuZhenn/tilelive-arcgis) - A tilelive.js adapter for ArcGIS tile caches.
