@@ -3,17 +3,21 @@
 [![Build Status](https://travis-ci.org/mapbox/tilelive.svg?branch=master)](https://travis-ci.org/mapbox/tilelive)
 [![Coverage Status](https://coveralls.io/repos/github/mapbox/tilelive/badge.svg?branch=master)](https://coveralls.io/github/mapbox/tilelive?branch=master)
 
-Tilelive is designed for stremaing map tiles from _sources_ (custom geographic data formats) to _sinks_ (destinations, like file systems) by providing a consistent API. This repository enables the interaction between sources and sinks and is meant to be used in tandem with at least one Tilelive plugin. Tilelive plugins (modules) follow a consistent architecture (defined in [API.md](https://github.com/mapbox/tilelive/blob/master/API.md)) and implement the logic for generating and reading map tiles from a source or putting map tiles to a destination, or both.
+Tilelive is designed for streaming map tiles from _sources_ (like custom geographic data formats) to _sinks_ (destinations, like file systems) by providing a consistent API. This repository enables the interaction between sources and sinks and is meant to be used in tandem with at least one Tilelive plugin. Tilelive plugins (modules) follow a consistent architecture (defined in [API.md](https://github.com/mapbox/tilelive/blob/master/API.md)) and implement the logic for generating and reading map tiles from a source or putting map tiles to a destination, or both.
 
-An example use case for tilelive is streaming tiles from a geojson source (using [tilelive-omnivore](https://github.com/mapbox/tilelive-omnivore)) and putting tiles to Amazon S3 (using [tilelive-s3](https://github.com/mapbox/tilelive-s3)). Tilelive-omnivore is considered the _source_, while tilelive-s3 is considered the _sink_. Tilelive omnivore performs special operations for generating map tiles (using mapnik), whereas tilelive-s3 is able to properly connect to Amazon S3 for putting tiles in their proper location. The Tilelive module performs all of the getting and putting within `tilelive.copy`.
+An example of a plugin that implements both reading (can be a source) and writing (can be a sink) is [tilelive-s3](https://github.com/mapbox/tilelive-s3).
+
+An example use case for tilelive is creating vector tiles from a geojson file and putting them to Amazon S3. This can be accomplished by using [tilelive-omnivore](https://github.com/mapbox/tilelive-omnivore) as the source and using [tilelive-s3](https://github.com/mapbox/tilelive-s3) as the sink. Tilelive omnivore performs special operations for generating map tiles (using mapnik), whereas tilelive-s3 is able to properly connect to Amazon S3 for putting tiles in their proper location. The Tilelive module performs all of the getting and putting within `tilelive.copy`.
 
 Basic tilelive steps:
 
 1. Require tilelive in your script, `var tilelive = require('@mapbox/tilelive')`
-1. Register custom protocols, `CustomTileSourcePlugin.registerProtocols(tilelive)` or `CustomTileSinkPlugin.registerProtocols(tilelive)`
+1. Register custom protocols via plugins, `CustomTileSourcePlugin.registerProtocols(tilelive)` or `CustomTileSinkPlugin.registerProtocols(tilelive)`
 1. Load protocols using `tilelive.load`, this creates read and write streams
 1. Copy from source to destination (the creating of tiles is left to the plugin) using `tilelive.copy(source, sink, callback)`
 1. Once tiles are copied the streams are closed
+
+See [Usage](#Usage) for more details on the tilelive module API.
 
 ## Awesome tilelive modules
 
