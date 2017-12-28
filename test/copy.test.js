@@ -81,7 +81,7 @@ test('copy streams', function(t) {
         t.ifError(err, 'no errors');
         t.equal(stderr, '', 'no stderr');
         t.ok(stdout.indexOf('JSONBREAKFASTTIME\n') === 0);
-        t.equal(stdout.length, 647001);
+        t.equal(stdout.length, 647002);
         t.end();
     });
 });
