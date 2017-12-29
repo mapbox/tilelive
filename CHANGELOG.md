@@ -1,3 +1,7 @@
+## 6.0.0
+
+* Include trailing newline at the end of serialtiles to make append implementations simpler (https://github.com/mapbox/tilelive/pull/206)
+
 ## 5.12.6
 
 * Updated several dependencies to the @mapbox namespaced version
