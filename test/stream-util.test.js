@@ -319,6 +319,17 @@ test('Info: deserialize', function(t) {
     }
 });
 
+test('serialize/deserialize corner cases', function(t) {
+    t.deepEqual(util.deserialize(''), null, 'deserialize interprets empty strings as null');
+    t.throws(function() {
+        util.serialize('boogie woogie');
+    }, /SerializationError: Invalid data/, 'serialize throws on invalid data');
+    t.throws(function() {
+        util.serialize('');
+    }, /SerializationError: Invalid data/, 'serialize throws on invalid data');
+    t.end();
+});
+
 test('Limit bounds', function(t) {
 
     // these inputs should simply be equal to themselves, since they don't contain
