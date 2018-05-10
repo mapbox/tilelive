@@ -68,7 +68,7 @@ See [Usage](#Usage) for more details on the tilelive module API.
 - [tilelive-foxgis](https://github.com/FoxGIS/tilelive-foxgis) - A tilelive plugin to serve tiles with mongodb
 - [tessera](https://github.com/mojodna/tessera) - A tilelive-based tile server.
 
-## Ecosytem of tilelive
+## Ecosystem of tilelive
 ![image](https://cloud.githubusercontent.com/assets/1522494/16645056/a8f8fff2-4453-11e6-8ba7-b9aff033f2cd.png)
 
 
