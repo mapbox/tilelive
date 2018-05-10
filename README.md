@@ -61,6 +61,8 @@ See [Usage](#Usage) for more details on the tilelive module API.
 - [tilelive-error](https://github.com/mojodna/tilelive-error) - Avoid repeating error-prone initialization.
 - [tilelive-lambda](https://github.com/mojodna/tilelive-lambda) - AWS Lambda source for tilelive.
 - [tilelive-cartodb](https://github.com/mojodna/tilelive-cartodb) - A tilelive source for CartoDB.
+- [@kartotherian/cassandra](https://github.com/kartotherian/cassandra) - A tilelive source to store tiles in a Cassandra DB
+- [@kartotherian/postgres](https://github.com/kartotherian/postgres) - A tilelive source to store tiles in a Postgres DB
 - [cdbtiles](https://github.com/vsivsi/cdbtiles) - A tilelive backend plug-in for CouchDB.
 - [node-tilejson](https://github.com/mapbox/node-tilejson) - Tile source backend for online tile sources.
 - [tilelive-foxgis](https://github.com/FoxGIS/tilelive-foxgis) - A tilelive plugin to serve tiles with mongodb
