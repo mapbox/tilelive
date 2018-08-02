@@ -71,26 +71,22 @@ See [Usage](#Usage) for more details on the tilelive module API.
 ## Ecosystem of tilelive
 ![image](https://cloud.githubusercontent.com/assets/1522494/16645056/a8f8fff2-4453-11e6-8ba7-b9aff033f2cd.png)
 
-
-
-
 ## Usage
 
 Tilelive doesn't ship with any implementing modules by default. To register a module as one tilelive recognizes:
 
-    require('[implementation]').registerProtocols(tilelive);
+```javascript
+require('[implementation]').registerProtocols(tilelive);
+```
 
 * `tilelive.list(source, callback)`: Lists all tilesets in a directory. `source` is a folder that is used by registered implementations to search for individual tilesets. `callback` receives an error object (or `null`) and a hash with keys being Tilestore IDs and values being Tilestore URIs. Example:
 
-```javascript
-{
-    "world-light": "mbtiles:///path/to/file/world-light.mbtiles",
-    "mapquest": "tilejson:///path/to/file/mapquest.tilejson"
-}
-```
+      {
+          "world-light": "mbtiles:///path/to/file/world-light.mbtiles",
+          "mapquest": "tilejson:///path/to/file/mapquest.tilejson"
+      }
 
 * `tilelive.findID(source, id, callback)`: Looks for a particular tileset ID in a directory. `callback` receives an error object (or `null`) and the URI of the tileset.
-
 
 * `tilelive.load(uri, callback)`: Loads the Tilestore object associated with the specified `uri`. `callback` receives an error object (or `null`) and the [Tilestore object](API.md).
 
@@ -104,15 +100,17 @@ Tilelive doesn't ship with any implementing modules by default. To register a mo
 
 Tilelive provides an implementation of node object streams for copying tiles from one source to another.
 
-    // Copy all tiles and metadata from source A to source B.
-    var get = tilelive.createReadStream(sourceA);
-    var put = tilelive.createWriteStream(sourceB);
-    get.pipe(put);
-    put.on('finish', function() {
-        console.log('done!');
-    });
+```javascript
+// Copy all tiles and metadata from source A to source B.
+var get = tilelive.createReadStream(sourceA);
+var put = tilelive.createWriteStream(sourceB);
+get.pipe(put);
+put.on('finish', function() {
+    console.log('done!');
+});
+```
 
-See `tilelive-copy` and the streams tests for example usage of copy streams.
+See the `tilelive-copy` CLI and the streams tests for example usage of copy streams.
 
 ## Parallel read streams
 
