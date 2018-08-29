@@ -138,7 +138,7 @@ Options:
 
 * **--scheme**=[scanline,pyramid,list] - Default: scanline.
 * **--list**=[filepath] - Filepath if scheme is list.
-* **--concurrency**=[number] - Control on the number of pending I/O operations with the underlying source during copy. Note: this is  CPU concurrency, which is handled by individual plugins typically by setting UV_THREADPOOL_SIZE=[number] as an environment variable.
+* **--concurrency**=[number] - Control on the number of pending I/O operations with the underlying source during copy. Note: this is not CPU concurrency, which is handled by individual plugins typically by setting UV_THREADPOOL_SIZE=[number] as an environment variable.
 * **--withoutprogress** - Shows progress by default.
 * **--timeout**=[number] - Timeout after `n` ms of inactivity.
 * **--slow**=[number] - Warn on slow tiles.
