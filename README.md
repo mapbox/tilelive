@@ -124,7 +124,31 @@ This instructs tilelive to only read tiles that would fall into job `1` of `4`. 
 
 ## bin/tilelive-copy
 
-tilelive can be used to copy data between tilestores. For a full list of options, run `tilelive-copy`.
+tilelive can be used to copy data between tilestores. The CLI tool uses tilelive.auto() to register plugins by filename. For example, file.mbtiles will result in using the `mbtiles:` protocol and the `@mapbox/mbtiles` module.
+
+```shell
+# usage
+tilelive-copy <src> <dst>
+
+# example
+tilelive-copy orig.mbtiles copy.mbtiles
+```
+
+Options:
+
+* **--scheme**=[scanline,pyramid,list] - Default: scanline.
+* **--list**=[filepath] - Filepath if scheme is list.
+* **--concurrency**=[number] - Control on the number of pending I/O operations with the underlying source during copy. Note: this is  CPU concurrency, which is handled by individual plugins typically by setting UV_THREADPOOL_SIZE=[number] as an environment variable.
+* **--withoutprogress** - Shows progress by default.
+* **--timeout**=[number] - Timeout after `n` ms of inactivity.
+* **--slow**=[number] - Warn on slow tiles.
+* **--exit** - Exit explicitly when copy is complete.
+* **--bounds**=[w,s,e,n] - as defined by the [TileJSON specification](https://github.com/mapbox/tilejson-spec)
+* **--minzoom**=[number] - as defined by the [TileJSON specification](https://github.com/mapbox/tilejson-spec)
+* **--maxzoom**=[number] - as defined by the [TileJSON specification](https://github.com/mapbox/tilejson-spec)
+* **--parts**=[number] - total number of parts to copy (part splitting is used for processing in parallel, where specific parts only copy specific tiles from the tile pyramid)
+* **--part**=[number] - the specific part to copy
+* **--retry**=[number] - number of retry attempts
 
 ## Tests
 
