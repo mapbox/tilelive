@@ -71,26 +71,22 @@ See [Usage](#Usage) for more details on the tilelive module API.
 ## Ecosystem of tilelive
 ![image](https://cloud.githubusercontent.com/assets/1522494/16645056/a8f8fff2-4453-11e6-8ba7-b9aff033f2cd.png)
 
-
-
-
 ## Usage
 
 Tilelive doesn't ship with any implementing modules by default. To register a module as one tilelive recognizes:
 
-    require('[implementation]').registerProtocols(tilelive);
+```javascript
+require('[implementation]').registerProtocols(tilelive);
+```
 
 * `tilelive.list(source, callback)`: Lists all tilesets in a directory. `source` is a folder that is used by registered implementations to search for individual tilesets. `callback` receives an error object (or `null`) and a hash with keys being Tilestore IDs and values being Tilestore URIs. Example:
 
-```javascript
-{
-    "world-light": "mbtiles:///path/to/file/world-light.mbtiles",
-    "mapquest": "tilejson:///path/to/file/mapquest.tilejson"
-}
-```
+      {
+          "world-light": "mbtiles:///path/to/file/world-light.mbtiles",
+          "mapquest": "tilejson:///path/to/file/mapquest.tilejson"
+      }
 
 * `tilelive.findID(source, id, callback)`: Looks for a particular tileset ID in a directory. `callback` receives an error object (or `null`) and the URI of the tileset.
-
 
 * `tilelive.load(uri, callback)`: Loads the Tilestore object associated with the specified `uri`. `callback` receives an error object (or `null`) and the [Tilestore object](API.md).
 
@@ -104,15 +100,17 @@ Tilelive doesn't ship with any implementing modules by default. To register a mo
 
 Tilelive provides an implementation of node object streams for copying tiles from one source to another.
 
-    // Copy all tiles and metadata from source A to source B.
-    var get = tilelive.createReadStream(sourceA);
-    var put = tilelive.createWriteStream(sourceB);
-    get.pipe(put);
-    put.on('finish', function() {
-        console.log('done!');
-    });
+```javascript
+// Copy all tiles and metadata from source A to source B.
+var get = tilelive.createReadStream(sourceA);
+var put = tilelive.createWriteStream(sourceB);
+get.pipe(put);
+put.on('finish', function() {
+    console.log('done!');
+});
+```
 
-See `tilelive-copy` and the streams tests for example usage of copy streams.
+See the `tilelive-copy` CLI and the streams tests for example usage of copy streams.
 
 ## Parallel read streams
 
@@ -126,7 +124,31 @@ This instructs tilelive to only read tiles that would fall into job `1` of `4`. 
 
 ## bin/tilelive-copy
 
-tilelive can be used to copy data between tilestores. For a full list of options, run `tilelive-copy`.
+tilelive can be used to copy data between tilestores. The CLI tool uses tilelive.auto() to register plugins by filename. For example, file.mbtiles will result in using the `mbtiles:` protocol and the `@mapbox/mbtiles` module.
+
+```shell
+# usage
+tilelive-copy <src> <dst>
+
+# example
+tilelive-copy orig.mbtiles copy.mbtiles
+```
+
+Options:
+
+* **--scheme**=[scanline,pyramid,list] - Default: scanline.
+* **--list**=[filepath] - Filepath if scheme is list.
+* **--concurrency**=[number] - Control on the number of pending I/O operations with the underlying source during copy. Note: this is not CPU concurrency, which is handled by individual plugins typically by setting UV_THREADPOOL_SIZE=[number] as an environment variable.
+* **--withoutprogress** - Shows progress by default.
+* **--timeout**=[number] - Timeout after `n` ms of inactivity.
+* **--slow**=[number] - Warn on slow tiles.
+* **--exit** - Exit explicitly when copy is complete.
+* **--bounds**=[w,s,e,n] - as defined by the [TileJSON specification](https://github.com/mapbox/tilejson-spec)
+* **--minzoom**=[number] - as defined by the [TileJSON specification](https://github.com/mapbox/tilejson-spec)
+* **--maxzoom**=[number] - as defined by the [TileJSON specification](https://github.com/mapbox/tilejson-spec)
+* **--parts**=[number] - total number of parts to copy (part splitting is used for processing in parallel, where specific parts only copy specific tiles from the tile pyramid)
+* **--part**=[number] - the specific part to copy
+* **--retry**=[number] - number of retry attempts
 
 ## Tests
 

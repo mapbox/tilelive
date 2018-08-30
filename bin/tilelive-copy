@@ -27,7 +27,7 @@ if (!argv._[0]) {
     console.log('Options:');
     console.log('  --scheme=[scanline,pyramid,list]  Default: scanline.');
     console.log('  --list=[filepath]                 Filepath if scheme is list.');
-    console.log('  --concurrency=[number]            Copy concurrency.');
+    console.log('  --concurrency=[number]            Control on the number of pending I/O operations with the underlying source during copy. Note: this is not CPU concurrency, which is handled by individual plugins typically by setting UV_THREADPOOL_SIZE=[number] as an environment variable.');
     console.log('  --withoutprogress                 Shows progress by default.');
     console.log('  --timeout=[number]                Timeout after n ms of inactivity.');
     console.log('  --slow=[number]                   Warn on slow tiles.');
@@ -79,7 +79,7 @@ function copy() {
         timeout:argv.timeout,
         close:true
     };
-    
+
     if (!argv.withoutprogress && dsturi) options.progress = report;
     if (argv.concurrency) options.concurrency = argv.concurrency;
     if (isNumeric(argv.part) && isNumeric(argv.parts)) options.job = {
