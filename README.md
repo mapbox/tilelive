@@ -3,6 +3,10 @@
 [![Build Status](https://travis-ci.org/mapbox/tilelive.svg?branch=master)](https://travis-ci.org/mapbox/tilelive)
 [![Coverage Status](https://coveralls.io/repos/github/mapbox/tilelive/badge.svg?branch=master)](https://coveralls.io/github/mapbox/tilelive?branch=master)
 
+:warning: tilelive and related mapbox-owned tilelive plugins are not actively maintained. Please open a new issue to check with the project maintainers before beginning work on new features.
+
+---
+
 Tilelive is designed for streaming map tiles from _sources_ (like custom geographic data formats) to _sinks_ (destinations, like file systems) by providing a consistent API. This repository enables the interaction between sources and sinks and is meant to be used in tandem with at least one Tilelive plugin. Tilelive plugins (modules) follow a consistent architecture (defined in [API.md](https://github.com/mapbox/tilelive/blob/master/API.md)) and implement the logic for generating and reading map tiles from a source or putting map tiles to a destination, or both.
 
 An example of a plugin that implements both reading (can be a source) and writing (can be a sink) is [tilelive-s3](https://github.com/mapbox/tilelive-s3).
