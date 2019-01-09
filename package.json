@@ -1,8 +1,8 @@
 {
-  "name": "@mapbox/tilelive",
-  "version": "6.0.0",
+  "name": "tilelive-browser",
+  "version": "7.0.0",
   "main": "./lib/tilelive.js",
-  "description": "API for various map tile backends",
+  "description": "API for various map tile backends, that works in the browser",
   "url": "http://github.com/mapbox/tilelive.js",
   "keywords": [
     "map",
