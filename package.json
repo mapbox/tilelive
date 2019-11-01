@@ -40,7 +40,7 @@
   "devDependencies": {
     "concat-stream": "1.4.x",
     "coveralls": "~2.11.1",
-    "eslint": "^0.24.0",
+    "eslint": "^6.6.0",
     "istanbul": "~0.3.0",
     "@mapbox/mbtiles": "~0.9.0",
     "stream-combiner": "^0.2.2",
