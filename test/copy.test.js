@@ -201,7 +201,12 @@ test('tilelive copy: list auto', function(t) {
 });
 
 test('tilelive copy: missing liststream', function(t) {
-    var src = 'tilejson+http://api.mapbox.com/v3/mapbox.world-bright.json';
+    var src = new Timedsource({});
+    src.flag = false;
+    src.close = function(callback) {
+        this.flag = true;
+        callback();
+    };
     var dst = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.tilelivecopy_liststream.mbtiles');
     var options = {};
     options.type = 'list';
