@@ -42,7 +42,7 @@
     "coveralls": "~2.11.1",
     "eslint": "^0.24.0",
     "istanbul": "~0.3.0",
-    "@mapbox/mbtiles": "~0.9.0",
+    "@mapbox/mbtiles": "~0.11.0",
     "stream-combiner": "^0.2.2",
     "tape": "2.13.3",
     "@mapbox/tilejson": "~1.0.4"
