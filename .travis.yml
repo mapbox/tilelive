@@ -1,12 +1,9 @@
 language: node_js
 
 node_js:
- - "0.10"
- - "4"
- - "6"
+ - "8"
+ - "10"
+ - "12"
 
 script:
  - npm test
- - npm run cov
-
-sudo: false
