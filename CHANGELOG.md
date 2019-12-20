@@ -1,3 +1,6 @@
+## 6.1.0
+* Added node v10 support by upgrading to @mapbox/mbtiles0.10.x
+
 ## 6.0.0
 
 * Include trailing newline at the end of serialtiles to make append implementations simpler (https://github.com/mapbox/tilelive/pull/206)
