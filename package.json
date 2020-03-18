@@ -1,6 +1,6 @@
 {
   "name": "@mapbox/tilelive",
-  "version": "6.1.0",
+  "version": "6.2.0",
   "main": "./lib/tilelive.js",
   "description": "API for various map tile backends",
   "url": "http://github.com/mapbox/tilelive.js",
@@ -32,20 +32,20 @@
     "Blake Thompson <flippmoke>"
   ],
   "dependencies": {
-    "minimist": "~0.2.0",
-    "progress-stream": "~0.5.x",
-    "@mapbox/sphericalmercator": "~1.0.1",
-    "queue-async": "~1.0.7"
+    "minimist": "~0.2.1",
+    "progress-stream": "~2.0.0",
+    "@mapbox/sphericalmercator": "~1.1.0",
+    "queue-async": "~1.2.1"
   },
   "devDependencies": {
     "@mapbox/mbtiles": "^0.10.0",
-    "@mapbox/tilejson": "~1.0.4",
+    "@mapbox/tilejson": "^1.1.0",
     "concat-stream": "1.4.x",
-    "coveralls": "~2.11.1",
-    "eslint": "^0.24.0",
-    "istanbul": "~0.3.0",
+    "coveralls": "^3.0.9",
+    "eslint": "^6.8.0",
+    "istanbul": "~0.4.5",
     "stream-combiner": "^0.2.2",
-    "tape": "2.13.3"
+    "tape": "^4.13.2"
   },
   "bin": {
     "tilelive-copy": "./bin/tilelive-copy"
