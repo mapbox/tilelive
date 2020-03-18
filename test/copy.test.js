@@ -18,7 +18,7 @@ var out = [];
 var s3url = 's3://tilestream-tilesets-development/carol-staging/mapbox-tile-copy/{z}/{x}/{y}.png';
 
 test('copy usage', function(t) {
-    exec(__dirname + '/../bin/tilelive-copy', function(err, stdout, stderr) {
+    exec('node ' + __dirname + '/../bin/tilelive-copy', function(err, stdout, stderr) {
         t.equal(1, err.code, 'exit 1');
         t.ok(/Usage:/.test(stdout), 'shows usage');
         t.end();
@@ -27,7 +27,7 @@ test('copy usage', function(t) {
 
 test('copy copies', function(t) {
     var filepath = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.copy.mbtiles');
-    exec(__dirname + '/../bin/tilelive-copy ' + __dirname + '/fixtures/plain_1.mbtiles ' + filepath, function(err, stdout, stderr) {
+    exec('node ' + __dirname + '/../bin/tilelive-copy ' + __dirname + '/fixtures/plain_1.mbtiles ' + filepath, function(err, stdout, stderr) {
         t.ifError(err, 'no errors');
         t.ok(stdout.indexOf('100.0000%') !== -1, 'pct complete');
         t.ok(stdout.indexOf('286/') !== -1, '286');
@@ -45,7 +45,7 @@ test('copy copies', function(t) {
 
 test('copy min/max', function(t) {
     var filepath = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.copy_minmax.mbtiles');
-    exec(__dirname + '/../bin/tilelive-copy --minzoom=1 --maxzoom=2 ' + __dirname + '/fixtures/plain_1.mbtiles ' + filepath, function(err, stdout, stderr) {
+    exec('node ' + __dirname + '/../bin/tilelive-copy --minzoom=1 --maxzoom=2 ' + __dirname + '/fixtures/plain_1.mbtiles ' + filepath, function(err, stdout, stderr) {
         t.ifError(err, 'no errors');
         t.equal(stderr, '', 'no stderr');
         t.ok(stdout.indexOf('100.0000%') !== -1, 'pct complete');
@@ -56,7 +56,7 @@ test('copy min/max', function(t) {
 
 test('copy bounds', function(t) {
     var filepath = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.copy_bounds.mbtiles');
-    exec(__dirname + '/../bin/tilelive-copy --bounds=-180,-85,0,0 ' + __dirname + '/fixtures/plain_1.mbtiles ' + filepath, function(err, stdout, stderr) {
+    exec('node ' + __dirname + '/../bin/tilelive-copy --bounds=-180,-85,0,0 ' + __dirname + '/fixtures/plain_1.mbtiles ' + filepath, function(err, stdout, stderr) {
         t.ifError(err, 'no errors');
         t.equal(stderr, '', 'no stderr');
         t.ok(stdout.indexOf('100.0000%') !== -1, 'pct complete');
@@ -67,7 +67,7 @@ test('copy bounds', function(t) {
 
 test('copy list', function(t) {
     var filepath = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.copy_list.mbtiles');
-    exec(__dirname + '/../bin/tilelive-copy --scheme=list --list=' + __dirname + '/fixtures/filescheme.flat ' + __dirname + '/fixtures/plain_1.mbtiles ' + filepath, function(err, stdout, stderr) {
+    exec('node ' + __dirname + '/../bin/tilelive-copy --scheme=list --list=' + __dirname + '/fixtures/filescheme.flat ' + __dirname + '/fixtures/plain_1.mbtiles ' + filepath, function(err, stdout, stderr) {
         t.ifError(err, 'no errors');
         t.equal(stderr, '', 'no stderr');
         t.ok(stdout.indexOf('100.0000%') !== -1, 'pct complete');
@@ -77,7 +77,7 @@ test('copy list', function(t) {
 });
 
 test('copy streams', function(t) {
-    exec(__dirname + '/../bin/tilelive-copy ' + __dirname + '/fixtures/plain_1.mbtiles', {maxBuffer:5e6}, function(err, stdout, stderr) {
+    exec('node ' + __dirname + '/../bin/tilelive-copy ' + __dirname + '/fixtures/plain_1.mbtiles', {maxBuffer:5e6}, function(err, stdout, stderr) {
         t.ifError(err, 'no errors');
         t.equal(stderr, '', 'no stderr');
         t.ok(stdout.indexOf('JSONBREAKFASTTIME\n') === 0);
@@ -87,7 +87,7 @@ test('copy streams', function(t) {
 });
 
 test('copy part zero', function(t) {
-    exec(__dirname + '/../bin/tilelive-copy ' + __dirname + '/fixtures/plain_1.mbtiles --part 0 --parts 10', function(err, stdout, stderr) {
+    exec('node ' + __dirname + '/../bin/tilelive-copy ' + __dirname + '/fixtures/plain_1.mbtiles --part 0 --parts 10', function(err, stdout, stderr) {
         t.ifError(err, 'no errors');
         t.equal(stderr, '', 'no stderr');
         t.ok(stdout.split('\n').length < 287, 'does not render all tiles');
@@ -96,7 +96,7 @@ test('copy part zero', function(t) {
 });
 
 test('copy timeout', function(t) {
-    exec(__dirname + '/../bin/tilelive-copy ' + __dirname + '/fixtures/plain_1.mbtiles --timeout=1', function(err, stdout, stderr) {
+    exec('node ' + __dirname + '/../bin/tilelive-copy ' + __dirname + '/fixtures/plain_1.mbtiles --timeout=1', function(err, stdout, stderr) {
         t.ok(err);
         t.ok(/Copy operation timed out/.test(stderr));
         t.end();
@@ -105,7 +105,7 @@ test('copy timeout', function(t) {
 
 test('copy slow', function(t) {
     var filepath = path.join(tmp, crypto.randomBytes(12).toString('hex') + '.copy_slow.mbtiles');
-    exec(__dirname + '/../bin/tilelive-copy --slow=20 ' + __dirname + '/fixtures/plain_1.mbtiles ' + filepath, function(err, stdout, stderr) {
+    exec('node ' + __dirname + '/../bin/tilelive-copy --slow=20 ' + __dirname + '/fixtures/plain_1.mbtiles ' + filepath, function(err, stdout, stderr) {
         t.ifError(err, 'no errors');
         t.ok((/\[slow tile\] (get|put) \d+\/\d+\/\d+ \d+ms/).test(stderr), 'logs slow tiles to stderr');
         t.end();

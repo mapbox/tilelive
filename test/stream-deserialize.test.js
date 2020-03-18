@@ -10,6 +10,7 @@ var tmp = require('os').tmpdir();
 var assert = require('assert');
 var unzip = require('zlib').createGunzip();
 var crypto = require('crypto');
+var LINE_SEPARATOR = require('./util').LINE_SEPARATOR;
 
 var src, dst;
 
@@ -230,7 +231,7 @@ test('deserialize: split into jobs', function(t) {
     var results = [];
     var tilesPerJob = [];
     var tilelist = path.join(__dirname, 'fixtures', 'plain_1.tilelist');
-    var expectedTiles = fs.readFileSync(tilelist, 'utf8').split('\n').slice(0, -1);
+    var expectedTiles = fs.readFileSync(tilelist, 'utf8').split(LINE_SEPARATOR).slice(0, -1);
 
     runJob(1, 0, function() {       // one job
     runJob(4, 0, function() {       // a few jobs
