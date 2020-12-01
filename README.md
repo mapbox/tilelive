@@ -1,6 +1,6 @@
 # tilelive.js
 
-[![Build Status](https://travis-ci.org/mapbox/tilelive.svg?branch=master)](https://travis-ci.org/mapbox/tilelive)
+[![Build Status](https://travis-ci.com/mapbox/tilelive.svg?branch=master)](https://travis-ci.com/mapbox/tilelive)
 [![Coverage Status](https://coveralls.io/repos/github/mapbox/tilelive/badge.svg?branch=master)](https://coveralls.io/github/mapbox/tilelive?branch=master)
 
 :warning: tilelive and related mapbox-owned tilelive plugins are not actively maintained. Please open a new issue to check with the project maintainers before beginning work on new features.
