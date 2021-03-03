@@ -1,9 +1,9 @@
 {
-  "name": "@mapbox/tilelive",
+  "name": "@urdeveloper/tilelive",
   "version": "6.3.0",
   "main": "./lib/tilelive.js",
   "description": "API for various map tile backends",
-  "url": "http://github.com/mapbox/tilelive.js",
+  "url": "http://github.com/urdeveloper/tilelive",
   "keywords": [
     "map",
     "mapnik",
@@ -16,7 +16,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "http://github.com/mapbox/tilelive.js.git"
+    "url": "http://github.com/urdeveloper/tilelive.git"
   },
   "author": {
     "name": "Mapbox",
