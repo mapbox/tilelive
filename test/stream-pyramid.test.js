@@ -7,6 +7,7 @@ var path = require('path');
 var Nearemptysource = require('./nearemptysource');
 var Containsdatasource = require('./containsdatasource');
 var Timedsource = require('./timedsource');
+var LINE_SEPARATOR = require('./util').LINE_SEPARATOR;
 
 tilelive.stream.setConcurrency(10);
 
@@ -97,7 +98,7 @@ test('pyramid: split into jobs', function(t) {
     var results = [];
     var tilesPerJob = [];
     var tilelist = path.join(__dirname, 'fixtures', 'plain_1.tilelist');
-    var expectedTiles = fs.readFileSync(tilelist, 'utf8').split('\n').slice(0, -1);
+    var expectedTiles = fs.readFileSync(tilelist, 'utf8').split(LINE_SEPARATOR).slice(0, -1);
 
     runJob(1, 0, function() {       // one job
     runJob(4, 0, function() {       // a few jobs
