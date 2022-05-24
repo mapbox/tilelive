@@ -1,3 +1,6 @@
+## 6.1.1
+* Update to minimist version 1.2.6
+
 ## 6.1.0
 * Added node v10 support by upgrading to @mapbox/mbtiles0.10.x
 
