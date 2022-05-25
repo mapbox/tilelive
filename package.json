@@ -1,6 +1,6 @@
 {
   "name": "@mapbox/tilelive",
-  "version": "6.1.0",
+  "version": "6.1.1",
   "main": "./lib/tilelive.js",
   "description": "API for various map tile backends",
   "url": "http://github.com/mapbox/tilelive.js",
@@ -32,7 +32,7 @@
     "Blake Thompson <flippmoke>"
   ],
   "dependencies": {
-    "minimist": "~0.2.0",
+    "minimist": "~1.2.6",
     "progress-stream": "~0.5.x",
     "@mapbox/sphericalmercator": "~1.0.1",
     "queue-async": "~1.0.7"
