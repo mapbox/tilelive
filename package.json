@@ -1,6 +1,6 @@
 {
   "name": "@mapbox/tilelive",
-  "version": "6.1.1-dev0",
+  "version": "6.1.1",
   "main": "./lib/tilelive.js",
   "description": "API for various map tile backends",
   "url": "http://github.com/mapbox/tilelive.js",
