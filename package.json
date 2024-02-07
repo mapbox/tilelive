@@ -33,7 +33,7 @@
   ],
   "dependencies": {
     "minimist": "~1.2.6",
-    "progress-stream": "~0.5.x",
+    "progress-stream": "~2.0.0",
     "@mapbox/sphericalmercator": "~1.0.1",
     "queue-async": "~1.0.7"
   },
