@@ -17,6 +17,8 @@ var argv = require('minimist')(process.argv.slice(2), {
     }
 });
 
+console.log("Debug version of tilelive-copy")
+
 if (!argv._[0]) {
     console.log('Usage:');
     console.log('  tilelive-copy <src> [dst]');
