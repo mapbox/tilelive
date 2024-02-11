@@ -40,7 +40,7 @@ test('stream-api: valid writable', function(t) {
 });
 
 test('stream-api: invalid writable', function(t) {
-    var fn = tilelive.createWriteStream.bind(tilelive, src, { type: 'list' });
+    var fn = tilelive.createWriteStream.bind(tilelive, src, { type: 'scanline' });
     t.throws(fn);
     t.end();
 });
