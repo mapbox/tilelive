@@ -17,7 +17,7 @@ var argv = require('minimist')(process.argv.slice(2), {
     }
 });
 
-console.log("Debug version of tilelive-copy,dev18,   removed unpipe event response")
+console.log("Debug version of tilelive-copy,dev20,   removed unpipe event response")
 
 if (!argv._[0]) {
     console.log('Usage:');
