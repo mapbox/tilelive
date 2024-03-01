@@ -1,3 +1,8 @@
+## 6.1.2
+Updates to work with aws-sdk 2.1562.0:
+* Use the default value of HighWaterMark for the WriteStream interface. With updated aws-sdk version, the HighWaterMark setting was causing write timeouts.
+* New version of aws-sdk does not reliably call the callback fuction of put_object. tilelive depended on that call back to count the number tiles being written. When the callback was not being called tilelive would hang. The solution is just use the finish event that tilelive to indicate that all of the tiles have been written. If an error occures tilelive will catch the error event.
+
 ## 6.1.1
 * Update to minimist version 1.2.6
 
