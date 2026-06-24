@@ -1,6 +1,6 @@
 {
   "name": "@mapbox/tilelive",
-  "version": "6.1.2",
+  "version": "6.1.3",
   "main": "./lib/tilelive.js",
   "description": "API for various map tile backends",
   "url": "http://github.com/mapbox/tilelive.js",
@@ -56,5 +56,8 @@
   "scripts": {
     "test": "eslint --no-eslintrc -c .eslintrc lib/*.js && tape test/*.test.js",
     "cov": "istanbul cover tape test/*.test.js && coveralls < ./coverage/lcov.info"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
